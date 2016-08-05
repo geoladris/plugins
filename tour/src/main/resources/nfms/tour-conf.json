@@ -47,7 +47,7 @@
             	{
                 	"id": "zoom_to_max_extent",
                 	"text": "... podemos pinchar en este botón y volver al encuadre inicial",
-                	"gravity" : "w",
+                	"gravity" : "w"
             	},
             	{
                 	"id": "all_layers",
@@ -110,7 +110,7 @@
                 	"id": "layer_info_button_forestClassification",
                 	"text": "El panel se puede cerrar pulsando escape o el aspa que hay en la ventana emergente.",
                 	"next": {
-                		"hide-info" : "",
+                		"hide-info" : ""
                 	}
             	},
             	{
