@@ -30,6 +30,6 @@
 			"mustache" : [ "jquery" ],
 			"highcharts" : [ "jquery" ],
 			"highcharts-theme-sand" : [ "highcharts" ]
-		},
+		}
 	}
 }

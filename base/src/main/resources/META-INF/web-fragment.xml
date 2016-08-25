@@ -12,6 +12,9 @@
 	<listener>
 		<listener-class>org.fao.unredd.IndicatorsContextListener</listener-class>
 	</listener>
+	<listener>
+		<listener-class>org.fao.unredd.LayersContextListener</listener-class>
+	</listener>
 
 	<!-- indicators -->
 	<servlet>
