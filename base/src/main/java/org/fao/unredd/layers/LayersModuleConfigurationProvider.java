@@ -2,16 +2,16 @@ package org.fao.unredd.layers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
+import org.fao.unredd.jwebclientAnalyzer.PluginDescriptor;
 import org.fao.unredd.portal.ModuleConfigurationProvider;
 import org.fao.unredd.portal.PortalRequestConfiguration;
 
-import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
@@ -20,26 +20,15 @@ public class LayersModuleConfigurationProvider
 			ModuleConfigurationProvider {
 
 	@Override
-	public Map<String, JSONObject> getConfigurationMap(
+	public Map<PluginDescriptor, JSONObject> getPluginConfig(
 			PortalRequestConfiguration configurationContext,
 			HttpServletRequest request) throws IOException {
-		HashMap<String, JSONObject> ret = new HashMap<String, JSONObject>();
-		fillConfigMap(configurationContext, request, ret);
-		return ret;
-	}
+		// We create return a pseudo-plugin descriptor containing all the
+		// configuration to override/merge
+		// The modules, stylesheets and RequireJS data is empty since it is
+		// taken from all the other real plugins.
+		JSONObject conf = new JSONObject();
 
-	@Override
-	public Map<String, JSON> getConfigMap(
-			PortalRequestConfiguration configurationContext,
-			HttpServletRequest request) throws IOException {
-		HashMap<String, JSON> ret = new HashMap<String, JSON>();
-		fillConfigMap(configurationContext, request, ret);
-		return ret;
-	}
-
-	private <T extends JSON> void fillConfigMap(
-			PortalRequestConfiguration configurationContext,
-			HttpServletRequest request, Map<String, T> ret) throws IOException {
 		String id = request.getParameter("mapId");
 		if (id == null) {
 			id = "";
@@ -48,11 +37,10 @@ public class LayersModuleConfigurationProvider
 				new File(configurationContext.getConfigurationDirectory(),
 						"layers" + id + ".json").toURI(),
 				"UTF-8");
-		@SuppressWarnings("unchecked")
-		T layersContent = (T) JSONSerializer
+		JSONObject content = (JSONObject) JSONSerializer
 				.toJSON(configurationContext.localize(layersTemplate));
-
-		ret.put("layers", layersContent);
+		conf.put("layers", content);
+		return Collections.singletonMap(new PluginDescriptor(true), conf);
 	}
 
 	@Override

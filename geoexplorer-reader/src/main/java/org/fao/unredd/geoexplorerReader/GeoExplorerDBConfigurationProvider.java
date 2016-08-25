@@ -5,20 +5,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-
+import org.fao.unredd.jwebclientAnalyzer.PluginDescriptor;
 import org.fao.unredd.portal.ConfigurationException;
 import org.fao.unredd.portal.DBUtils;
 import org.fao.unredd.portal.ModuleConfigurationProvider;
 import org.fao.unredd.portal.PersistenceException;
 import org.fao.unredd.portal.PortalRequestConfiguration;
+
+import net.sf.json.JSON;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 public class GeoExplorerDBConfigurationProvider
 		implements
@@ -28,27 +29,18 @@ public class GeoExplorerDBConfigurationProvider
 	}
 
 	@Override
-	public Map<String, JSONObject> getConfigurationMap(
+	public Map<PluginDescriptor, JSONObject> getPluginConfig(
 			PortalRequestConfiguration configurationContext,
 			HttpServletRequest request) throws IOException {
-		Map<String, JSONObject> ret = new HashMap<String, JSONObject>();
-		fillConfigMap(configurationContext, request, ret);
-		return ret;
+		JSONObject conf = new JSONObject();
+		conf.put("geoexplorer-layers",
+				getGeoExplorerLayers(configurationContext, request));
+		return Collections.singletonMap(new PluginDescriptor(true), conf);
 	}
 
-	@Override
-	public Map<String, JSON> getConfigMap(
+	private JSON getGeoExplorerLayers(
 			PortalRequestConfiguration configurationContext,
-			HttpServletRequest request) throws IOException {
-		Map<String, JSON> ret = new HashMap<String, JSON>();
-		fillConfigMap(configurationContext, request, ret);
-		return ret;
-	}
-
-	@SuppressWarnings("unchecked")
-	private <T extends JSON> void fillConfigMap(
-			PortalRequestConfiguration configurationContext,
-			HttpServletRequest request, Map<String, T> ret) {
+			HttpServletRequest request) {
 		try {
 			String mapIdParameter = request.getParameter("mapId");
 			int mapId;
@@ -63,7 +55,7 @@ public class GeoExplorerDBConfigurationProvider
 				throw new ConfigurationException(
 						"mapId parameter must be configured");
 			}
-			ret.put("geoexplorer-layers", (T) getGeoExplorerLayers(mapId));
+			return getGeoExplorerLayers(mapId);
 		} catch (PersistenceException e) {
 			throw new ConfigurationException("Cannot read geoexplorer database",
 					e);
@@ -91,7 +83,7 @@ public class GeoExplorerDBConfigurationProvider
 					}
 				});
 
-		return (JSONObject) JSONSerializer.toJSON(config);
+		return JSONSerializer.toJSON(config);
 	}
 
 	@Override
