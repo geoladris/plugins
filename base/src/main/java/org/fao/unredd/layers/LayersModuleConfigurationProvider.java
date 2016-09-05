@@ -8,8 +8,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
-import org.fao.unredd.jwebclientAnalyzer.PluginDescriptor;
 import org.fao.unredd.portal.ModuleConfigurationProvider;
+import org.fao.unredd.portal.PluginDescriptors;
 import org.fao.unredd.portal.PortalRequestConfiguration;
 
 import net.sf.json.JSONObject;
@@ -20,7 +20,7 @@ public class LayersModuleConfigurationProvider
 			ModuleConfigurationProvider {
 
 	@Override
-	public Map<PluginDescriptor, JSONObject> getPluginConfig(
+	public Map<String, JSONObject> getPluginConfig(
 			PortalRequestConfiguration configurationContext,
 			HttpServletRequest request) throws IOException {
 		// We create return a pseudo-plugin descriptor containing all the
@@ -40,7 +40,8 @@ public class LayersModuleConfigurationProvider
 		JSONObject content = (JSONObject) JSONSerializer
 				.toJSON(configurationContext.localize(layersTemplate));
 		conf.put("layers", content);
-		return Collections.singletonMap(new PluginDescriptor(true), conf);
+		return Collections.singletonMap(
+				PluginDescriptors.UNNAMED_GEOLADRIS_CORE_PLUGIN, conf);
 	}
 
 	@Override

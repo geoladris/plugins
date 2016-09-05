@@ -12,7 +12,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
-import org.fao.unredd.jwebclientAnalyzer.PluginDescriptor;
 import org.fao.unredd.portal.PortalRequestConfiguration;
 import org.junit.After;
 import org.junit.Before;
@@ -48,8 +47,8 @@ public class LayersModuleConfigurationProviderTest {
 		when(portalConf.localize(anyString())).thenReturn("{}");
 		new File(this.confDir, "layers.json").createNewFile();
 
-		Map<PluginDescriptor, JSONObject> config = provider
-				.getPluginConfig(portalConf, request);
+		Map<String, JSONObject> config = provider.getPluginConfig(portalConf,
+				request);
 
 		assertEquals(1, config.size());
 		JSONObject pluginConf = config.values().iterator().next();

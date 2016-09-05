@@ -10,11 +10,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.fao.unredd.jwebclientAnalyzer.PluginDescriptor;
 import org.fao.unredd.portal.ConfigurationException;
 import org.fao.unredd.portal.DBUtils;
 import org.fao.unredd.portal.ModuleConfigurationProvider;
 import org.fao.unredd.portal.PersistenceException;
+import org.fao.unredd.portal.PluginDescriptors;
 import org.fao.unredd.portal.PortalRequestConfiguration;
 
 import net.sf.json.JSON;
@@ -29,13 +29,14 @@ public class GeoExplorerDBConfigurationProvider
 	}
 
 	@Override
-	public Map<PluginDescriptor, JSONObject> getPluginConfig(
+	public Map<String, JSONObject> getPluginConfig(
 			PortalRequestConfiguration configurationContext,
 			HttpServletRequest request) throws IOException {
 		JSONObject conf = new JSONObject();
 		conf.put("geoexplorer-layers",
 				getGeoExplorerLayers(configurationContext, request));
-		return Collections.singletonMap(new PluginDescriptor(true), conf);
+		return Collections.singletonMap(
+				PluginDescriptors.UNNAMED_GEOLADRIS_CORE_PLUGIN, conf);
 	}
 
 	private JSON getGeoExplorerLayers(
