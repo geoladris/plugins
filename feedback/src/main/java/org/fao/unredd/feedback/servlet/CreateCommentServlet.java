@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.fao.unredd.feedback.CannotSendMailException;
 import org.fao.unredd.feedback.Feedback;
 import org.fao.unredd.feedback.MissingArgumentException;
-import org.fao.unredd.portal.Config;
-import org.fao.unredd.portal.PersistenceException;
-import org.fao.unredd.portal.StatusServletException;
+import org.geoladris.PersistenceException;
+import org.geoladris.StatusServletException;
+import org.geoladris.config.Config;
 
 public class CreateCommentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

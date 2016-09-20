@@ -17,8 +17,8 @@ import java.util.PropertyResourceBundle;
 
 import javax.mail.MessagingException;
 
-import org.fao.unredd.portal.Config;
-import org.fao.unredd.portal.PersistenceException;
+import org.geoladris.PersistenceException;
+import org.geoladris.config.Config;
 import org.junit.Test;
 
 public class CreateCommentTest {

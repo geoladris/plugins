@@ -4,7 +4,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.fao.unredd.portal.Config;
+import org.geoladris.config.Config;
 
 public class GeoExplorerReaderContextListener implements ServletContextListener {
 

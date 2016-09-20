@@ -7,7 +7,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.fao.unredd.layers.bd.DBLayerFactory;
-import org.fao.unredd.portal.Config;
+import org.geoladris.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

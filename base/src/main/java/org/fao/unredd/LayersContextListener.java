@@ -5,7 +5,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.fao.unredd.layers.LayersModuleConfigurationProvider;
-import org.fao.unredd.portal.Config;
+import org.geoladris.config.Config;
 
 public class LayersContextListener implements ServletContextListener {
 	@Override

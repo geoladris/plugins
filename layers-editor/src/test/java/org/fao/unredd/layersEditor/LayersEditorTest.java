@@ -26,10 +26,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.fao.unredd.jwebclientAnalyzer.PluginDescriptor;
-import org.fao.unredd.portal.Config;
-import org.fao.unredd.portal.ConfigFolder;
-import org.fao.unredd.portal.DefaultConfig;
+import org.geoladris.PluginDescriptor;
+import org.geoladris.config.Config;
+import org.geoladris.config.ConfigFolder;
+import org.geoladris.config.DefaultConfig;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

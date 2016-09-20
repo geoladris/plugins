@@ -8,9 +8,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
-import org.fao.unredd.portal.ModuleConfigurationProvider;
-import org.fao.unredd.portal.PluginDescriptors;
-import org.fao.unredd.portal.PortalRequestConfiguration;
+import org.geoladris.PortalRequestConfiguration;
+import org.geoladris.config.ModuleConfigurationProvider;
+import org.geoladris.config.PluginDescriptors;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;

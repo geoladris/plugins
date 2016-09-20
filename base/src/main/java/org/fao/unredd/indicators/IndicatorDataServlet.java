@@ -12,8 +12,8 @@ import org.fao.unredd.layers.Layer;
 import org.fao.unredd.layers.LayerFactory;
 import org.fao.unredd.layers.NoSuchIndicatorException;
 import org.fao.unredd.layers.Output;
-import org.fao.unredd.portal.PersistenceException;
-import org.fao.unredd.portal.StatusServletException;
+import org.geoladris.PersistenceException;
+import org.geoladris.StatusServletException;
 
 public class IndicatorDataServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

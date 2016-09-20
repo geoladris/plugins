@@ -22,7 +22,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.fao.unredd.layers.Output;
-import org.fao.unredd.portal.PersistenceException;
+import org.geoladris.PersistenceException;
 
 /**
  * 

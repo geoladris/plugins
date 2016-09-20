@@ -22,8 +22,8 @@ import java.sql.SQLException;
 
 import org.fao.unredd.layers.Layer;
 import org.fao.unredd.layers.LayerFactory;
-import org.fao.unredd.portal.DBUtils;
-import org.fao.unredd.portal.PersistenceException;
+import org.geoladris.DBUtils;
+import org.geoladris.PersistenceException;
 
 /**
  * Databases based implementation of {@link LayerFactory}

@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.fao.unredd.portal.ClientContentServlet;
-import org.fao.unredd.portal.Config;
+import org.geoladris.config.Config;
+import org.geoladris.servlet.ClientContentServlet;
 
 @MultipartConfig
 public class LayersServlet extends HttpServlet {

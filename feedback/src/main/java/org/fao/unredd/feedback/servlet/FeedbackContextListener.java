@@ -12,8 +12,8 @@ import org.fao.unredd.feedback.DBFeedbackPersistence;
 import org.fao.unredd.feedback.Feedback;
 import org.fao.unredd.feedback.Mailer;
 import org.fao.unredd.feedback.MissingArgumentException;
-import org.fao.unredd.portal.Config;
-import org.fao.unredd.portal.PersistenceException;
+import org.geoladris.PersistenceException;
+import org.geoladris.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

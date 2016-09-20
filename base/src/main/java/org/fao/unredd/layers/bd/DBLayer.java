@@ -28,8 +28,8 @@ import org.fao.unredd.layers.Layer;
 import org.fao.unredd.layers.NoSuchIndicatorException;
 import org.fao.unredd.layers.Output;
 import org.fao.unredd.layers.Outputs;
-import org.fao.unredd.portal.DBUtils;
-import org.fao.unredd.portal.PersistenceException;
+import org.geoladris.DBUtils;
+import org.geoladris.PersistenceException;
 
 /**
  * Concrete implementation of the {@link Layer} interface based on databases

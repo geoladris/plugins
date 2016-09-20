@@ -10,12 +10,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.fao.unredd.portal.ConfigurationException;
-import org.fao.unredd.portal.DBUtils;
-import org.fao.unredd.portal.ModuleConfigurationProvider;
-import org.fao.unredd.portal.PersistenceException;
-import org.fao.unredd.portal.PluginDescriptors;
-import org.fao.unredd.portal.PortalRequestConfiguration;
+import org.geoladris.ConfigurationException;
+import org.geoladris.DBUtils;
+import org.geoladris.PersistenceException;
+import org.geoladris.PortalRequestConfiguration;
+import org.geoladris.config.ModuleConfigurationProvider;
+import org.geoladris.config.PluginDescriptors;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
