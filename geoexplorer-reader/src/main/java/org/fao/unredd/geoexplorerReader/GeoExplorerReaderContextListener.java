@@ -8,16 +8,15 @@ import org.geoladris.config.Config;
 
 public class GeoExplorerReaderContextListener implements ServletContextListener {
 
-	@Override
-	public void contextInitialized(ServletContextEvent sce) {
-		ServletContext servletContext = sce.getServletContext();
-		Config config = (Config) servletContext.getAttribute("config");
+  @Override
+  public void contextInitialized(ServletContextEvent sce) {
+    ServletContext servletContext = sce.getServletContext();
+    Config config = (Config) servletContext.getAttribute("config");
 
-		config.addModuleConfigurationProvider(new GeoExplorerDBConfigurationProvider());
-	}
+    config.addModuleConfigurationProvider(new GeoExplorerDBConfigurationProvider());
+  }
 
-	@Override
-	public void contextDestroyed(ServletContextEvent sce) {
-	}
+  @Override
+  public void contextDestroyed(ServletContextEvent sce) {}
 
 }

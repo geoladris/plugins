@@ -15,37 +15,32 @@ import org.geoladris.config.PluginDescriptors;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
-public class LayersModuleConfigurationProvider
-		implements
-			ModuleConfigurationProvider {
+public class LayersModuleConfigurationProvider implements ModuleConfigurationProvider {
 
-	@Override
-	public Map<String, JSONObject> getPluginConfig(
-			PortalRequestConfiguration configurationContext,
-			HttpServletRequest request) throws IOException {
-		// We create return a pseudo-plugin descriptor containing all the
-		// configuration to override/merge
-		// The modules, stylesheets and RequireJS data is empty since it is
-		// taken from all the other real plugins.
-		JSONObject conf = new JSONObject();
+  @Override
+  public Map<String, JSONObject> getPluginConfig(PortalRequestConfiguration configurationContext,
+      HttpServletRequest request) throws IOException {
+    // We create return a pseudo-plugin descriptor containing all the
+    // configuration to override/merge
+    // The modules, stylesheets and RequireJS data is empty since it is
+    // taken from all the other real plugins.
+    JSONObject conf = new JSONObject();
 
-		String id = request.getParameter("mapId");
-		if (id == null) {
-			id = "";
-		}
-		String layersTemplate = IOUtils.toString(
-				new File(configurationContext.getConfigurationDirectory(),
-						"layers" + id + ".json").toURI(),
-				"UTF-8");
-		JSONObject content = (JSONObject) JSONSerializer
-				.toJSON(configurationContext.localize(layersTemplate));
-		conf.put("layers", content);
-		return Collections.singletonMap(
-				PluginDescriptors.UNNAMED_GEOLADRIS_CORE_PLUGIN, conf);
-	}
+    String id = request.getParameter("mapId");
+    if (id == null) {
+      id = "";
+    }
+    String layersTemplate = IOUtils.toString(
+        new File(configurationContext.getConfigurationDirectory(), "layers" + id + ".json").toURI(),
+        "UTF-8");
+    JSONObject content =
+        (JSONObject) JSONSerializer.toJSON(configurationContext.localize(layersTemplate));
+    conf.put("layers", content);
+    return Collections.singletonMap(PluginDescriptors.UNNAMED_GEOLADRIS_CORE_PLUGIN, conf);
+  }
 
-	@Override
-	public boolean canBeCached() {
-		return true;
-	}
+  @Override
+  public boolean canBeCached() {
+    return true;
+  }
 }

@@ -3,15 +3,13 @@
  *
  * (C) 2012, FAO Forestry Department (http://www.fao.org/forestry/)
  *
- * This application is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public
- * License as published by the Free Software Foundation;
- * version 3.0 of the License.
+ * This application is free software; you can redistribute it and/or modify it under the terms of
+ * the GNU General Public License as published by the Free Software Foundation; version 3.0 of the
+ * License.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  */
 package org.fao.unredd.charts;
 
@@ -30,43 +28,42 @@ import org.geoladris.PersistenceException;
  */
 public class ChartGenerator {
 
-	private Output inputData;
+  private Output inputData;
 
-	public ChartGenerator(Output output) {
-		inputData = output;
-	}
+  public ChartGenerator(Output output) {
+    inputData = output;
+  }
 
-	public String generate(String objectId, String objectName)
-			throws IOException, PersistenceException {
-		VelocityEngine engine = new VelocityEngine();
-		engine.setProperty("resource.loader", "class");
-		engine.setProperty("class.resource.loader.class",
-				"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-		engine.init();
-		VelocityContext context = new VelocityContext();
+  public String generate(String objectId, String objectName)
+      throws IOException, PersistenceException {
+    VelocityEngine engine = new VelocityEngine();
+    engine.setProperty("resource.loader", "class");
+    engine.setProperty("class.resource.loader.class",
+        "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+    engine.init();
+    VelocityContext context = new VelocityContext();
 
-		context.put("title", nullToEmptyString(inputData.getTitle()) + ": "
-				+ objectName);
-		context.put("subtitle", nullToEmptyString(inputData.getSubtitle()));
+    context.put("title", nullToEmptyString(inputData.getTitle()) + ": " + objectName);
+    context.put("subtitle", nullToEmptyString(inputData.getSubtitle()));
 
-		context.put("dates", inputData.getLabels(objectId));
-		context.put("axes", inputData.getAxes(objectId));
+    context.put("dates", inputData.getLabels(objectId));
+    context.put("axes", inputData.getAxes(objectId));
 
-		String template = "/org/fao/unredd/charts/highcharts-template.vtl";
-		Template t = engine.getTemplate(template);
+    String template = "/org/fao/unredd/charts/highcharts-template.vtl";
+    Template t = engine.getTemplate(template);
 
-		StringWriter writer = new StringWriter();
-		t.merge(context, writer);
-		writer.flush();
-		return writer.getBuffer().toString();
-	}
+    StringWriter writer = new StringWriter();
+    t.merge(context, writer);
+    writer.flush();
+    return writer.getBuffer().toString();
+  }
 
-	private Object nullToEmptyString(Object value) {
-		return value == null ? "" : value;
-	}
+  private Object nullToEmptyString(Object value) {
+    return value == null ? "" : value;
+  }
 
-	public String getContentType() {
-		return "application/json;charset=UTF-8";
-	}
+  public String getContentType() {
+    return "application/json;charset=UTF-8";
+  }
 
 }

@@ -41,81 +41,74 @@ import org.junit.rules.TemporaryFolder;
  */
 public class LayersEditorTest {
 
-	private static final boolean APPEND = true;
-	private LayersServlet servlet;
-	private Config defaultconfig;
+  private static final boolean APPEND = true;
+  private LayersServlet servlet;
+  private Config defaultconfig;
 
-	@Rule
-	public TemporaryFolder testFolder = new TemporaryFolder();
+  @Rule
+  public TemporaryFolder testFolder = new TemporaryFolder();
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-		servlet = new LayersServlet();
-		ServletConfig config = mock(ServletConfig.class);
-		servlet.init(config);
-		defaultconfig = new DefaultConfig(mock(ConfigFolder.class),
-				new HashSet<PluginDescriptor>(), null, false);
-		ServletContext context = mock(ServletContext.class);
-		when(config.getServletContext()).thenReturn(context);
-		when(context.getAttribute("config")).thenReturn(defaultconfig);
-	}
+  /**
+   * @throws java.lang.Exception
+   */
+  @Before
+  public void setUp() throws Exception {
+    servlet = new LayersServlet();
+    ServletConfig config = mock(ServletConfig.class);
+    servlet.init(config);
+    defaultconfig =
+        new DefaultConfig(mock(ConfigFolder.class), new HashSet<PluginDescriptor>(), null, false);
+    ServletContext context = mock(ServletContext.class);
+    when(config.getServletContext()).thenReturn(context);
+    when(context.getAttribute("config")).thenReturn(defaultconfig);
+  }
 
-	/**
-	 * Test method for
-	 * {@link org.fao.unredd.layersEditor.LayersServlet#doPut(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
-	 * 
-	 * @throws IOException
-	 * @throws ServletException
-	 */
-	@Test
-	public void testDoPutHttpServletRequestHttpServletResponse()
-			throws ServletException, IOException {
+  /**
+   * Test method for
+   * {@link org.fao.unredd.layersEditor.LayersServlet#doPut(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
+   * 
+   * @throws IOException
+   * @throws ServletException
+   */
+  @Test
+  public void testDoPutHttpServletRequestHttpServletResponse()
+      throws ServletException, IOException {
 
-		HttpServletRequest req = mock(HttpServletRequest.class);
-		HttpServletResponse resp = mock(HttpServletResponse.class);
+    HttpServletRequest req = mock(HttpServletRequest.class);
+    HttpServletResponse resp = mock(HttpServletResponse.class);
 
-		File tmpDir = testFolder.getRoot();
-		tmpDir = new File("/tmp");
+    File tmpDir = testFolder.getRoot();
+    tmpDir = new File("/tmp");
 
-		when(defaultconfig.getDir()).thenReturn(tmpDir);
+    when(defaultconfig.getDir()).thenReturn(tmpDir);
 
-		URL url = this.getClass().getResource("/layers.json");
-		File layersJSON = new File(url.getFile());
+    URL url = this.getClass().getResource("/layers.json");
+    File layersJSON = new File(url.getFile());
 
-		FileUtils.copyFileToDirectory(layersJSON, tmpDir);
+    FileUtils.copyFileToDirectory(layersJSON, tmpDir);
 
-		File layersJSONCopy = new File(tmpDir, "layers.json");
-		FileUtils.writeStringToFile(layersJSONCopy, "dirty", APPEND);
+    File layersJSONCopy = new File(tmpDir, "layers.json");
+    FileUtils.writeStringToFile(layersJSONCopy, "dirty", APPEND);
 
-		BufferedReader readerLayers = new BufferedReader(
-				new FileReader(layersJSON));
-		when(req.getReader()).thenReturn(readerLayers);
+    BufferedReader readerLayers = new BufferedReader(new FileReader(layersJSON));
+    when(req.getReader()).thenReturn(readerLayers);
 
-		servlet.doPut(req, resp);
+    servlet.doPut(req, resp);
 
-		File backupFolder = new File(tmpDir, "backup");
-		InputStream afterPutBackupIs = null;
-		Iterator<File> allFilesInBackup = FileUtils.iterateFiles(backupFolder,
-				null, false);
-		while (allFilesInBackup.hasNext()) {
-			File aFileInFolder = allFilesInBackup.next();
-			afterPutBackupIs = new FileInputStream(aFileInFolder);
-		}
-		InputStream originalLayerJSONIs = new FileInputStream(
-				new File(url.getFile()));
-		InputStream afterPutLayersIs = new FileInputStream(
-				new File(tmpDir, "layers.json"));
-		boolean equals = IOUtils.contentEquals(afterPutLayersIs,
-				originalLayerJSONIs);
-		assertTrue(equals);
+    File backupFolder = new File(tmpDir, "backup");
+    InputStream afterPutBackupIs = null;
+    Iterator<File> allFilesInBackup = FileUtils.iterateFiles(backupFolder, null, false);
+    while (allFilesInBackup.hasNext()) {
+      File aFileInFolder = allFilesInBackup.next();
+      afterPutBackupIs = new FileInputStream(aFileInFolder);
+    }
+    InputStream originalLayerJSONIs = new FileInputStream(new File(url.getFile()));
+    InputStream afterPutLayersIs = new FileInputStream(new File(tmpDir, "layers.json"));
+    boolean equals = IOUtils.contentEquals(afterPutLayersIs, originalLayerJSONIs);
+    assertTrue(equals);
 
-		InputStream againOriginalLayerJSONIs = new FileInputStream(
-				new File(url.getFile()));
-		equals = IOUtils.contentEquals(afterPutBackupIs,
-				againOriginalLayerJSONIs);
-		assertFalse(equals);
-	}
+    InputStream againOriginalLayerJSONIs = new FileInputStream(new File(url.getFile()));
+    equals = IOUtils.contentEquals(afterPutBackupIs, againOriginalLayerJSONIs);
+    assertFalse(equals);
+  }
 }
