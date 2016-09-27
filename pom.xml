@@ -40,11 +40,11 @@
 	<repositories>
 		<repository>
 			<id>geoladris releases</id>
-			<url>http://nullisland.geomati.co:8081/mvn/releases/</url>
+			<url>http://nullisland.geomati.co:8082/repository/releases/</url>
 		</repository>
 		<repository>
 			<id>geoladris snapshots</id>
-			<url>http://nullisland.geomati.co:8081/mvn/snapshots/</url>
+			<url>http://nullisland.geomati.co:8082/repository/snapshots/</url>
 		</repository>
 	</repositories>
 	<build>
