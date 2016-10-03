@@ -13,7 +13,7 @@ function(bus, customization, map, toolbar, i18n, $) {
 
 	var feedbackLayer = new OpenLayers.Layer.Vector("Feedback");
 
-	var btn = $("<a/>").attr("id", "feedback-button").addClass("blue_button").html("Feedback");
+	var btn = $("<a/>").attr("id", "feedback-button").addClass("blue_button toolbar_button").html("Feedback");
 
 	var initializeDialog = function() {
 		dlg = $("<div/>").attr("id", "feedback_popup");

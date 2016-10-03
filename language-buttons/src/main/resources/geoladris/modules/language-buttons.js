@@ -6,7 +6,7 @@ define([ "toolbar", "customization", "mustache" ], function(toolbar, customizati
 		}
 	};
 
-	var template = '{{#langs}}<a class="blue_button lang_button {{selectedClass}}" href="?lang={{code}}" id="button_{{code}}">{{name}}</a>{{/langs}}';
+	var template = '{{#langs}}<a class="blue_button toolbar_button lang_button {{selectedClass}}" href="?lang={{code}}" id="button_{{code}}">{{name}}</a>{{/langs}}';
 	var output = mustache.render(template, view);
 	toolbar.append(output);
 });

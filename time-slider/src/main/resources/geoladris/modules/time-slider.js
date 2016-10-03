@@ -4,6 +4,7 @@ define([ "jquery", "message-bus", "toolbar", "jquery-ui" ], function($, bus, too
 	var divTimeSlideContainer;
 
 	divTimeSlideContainer = $("<div/>").attr("id", "time_slider_pane");
+	divTimeSlideContainer.addClass("toolbar_button");
 	divTimeSlideContainer.hide();
 	toolbar.append(divTimeSlideContainer);
 

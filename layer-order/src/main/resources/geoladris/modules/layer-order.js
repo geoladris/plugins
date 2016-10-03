@@ -63,7 +63,7 @@ define(["module", "toolbar", "i18n", "jquery", "message-bus", "map", "jquery-ui"
 		divContent.empty();
 	}
 
-	var btn = $("<a/>").attr("id", "order-button").addClass("blue_button").html(i18n["layer_order"]);
+	var btn = $("<a/>").attr("id", "order-button").addClass("blue_button toolbar_button").html(i18n["layer_order"]);
 	btn.appendTo(toolbar);
 	btn.click(function() {
 		layers = map.layers;
