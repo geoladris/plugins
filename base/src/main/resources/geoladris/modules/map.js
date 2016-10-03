@@ -211,8 +211,21 @@ define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout
 		map.zoomOut();
 	});
 
-	bus.listen("zoom-to", function(event, bounds) {
-		map.zoomToExtent(bounds);
+	function getCRSOr4326(obj) {
+		var crsName = obj.hasOwnProperty("crs") ? obj.crs : "EPSG:4326";
+		return new OpenLayers.Projection(crsName);
+	}
+
+	bus.listen("zoom-to", function(event, msg) {
+		if (msg instanceof Array) {
+			map.zoomToExtent(msg);
+		} else if (msg instanceof Object) {
+			var center = new OpenLayers.LonLat(msg.x, msg.y);
+			center.transform(getCRSOr4326(msg), map.projection);
+
+			var zoomLevel = msg.zoomLevel ? msg.zoomLevel : map.getNumZoomLevels() - 4;
+			map.setCenter(center, zoomLevel);
+		}
 	});
 
 	bus.listen("transparency-slider-changed", function(event, layerId, opacity) {

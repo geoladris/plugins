@@ -9,8 +9,8 @@ describe("board tests", function() {
 		require.config({
 			"baseUrl" : "src/",
 			"paths" : {
-				"message-bus" : "/messagebus/message-bus",
-				"jquery" : "/jslib/jquery-2.1.0"
+				"message-bus" : "/core-modules/message-bus",
+				"jquery" : "/core-jslib/jquery-2.1.0"
 			},
 			"config" : {
 				"layers" : {

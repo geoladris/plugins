@@ -122,12 +122,16 @@
 					<haltOnFailure>true</haltOnFailure>
 					<additionalContexts>
 						<context>
-							<contextRoot>/messagebus</contextRoot>
+							<contextRoot>/core-modules</contextRoot>
 							<directory>${project.build.directory}/unpacked-core/geoladris/modules</directory>
 						</context>
 						<context>
-							<contextRoot>/jslib</contextRoot>
+							<contextRoot>/core-jslib</contextRoot>
 							<directory>${project.build.directory}/unpacked-core/geoladris/jslib</directory>
+						</context>
+						<context>
+							<contextRoot>/jslib</contextRoot>
+							<directory>${project.basedir}/src/main/resources/geoladris/jslib</directory>
 						</context>
 						<context>
 							<contextRoot>/test-jslib</contextRoot>
@@ -135,8 +139,7 @@
 						</context>
 					</additionalContexts>
 					<preloadSources>
-						<source>/jslib/jquery-2.1.0.js</source>
-						<source>/jslib/require.js</source>
+						<source>/core-jslib/require.js</source>
 					</preloadSources>
 					<customRunnerTemplate>${project.basedir}/../SpecRunner.html</customRunnerTemplate>
 				</configuration>
