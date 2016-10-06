@@ -223,7 +223,10 @@ define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout
 			var center = new OpenLayers.LonLat(msg.x, msg.y);
 			center.transform(getCRSOr4326(msg), map.projection);
 
-			var zoomLevel = msg.zoomLevel ? msg.zoomLevel : map.getNumZoomLevels() - 4;
+			var zoomLevel = msg.zoomLevel;
+			if (zoomLevel && zoomLevel < 0) {
+				zoomLevel = Math.max(1, map.getNumZoomLevels() + zoomLevel);
+			}
 			map.setCenter(center, zoomLevel);
 		}
 	});
