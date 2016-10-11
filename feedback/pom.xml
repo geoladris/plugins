@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.fao.unredd</groupId>
 		<artifactId>plugins-root</artifactId>
-		<version>5.0.0-beta4</version>
+		<version>5.0.0-beta5</version>
 	</parent>
 
 	<artifactId>feedback</artifactId>
@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>org.fao.unredd</groupId>
 			<artifactId>base</artifactId>
-			<version>5.0.0-beta4</version>
+			<version>5.0.0-beta5</version>
 		</dependency>
 
 		<!-- API and implementation, as reported here: https://java.net/projects/javamail/pages/Home -->
