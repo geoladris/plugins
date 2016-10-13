@@ -24,7 +24,7 @@
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<core.version>5.0.0-beta1</core.version>
+		<core.version>5.0-SNAPSHOT</core.version>
 	</properties>
 
 	<distributionManagement>
