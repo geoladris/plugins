@@ -1,0 +1,10 @@
+{
+	"default-conf" : {
+		"auth" : {
+			"button" : {
+				"div" : "auth-button",
+				"parentDiv" : "toolbar"
+			}
+		}
+	}
+}
