@@ -1,6 +1,16 @@
-define([ "message-bus" ], function(bus) {
+define([ "message-bus", "customization" ], function(bus, customization) {
 
 	var idLinkInfo = {};
+
+	function getInfoLink(obj) {
+		if (obj.infoLink) {
+			return obj.infoLink;
+		} else if (obj.infoFile) {
+			return "static/loc/" + customization.languageCode + "/html/" + obj.infoFile;
+		} else {
+			return null;
+		}
+	}
 
 	var buildLink = function(id, eventName) {
 		aLink = $("<a/>");
@@ -19,15 +29,15 @@ define([ "message-bus" ], function(bus) {
 	bus.listen("before-adding-layers", function() {
 
 		var showInfoLayerAction = function(portalLayer) {
-			if (portalLayer.getInfoLink() != null) {
-				return buildLink(portalLayer.getId(), "show-layer-info");
+			if (getInfoLink(portalLayer) != null) {
+				return buildLink(portalLayer.id, "show-layer-info");
 			} else {
 				return null;
 			}
 		};
 		var showInfoGroupAction = function(group) {
-			if (group.getInfoLink() != null) {
-				return buildLink(group.getId(), "show-group-info");
+			if (getInfoLink(group) != null) {
+				return buildLink(group.id, "show-group-info");
 			} else {
 				return null;
 			}
@@ -38,19 +48,19 @@ define([ "message-bus" ], function(bus) {
 	});
 
 	bus.listen("add-layer", function(event, layerInfo) {
-		if (layerInfo.getInfoLink() != null) {
-			idLinkInfo["layer-" + layerInfo.getId()] = {
-				"link" : layerInfo.getInfoLink(),
-				"title" : layerInfo.getName()
+		if (getInfoLink(layerInfo) != null) {
+			idLinkInfo["layer-" + layerInfo.id] = {
+				"link" : getInfoLink(layerInfo),
+				"title" : layerInfo.label
 			}
 		}
 	});
 
 	bus.listen("add-group", function(event, groupInfo) {
-		if (groupInfo.getInfoLink() != null) {
-			idLinkInfo["group-" + groupInfo.getId()] = {
-				"link" : groupInfo.getInfoLink(),
-				"title" : groupInfo.getName()
+		if (getInfoLink(groupInfo) != null) {
+			idLinkInfo["group-" + groupInfo.id] = {
+				"link" : getInfoLink(groupInfo),
+				"title" : groupInfo.label
 			}
 		}
 	});

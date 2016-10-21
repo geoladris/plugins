@@ -103,21 +103,21 @@ define([ "jquery", "i18n", "customization", "message-bus" ], function($, i18n, c
 
 	bus.listen("add-layer", function(event, layerInfo) {
 		var legendArray = [];
-		$.each(layerInfo.getMapLayers(), function(index, mapLayer) {
+		$.each(layerInfo.mapLayers, function(index, mapLayer) {
 			if (mapLayer.hasOwnProperty("legend")) {
 				legendArray.push({
-					id : mapLayer.getId(),
-					label : mapLayer.getName(),
-					legendUrl : mapLayer.getLegendURL(),
-					sourceLink : mapLayer.getSourceLink(),
-					sourceLabel : mapLayer.getSourceLabel(),
-					visibility : layerInfo.isActive(),
-					timeDependent : layerInfo.hasTimeDependentStyle()
+					id : mapLayer.id,
+					label : mapLayer.label,
+					legendUrl : mapLayer.legendURL,
+					sourceLink : mapLayer.sourceLink,
+					sourceLabel : mapLayer.sourceLabel,
+					visibility : layerInfo.active,
+					timeDependent : layerInfo.hasOwnProperty("timeStyles")
 				});
 			}
 		});
 		if (legendArray.length > 0) {
-			legendArrayInfo[layerInfo.getId()] = legendArray;
+			legendArrayInfo[layerInfo.id] = legendArray;
 		}
 	});
 

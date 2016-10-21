@@ -1,6 +1,4 @@
-define([ "layers-schema", "message-bus", "jquery", "jquery-ui" ], function(schema, bus, $) {
-
-	var layerRoot = null;
+define([ "layers-schema", "layers-api", "message-bus", "jquery", "jquery-ui" ], function(schema, layerRoot, bus, $) {
 
 	var dialog;
 	var form;
@@ -46,7 +44,7 @@ define([ "layers-schema", "message-bus", "jquery", "jquery-ui" ], function(schem
 		var portalValues = layerRoot.getPortalLayer(id);
 		addPortalLayerFields(form, portalValues);
 
-		var wmsValues = layerRoot.getWMSLayer(portalValues.layers[0]);
+		var wmsValues = layerRoot.getMapLayer(portalValues.layers[0]);
 		addWmsLayerFields(form, wmsValues);
 	}
 
@@ -155,7 +153,7 @@ define([ "layers-schema", "message-bus", "jquery", "jquery-ui" ], function(schem
 				label : "Google Maps", // TODO i18n
 				definition : "wmsLayer-gmapsType"
 			}
-		}
+		};
 		for ( var t in types) {
 			removePanel(types[t].definition, form);
 		}
@@ -287,10 +285,6 @@ define([ "layers-schema", "message-bus", "jquery", "jquery-ui" ], function(schem
 		return data;
 	}
 
-	bus.listen("layers-loaded", function(e, newLayersRoot) {
-		layerRoot = newLayersRoot;
-	});
-
 	function saveServer() {
 		var data = getFormValues();
 		layerRoot.setDefaultServer(data["server"]["default-server"]);
@@ -333,14 +327,13 @@ define([ "layers-schema", "message-bus", "jquery", "jquery-ui" ], function(schem
 	function saveLayer() {
 		var wmsLayer = buildWMSLayer();
 		var portalLayer = buildPortalLayer(wmsLayer.id);
-		layerRoot.getWMSLayer(wmsLayer.id).merge(wmsLayer);
+		layerRoot.getMapLayer(wmsLayer.id).merge(wmsLayer);
 		layerRoot.getPortalLayer(portalLayer.id).merge(portalLayer);
 	}
 
 	function addNewLayer(groupId) {
 		var wmsLayer = buildWMSLayer();
 		var portalLayer = buildPortalLayer(wmsLayer.id);
-
 		layerRoot.addLayer(groupId, portalLayer, wmsLayer);
 	}
 

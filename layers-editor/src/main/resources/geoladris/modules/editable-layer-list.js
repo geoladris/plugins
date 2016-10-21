@@ -1,21 +1,15 @@
-define([ "message-bus", "layers-edit-form", "jquery", "jquery-ui" ], function(bus, forms, $) {
-
-	var layerRoot = null
-
-	bus.listen("layers-loaded", function(e, newLayerRoot) {
-		layerRoot = newLayerRoot;
-	});
+define([ "message-bus", "layers-edit-form", "layers-api", "jquery", "jquery-ui" ], function(bus, forms, layerRoot, $) {
 
 	bus.listen("before-adding-layers", function() {
 		bus.send("register-layer-action", function(layer) {
-			return link(layer.getId(), forms.editLayer);
+			return link(layer.id, forms.editLayer);
 		});
 		bus.send("register-group-action", function(group) {
-			return link(group.getId(), forms.editGroup);
+			return link(group.id, forms.editGroup);
 		});
 		bus.send("register-group-action", function(group) {
 			return $("<a/>").addClass("editable-layer-list-button").addClass("layer_newLayer_button").click(function() {
-				forms.newLayer(group.getId());
+				forms.newLayer(group.id);
 			});
 		});
 		bus.send("register-layer-action", function(layer) {
@@ -56,7 +50,7 @@ define([ "message-bus", "layers-edit-form", "jquery", "jquery-ui" ], function(bu
 		// Añadir placeholder para soltar subgrupos
 		$(".group").each(function(i, el) {
 			var groupInfo = layerRoot.getGroup($(el).attr("data-group"));
-			if (groupInfo.items.length == 0) { // Sólo en grupos vacíos
+			if (groupInfo && groupInfo.items && groupInfo.items.length === 0) { // Sólo en grupos vacíos
 				$("<div/>").addClass("group_placeholder").addClass("group-container").appendTo($("#group-content-table-" + groupInfo.id));
 			}
 		});

@@ -21,7 +21,7 @@ define([ "jquery", "message-bus", "layout", "map", "layer-list-selector", "momen
 
 	bus.listen("add-layer", function(event, layerInfo) {
 		var timestamps = [];
-		var layerTimestamps = layerInfo.getTimestamps();
+		var layerTimestamps = layerInfo.timestamps;
 		if (layerTimestamps != null) {
 			for (var i = 0; i < layerTimestamps.length; i++) {
 				var d = new Date();
@@ -35,22 +35,22 @@ define([ "jquery", "message-bus", "layout", "map", "layer-list-selector", "momen
 				return a - b;
 			});
 
-			var divTimeSliderContainer = $("<div id='layer_time_slider_container_" + layerInfo.getId() + "'/>").addClass("layer-time-slider-container").appendTo(divTimeSliders);
-			var divTimeSliderTitle = $("<div/>").html(layerInfo.getName()).addClass("layer-time-slider-title").appendTo(divTimeSliderContainer);
-			var divTimeSliderLabel = $("<span id='layer_time_slider_label_" + layerInfo.getId() + "'/>").appendTo(divTimeSliderContainer);
-			var divTimeSlider = $("<div id='layer_time_slider_" + layerInfo.getId() + "' class='layers_time_slider' />").appendTo(divTimeSliderContainer);
+			var divTimeSliderContainer = $("<div id='layer_time_slider_container_" + layerInfo.id + "'/>").addClass("layer-time-slider-container").appendTo(divTimeSliders);
+			var divTimeSliderTitle = $("<div/>").html(layerInfo.label).addClass("layer-time-slider-title").appendTo(divTimeSliderContainer);
+			var divTimeSliderLabel = $("<span id='layer_time_slider_label_" + layerInfo.id + "'/>").appendTo(divTimeSliderContainer);
+			var divTimeSlider = $("<div id='layer_time_slider_" + layerInfo.id + "' class='layers_time_slider' />").appendTo(divTimeSliderContainer);
 			divTimeSlider.addClass("layer-time-slider");
 
 			divTimeSlider.slider({
 				change : function(event, ui) {
 					if (event.originalEvent) {
 						var date = timestamps[ui.value];
-						$.each(layerInfo.getMapLayers(), function(index, mapLayer) {
-							var layer = map.getLayer(mapLayer.getId());
+						$.each(layerInfo.mapLayers, function(index, mapLayer) {
+							var layer = map.getLayer(mapLayer.id);
 							layer.mergeNewParams({
 								'time' : date.toISO8601String()
 							});
-							bus.send("layer-time-slider.selection", [ layerInfo.getId(), date ]);
+							bus.send("layer-time-slider.selection", [ layerInfo.id, date ]);
 						});
 					} else { // Programatic change
 						// alert('programatic');
@@ -60,22 +60,22 @@ define([ "jquery", "message-bus", "layout", "map", "layer-list-selector", "momen
 				},
 				slide : function(event, ui) {
 					var date = timestamps[ui.value];
-					divTimeSliderLabel.text(formatDate(date, layerInfo.getDateFormat()));
+					divTimeSliderLabel.text(formatDate(date, layerInfo["date-format"]));
 				},
 				max : timestamps.length - 1,
 				value : timestamps.length - 1
 			});
 
-			divTimeSliderLabel.text(formatDate(timestamps[timestamps.length - 1], layerInfo.getDateFormat()));
+			divTimeSliderLabel.text(formatDate(timestamps[timestamps.length - 1], layerInfo["date-format"]));
 
 			var timestampInfo = {
 				"timestamps" : timestamps
 			};
-			if (layerInfo.getDateFormat()) {
-				timestampInfo["date-format"] = layerInfo.getDateFormat();
+			if (layerInfo["date-format"]) {
+				timestampInfo["date-format"] = layerInfo["date-format"];
 			}
 
-			aTimestampsLayers[layerInfo.getId()] = timestampInfo;
+			aTimestampsLayers[layerInfo.id] = timestampInfo;
 		}
 
 	});

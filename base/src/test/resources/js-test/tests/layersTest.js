@@ -71,20 +71,4 @@ describe("board tests", function() {
 			bus.send("modules-loaded");
 		});
 	});
-
-	it("remove layer in second level", function(done) {
-		injector.require([ "layers" ], function() {
-			bus.listen("layers-loaded", function(e, layerRoot) {
-				var layer = layerRoot.getPortalLayer("blue-marble");
-				if (layer != null) { // to ignore reentering calls
-					layer.remove();
-					var group = layerRoot.getGroup("innerbase");
-					expect(group.items.length).toBe(0);
-
-					done();
-				}
-			});
-			bus.send("modules-loaded");
-		});
-	});
 });

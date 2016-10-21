@@ -69,9 +69,8 @@ define([ "jquery", "message-bus", "toolbar", "jquery-ui" ], function($, bus, too
 	};
 
 	bus.listen("add-layer", function(event, layerInfo) {
-		if (layerInfo.getTimestamps() != null) {
-			var layerTimestamps = layerInfo.getTimestamps();
-
+		var layerTimestamps = layerInfo.timestamps;
+		if (layerTimestamps && layerTimestamps.length > 0) {
 			for (var i = 0; i < layerTimestamps.length; i++) {
 				timestampSet[layerTimestamps[i]] = true;
 			}

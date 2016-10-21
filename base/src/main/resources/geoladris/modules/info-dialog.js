@@ -11,11 +11,11 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "hig
 	});
 
 	bus.listen("add-layer", function(event, layerInfo) {
-		var portalLayerName = layerInfo.getName();
-		$.each(layerInfo.getMapLayers(), function(i, mapLayer) {
-			wmsLayerInfo[mapLayer.getId()] = {
+		var portalLayerName = layerInfo.label;
+		$.each(layerInfo.mapLayers, function(i, mapLayer) {
+			wmsLayerInfo[mapLayer.id] = {
 				"portalLayerName" : portalLayerName,
-				"wmsName" : mapLayer.getServerLayerName()
+				"wmsName" : mapLayer.wmsName
 			}
 		});
 	});
