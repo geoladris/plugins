@@ -42,7 +42,7 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "hig
 					fillColor : "#ee4400"
 				}
 			});
-			
+
 			pointHighlightLayer = new OpenLayers.Layer.Vector("point highlight layer", {
 				styleMap : styles
 			});
@@ -115,7 +115,7 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "hig
 			if (feature["bounds"] != null) {
 				tdMagnifier.append(imgZoomToArea);
 				tdMagnifier.click(function() {
-					bus.send("zoom-to", feature["bounds"].scale(1.2));
+					bus.send("zoom-to", [ feature["bounds"].scale(1.2).toArray() ]);
 				});
 			}
 
