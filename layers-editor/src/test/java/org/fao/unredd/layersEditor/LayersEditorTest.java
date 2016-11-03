@@ -15,7 +15,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.servlet.ServletConfig;
@@ -26,10 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.geoladris.PluginDescriptor;
 import org.geoladris.config.Config;
-import org.geoladris.config.ConfigFolder;
-import org.geoladris.config.DefaultConfig;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -56,8 +52,7 @@ public class LayersEditorTest {
     servlet = new LayersServlet();
     ServletConfig config = mock(ServletConfig.class);
     servlet.init(config);
-    defaultconfig =
-        new DefaultConfig(mock(ConfigFolder.class), new HashSet<PluginDescriptor>(), null, false);
+    defaultconfig = mock(Config.class);
     ServletContext context = mock(ServletContext.class);
     when(config.getServletContext()).thenReturn(context);
     when(context.getAttribute("config")).thenReturn(defaultconfig);
