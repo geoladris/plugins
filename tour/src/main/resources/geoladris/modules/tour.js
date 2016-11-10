@@ -43,24 +43,25 @@ define([ "module", "toolbar", "message-bus", "jquery", "tipsy" ], function(modul
 					bus.send(nextEvent, parameters);
 				}
 			}
-			
+
 			if (step.wait) {
-				var fnc = function() {
+				var fnc;
+				fnc = function() {
 					showStep(stepIndex + 1);
 					bus.stopListen(step.wait, fnc);
-				};
+				}
 				bus.listen(step.wait, fnc);
 			} else {
 				showStep(stepIndex + 1);
 			}
-			
+
 		});
 		$("#tour-close-" + stepIndex).click(function() {
 			$("#" + step.id).tipsy("hide");
 		});
 	};
 
-	var btn = $("<a/>").attr("id", "tour-button").addClass("blue_button").html("Guía interactiva");
+	var btn = $("<a/>").attr("id", "tour-button").addClass("blue_button toolbar_button").html("Guía interactiva");
 	btn.appendTo(toolbar);
 	btn.click(function() {
 		showStep(0);

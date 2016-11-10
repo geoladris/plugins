@@ -9,8 +9,8 @@ describe("board tests", function() {
 		require.config({
 			"baseUrl" : "src/",
 			"paths" : {
-				"message-bus" : "/messagebus/message-bus",
-				"jquery" : "/jslib/jquery-2.1.0"
+				"message-bus" : "/core-modules/message-bus",
+				"jquery" : "/core-jslib/jquery-2.1.0"
 			},
 			"config" : {
 				"layers" : {
@@ -67,22 +67,6 @@ describe("board tests", function() {
 		injector.require([ "layers" ], function() {
 			bus.listen("layers-loaded", function(e, layerRoot) {
 				done();
-			});
-			bus.send("modules-loaded");
-		});
-	});
-
-	it("remove layer in second level", function(done) {
-		injector.require([ "layers" ], function() {
-			bus.listen("layers-loaded", function(e, layerRoot) {
-				var layer = layerRoot.getPortalLayer("blue-marble");
-				if (layer != null) { // to ignore reentering calls
-					layer.remove();
-					var group = layerRoot.getGroup("innerbase");
-					expect(group.items.length).toBe(0);
-
-					done();
-				}
 			});
 			bus.send("modules-loaded");
 		});

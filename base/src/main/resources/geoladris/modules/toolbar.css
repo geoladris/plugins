@@ -23,3 +23,8 @@
 	position: relative;
 	padding-right: 10px;
 }
+
+.toolbar_button {
+	float: left;
+	margin-left: 20px;
+}

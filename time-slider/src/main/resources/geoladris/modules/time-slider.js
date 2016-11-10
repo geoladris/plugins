@@ -4,25 +4,9 @@ define([ "jquery", "message-bus", "toolbar", "jquery-ui" ], function($, bus, too
 	var divTimeSlideContainer;
 
 	divTimeSlideContainer = $("<div/>").attr("id", "time_slider_pane");
+	divTimeSlideContainer.addClass("toolbar_button");
 	divTimeSlideContainer.hide();
 	toolbar.append(divTimeSlideContainer);
-
-	function timeSliderSelection(event, date) {
-		var divTimeSlider = $("#time_slider");
-		var position = divTimeSlider.slider("value");
-		var d = new Date();
-		d.setISO8601(timestamps[position]);
-		if (d.getTime() != date.getTime()) {
-			for (var i = 0; i < timestamps.length; i++) {
-				d.setISO8601(timestamps[i]);
-				if (d.getTime() == date.getTime()) {
-					divTimeSlider.slider("value", i);
-					divTimeSliderLabel.text(date.getLocalizedDate());
-					break;
-				}
-			}
-		}
-	}
 
 	var draw = function() {
 		var timestamps, div, lastTimestampIndex;
@@ -64,13 +48,36 @@ define([ "jquery", "message-bus", "toolbar", "jquery-ui" ], function($, bus, too
 			divTimeSlider.slider("value", lastTimestampIndex);
 
 			bus.listen("time-slider.selection", timeSliderSelection);
+
+			function timeSliderSelection(event, date) {
+				var timestamps = Object.keys(timestampSet);
+				var divTimeSlider = $("#time_slider");
+				var position = divTimeSlider.slider("value");
+				// var d = new Date(timestamps[position]);
+				var d = new Date();
+				d.setISO8601(timestamps[position]);
+				if (d.getTime() != date.getTime()) {
+					for (var i = 0; i < timestamps.length; i++) {
+						// d = new Date(timestamps[i]);
+						d.setISO8601(timestamps[i]);
+						if (d.getTime() == date.getTime()) {
+							divTimeSlider.slider("value", i);
+							divTimeSliderLabel.text(date.getLocalizedDate());
+							break;
+						}
+					}
+				}
+			}
+
+			bus.listen("reset-layers", function() {
+				bus.stopListen("time-slider.selection", timeSliderSelection);
+			});
 		}
 	};
 
 	bus.listen("add-layer", function(event, layerInfo) {
-		if (layerInfo.getTimestamps() != null) {
-			var layerTimestamps = layerInfo.getTimestamps();
-
+		var layerTimestamps = layerInfo.timestamps;
+		if (layerTimestamps && layerTimestamps.length > 0) {
 			for (var i = 0; i < layerTimestamps.length; i++) {
 				timestampSet[layerTimestamps[i]] = true;
 			}
@@ -84,7 +91,6 @@ define([ "jquery", "message-bus", "toolbar", "jquery-ui" ], function($, bus, too
 		divTimeSlideContainer.hide();
 		$("#time_slider_label").remove();
 		$("#time_slider").remove();
-		bus.stopListen("time-slider.selection", timeSliderSelection);
 	});
 
 });

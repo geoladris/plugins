@@ -46,49 +46,49 @@ define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout
 
 	bus.listen("add-layer", function(event, layerInfo) {
 		var mapLayerArray = [];
-		$.each(layerInfo.getMapLayers(), function(index, mapLayer) {
+		$.each(layerInfo.mapLayers, function(index, mapLayer) {
 			var layer;
-			if (mapLayer.getType() == "osm") {
-				layer = new OpenLayers.Layer.OSM(mapLayer.getId(), mapLayer.getOSMURLs());
-			} else if (mapLayer.getType() == "gmaps") {
-				layer = new OpenLayers.Layer.Google(mapLayer.getId(), {
-					type : google.maps.MapTypeId[mapLayer.getGMapsType()]
+			if (mapLayer.type == "osm") {
+				layer = new OpenLayers.Layer.OSM(mapLayer.id, mapLayer.osmUrls);
+			} else if (mapLayer.type == "gmaps") {
+				layer = new OpenLayers.Layer.Google(mapLayer.id, {
+					type : google.maps.MapTypeId[mapLayer["gmaps-type"]]
 				});
-			} else if (mapLayer.getType() == "wfs") {
+			} else if (mapLayer.type == "wfs") {
 				layer = new OpenLayers.Layer.Vector("WFS", {
 					strategies : [ new OpenLayers.Strategy.Fixed() ],
 					protocol : new OpenLayers.Protocol.WFS({
 						version : "1.0.0",
-						url : mapLayer.getBaseURL(),
-						featureType : mapLayer.getServerLayerName()
+						url : mapLayer.baseUrl,
+						featureType : mapLayer.wmsName
 					}),
 					projection : new OpenLayers.Projection("EPSG:4326")
 				});
 			} else {
-				layer = new OpenLayers.Layer.WMS(mapLayer.getId(), mapLayer.getBaseURL(), {
-					layers : mapLayer.getServerLayerName(),
+				layer = new OpenLayers.Layer.WMS(mapLayer.id, mapLayer.baseUrl, {
+					layers : mapLayer.wmsName,
 					buffer : 0,
 					transitionEffect : "resize",
 					removeBackBufferDelay : 0,
 					isBaseLayer : false,
 					transparent : true,
-					format : mapLayer.getImageFormat() || 'image/png'
+					format : mapLayer.imageFormat || 'image/png'
 				}, {
 					noMagic : true,
 					visibility : false
 				// Don't show until a "layer-visibility" event indicates so
 				});
 			}
-			layer.id = mapLayer.getId();
+			layer.id = mapLayer.id;
 			if (map !== null) {
 				map.addLayer(layer);
-				map.setLayerIndex(layer, mapLayer.getZIndex());
-				zIndexes[mapLayer.getId()] = mapLayer.getZIndex();
+				map.setLayerIndex(layer, mapLayer.zIndex);
+				zIndexes[mapLayer.id] = mapLayer.zIndex;
 			}
-			mapLayerArray.push(mapLayer.getId());
+			mapLayerArray.push(mapLayer.id);
 		});
 		if (mapLayerArray.length > 0) {
-			mapLayersByLayerId[layerInfo.getId()] = mapLayerArray;
+			mapLayersByLayerId[layerInfo.id] = mapLayerArray;
 		}
 	});
 
@@ -211,8 +211,24 @@ define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout
 		map.zoomOut();
 	});
 
-	bus.listen("zoom-to", function(event, bounds) {
-		map.zoomToExtent(bounds);
+	function getCRSOr4326(obj) {
+		var crsName = obj.hasOwnProperty("crs") ? obj.crs : "EPSG:4326";
+		return new OpenLayers.Projection(crsName);
+	}
+
+	bus.listen("zoom-to", function(event, msg) {
+		if (msg instanceof Array) {
+			map.zoomToExtent(msg);
+		} else if (msg instanceof Object) {
+			var center = new OpenLayers.LonLat(msg.x, msg.y);
+			center.transform(getCRSOr4326(msg), map.projection);
+
+			var zoomLevel = msg.zoomLevel;
+			if (zoomLevel && zoomLevel < 0) {
+				zoomLevel = Math.max(1, map.getNumZoomLevels() + zoomLevel);
+			}
+			map.setCenter(center, zoomLevel);
+		}
 	});
 
 	bus.listen("transparency-slider-changed", function(event, layerId, opacity) {

@@ -31,15 +31,15 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "jquery-ui", "l
 		// set the visibility flag to true if the layer is active and if it is
 		// not a placeholder (placeholder means that no geospatial data to show
 		// are associated)
-		if (!layerInfo.isPlaceholder()) {
+		if (layerInfo.mapLayers && layerInfo.mapLayers.length > 0) {
 			var activeLayerInfo = {
-				label : layerInfo.getName(),
+				label : layerInfo.label,
 				opacity : 1
 			};
-			if (layerInfo.getInlineLegendURL() != null) {
-				activeLayerInfo["inlineLegendUrl"] = layerInfo.getInlineLegendURL();
+			if (layerInfo.inlineLegendUrl) {
+				activeLayerInfo["inlineLegendUrl"] = layerInfo.inlineLegendUrl;
 			}
-			layersInfo[layerInfo.getId()] = activeLayerInfo;
+			layersInfo[layerInfo.id] = activeLayerInfo;
 		}
 	});
 
