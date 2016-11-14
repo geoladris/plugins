@@ -365,6 +365,15 @@ define([ "layers-schema", "layers-api", "message-bus", "jquery", "jquery-ui" ], 
 		layerRoot.addLayer(groupId, clone, mapLayer, false);
 	});
 
+	bus.listen("add-group", function(e, group) {
+		if (loading) {
+			return;
+		}
+
+		// Added manually after all layers have been loaded
+		layerRoot.addGroup(JSON.parse(JSON.stringify(group)), false);
+	});
+
 	return {
 		editServer : editServer,
 		editLayer : editLayer,

@@ -143,10 +143,13 @@ define([ "jquery", "message-bus" ], function($, bus) {
 		getMapLayer : function(layerId) {
 			return findById(layerRoot.wmsLayers, layerId);
 		},
-		addGroup : function(group) {
+		addGroup : function(group, sendSetRoot) {
 			layerRoot.groups.push(group);
 			decorateGroup(null, group);
-			bus.send("layers-set-root", layerRoot);
+
+			if (sendSetRoot || sendSetRoot === undefined) {
+				bus.send("layers-set-root", layerRoot);
+			}
 		},
 		addLayer : function(groupId, portalLayer, wmsLayer, sendSetRoot) {
 			var group = findById(layerRoot.groups, groupId);
