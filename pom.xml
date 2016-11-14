@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.fao.unredd</groupId>
 	<artifactId>plugins-root</artifactId>
-	<version>5.0.0-beta5</version>
+	<version>5.0.0-beta6</version>
 	<packaging>pom</packaging>
 
 	<name>geoladris plugins</name>
