@@ -337,6 +337,34 @@ define([ "layers-schema", "layers-api", "message-bus", "jquery", "jquery-ui" ], 
 		layerRoot.addLayer(groupId, portalLayer, wmsLayer);
 	}
 
+	var loading = false;
+	bus.listen("before-adding-layers", function() {
+		loading = true;
+	});
+	bus.listen("layers-loaded", function() {
+		loading = false;
+	});
+
+	bus.listen("add-layer", function(e, portalLayer) {
+		if (loading) {
+			return;
+		}
+
+		// Added manually after all layers have been loaded
+		var clone = JSON.parse(JSON.stringify(portalLayer));
+
+		var mapLayer = clone.mapLayers[0];
+		var groupId = clone.groupId;
+
+		clone.layers = clone.mapLayers.map(function(layer) {
+			return layer.id;
+		});
+		clone.mapLayers = undefined;
+		clone.groupId = undefined;
+
+		layerRoot.addLayer(groupId, clone, mapLayer, false);
+	});
+
 	return {
 		editServer : editServer,
 		editLayer : editLayer,
