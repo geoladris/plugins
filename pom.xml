@@ -111,7 +111,7 @@
 				<!-- keep the configuration out of the execution so that the bdd goal 
 					has access to it -->
 				<configuration>
-					<jsSrcDir>src/main/resources/geoladris/modules</jsSrcDir>
+					<jsSrcDir>src/main/resources/geoladris/${project.artifactId}/modules</jsSrcDir>
 					<jsTestSrcDir>src/test/resources/js-test/tests/</jsTestSrcDir>
 					<webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName>
 					<webDriverCapabilities>
@@ -124,15 +124,15 @@
 					<additionalContexts>
 						<context>
 							<contextRoot>/core-modules</contextRoot>
-							<directory>${project.build.directory}/unpacked-core/geoladris/modules</directory>
+							<directory>${project.build.directory}/unpacked-core/geoladris/core/modules</directory>
 						</context>
 						<context>
 							<contextRoot>/core-jslib</contextRoot>
-							<directory>${project.build.directory}/unpacked-core/geoladris/jslib</directory>
+							<directory>${project.build.directory}/unpacked-core/geoladris/core/jslib</directory>
 						</context>
 						<context>
 							<contextRoot>/jslib</contextRoot>
-							<directory>${project.basedir}/src/main/resources/geoladris/jslib</directory>
+							<directory>${project.basedir}/src/main/resources/geoladris/${project.artifactId}/jslib</directory>
 						</context>
 						<context>
 							<contextRoot>/test-jslib</contextRoot>
