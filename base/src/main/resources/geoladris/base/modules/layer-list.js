@@ -184,7 +184,11 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "jque
 			}
 
 			tblLayerGroup.append(trLayer);
-			divLayers.accordion("refresh");
+			try {
+				divLayers.accordion("refresh");
+			} catch (e) {
+				console.log(e);
+			}
 		}
 	});
 

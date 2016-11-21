@@ -31,5 +31,6 @@
 			"highcharts" : [ "jquery" ],
 			"highcharts-theme-sand" : [ "highcharts" ]
 		}
-	}
+	},
+	"installInRoot" : true
 }
