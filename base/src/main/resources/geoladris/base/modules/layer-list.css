@@ -38,7 +38,7 @@ td.layer_visibility {
 .layer_visibility {
 	width: 16px;
 	height: 16px;
-	background: url(images/ui-elements.png) no-repeat scroll 0 0 transparent;
+	background: url("images/ui-elements.png") no-repeat scroll 0 0 transparent;
 	cursor: pointer;
 }
 
@@ -91,7 +91,7 @@ td.layer_visibility {
 	width: 16px;
 	height: 16px;
 	padding: 0;
-	background: url('images/ui-elements.png') no-repeat scroll 0px -114px
+	background: url("images/ui-elements.png") no-repeat scroll 0px -114px
 		transparent;
 	display: block;
 	cursor: default;
