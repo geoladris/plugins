@@ -17,6 +17,11 @@ define([ "jquery", "message-bus", "customization", "module" ], function($, bus, 
 
 	function getGetLegendGraphicUrl(wmsLayer) {
 		var url = wmsLayer.baseUrl;
+
+		if (url instanceof Array) {
+			url = url[0];
+		}
+
 		if (url.indexOf("?") === -1) {
 			url = url + "?";
 		} else {
@@ -36,12 +41,25 @@ define([ "jquery", "message-bus", "customization", "module" ], function($, bus, 
 
 	function processMapLayer(mapLayer, mapLayers) {
 		mapLayer.zIndex = mapLayers.indexOf(mapLayer);
-		if (mapLayer.baseUrl && mapLayer.baseUrl.charAt(0) == "/") {
-			mapLayer.baseUrl = defaultServer + mapLayer.baseUrl;
+		var url;
+		if (mapLayer.baseUrl) {
+			if (mapLayer.baseUrl instanceof Array) {
+				for (var i = 0; i < mapLayer.baseUrl.length; i++) {
+					if (mapLayer.baseUrl[i].charAt(0) == "/") {
+						mapLayer.baseUrl[i] = defaultServer + mapLayer.baseUrl[i];
+					}
+				}
+				url = mapLayer.baseUrl[0];
+			} else {
+				if (mapLayer.baseUrl.charAt(0) == "/") {
+					mapLayer.baseUrl = defaultServer + mapLayer.baseUrl;
+				}
+				url = mapLayer.baseUrl;
+			}
 		}
 
 		if (!mapLayer.queryUrl) {
-			mapLayer.queryUrl = mapLayer.baseUrl;
+			mapLayer.queryUrl = url;
 		}
 
 		if (mapLayer.legend) {
