@@ -4,7 +4,7 @@
             "steps" : [
             	{
                 	"id": "map",
-                	"text": "Este es el mapa donde se muestran los datos",
+                	"text": "Éste es el mapa donde se muestran los datos.",
                 	"gravity": "s",
                 	"next": {
                 		"initial-zoom" : []
@@ -12,18 +12,18 @@
             	},
             	{
                 	"id": "map",
-                	"text": "Como todos los mapas dinámicos, tiene herramientas para navegar"
+                	"text": "Como todos los mapas dinámicos, tiene herramientas para navegar."
             	},
             	{
                 	"id": "map",
-                	"text": "Con el ratón podemos arrastrar para desplazar el mapa, y acercarnos y alejarnos con la rueda",
+                	"text": "Con el ratón podemos arrastrar para desplazar el mapa, y acercarnos y alejarnos con la rueda.",
                 	"next": {
                 		"zoom-out" : []
                 	}
             	},
             	{
                 	"id": "zoom_out",
-                	"text": "Con este botón podemos alejarnos",
+                	"text": "Con este botón podemos alejarnos,",
                 	"gravity" : "w",
                 	"next": {
                 		"zoom-in" : []
@@ -31,7 +31,7 @@
             	},
             	{
                 	"id": "zoom_in",
-                	"text": "Con este acercarnos",
+                	"text": "con este acercarnos,",
                 	"gravity" : "w",
                 	"next": {
                 		"9zoom-in" : []
@@ -39,47 +39,51 @@
             	},
             	{
                 	"id": "map",
-                	"text": "Y si no sabemos donde nos encontramos...",
+                	"text": "y si no sabemos donde nos encontramos...",
                 	"next": {
                 		"initial-zoom" : []
                 	}
             	},
             	{
                 	"id": "zoom_to_max_extent",
-                	"text": "... podemos pinchar en este botón y volver al encuadre inicial",
+                	"text": "... podemos pinchar en este botón y volver al encuadre inicial.",
                 	"gravity" : "w"
             	},
             	{
                 	"id": "all_layers",
-                	"text": "Esta es la lista con las capas. Pincha en un grupo y se desplegarán las capas contenidas en él",
+                	"text": "Ésta es la lista con las capas. Pincha en un grupo y se desplegarán las capas contenidas en él.",
                 	"gravity": "s",
                 	"next": {
                 		"show-layer-group" : ["base"]
                 	}
             	},
             	{
-                	"id": "layer-row-blue-marble",
+                	"id": "layer-row-osm",
                 	"text": "Aquí están cada una de las capas que se visualizan en el mapa. Veamos qué opciones hay.",
                 	"gravity": "w"
             	},
             	{
-                	"id": "blue-marble_visibility_checkbox",
+                	"id": "osm_visibility_checkbox",
                 	"text": "Es posible hacer las capas visibles o invisibles pinchando en este checkbox. Vamos a esconder esta capa.",
                 	"gravity": "w",
                 	"next": {
-                		"layer-visibility" : ["blue-marble", false]
+                		"layer-visibility" : ["osm", false]
                 	}
             	},
             	{
-                	"id": "blue-marble_visibility_checkbox",
-                	"text": "Ves qué fácil?."
+                	"id": "osm_visibility_checkbox",
+                	"text": "¿Ves qué fácil?",
+                	"next" : {
+                		"show-layer-group" : ["landcover"],
+                		"layer-visibility" : ["selvamis_t", true]
+                	}
             	},
             	{
-                	"id": "inline-legend-button-forestClassification",
-                	"text": "Tambien podemos mostrar la leyenda de algunas capas pinchando en este icono.",
+                	"id": "inline-legend-button-selvamis_t",
+                	"text": "También podemos mostrar la leyenda de algunas capas pinchando en este icono.",
                 	"gravity": "w",
                 	"next": {
-                		"open-legend" : ["forestClassification"]
+                		"open-legend" : ["selvamis_t"]
                 	}
                 	
             	},
@@ -100,14 +104,14 @@
             	},
 
             	{
-                	"id": "layer_info_button_forestClassification",
+                	"id": "layer_info_button_selvamis_t",
                 	"text": "Otra de las cosas que se puede hacer con las capas es ver la información asociada, pinchando en este botón.",
                 	"next": {
-                		"show-layer-info" : "forestClassification"
+                		"show-layer-info" : "selvamis_t"
                 	}
             	},
             	{
-                	"id": "layer_info_button_forestClassification",
+                	"id": "layer_info_button_selvamis_t",
                 	"text": "El panel se puede cerrar pulsando escape o el aspa que hay en la ventana emergente.",
                 	"next": {
                 		"hide-info" : ""
@@ -127,16 +131,16 @@
                 	"gravity": "n"
             	},
             	{
-                	"id": "forestClassification_transparency_slider",
+                	"id": "selvamis_t_transparency_slider",
                 	"text": "Al mover la barra, la transparencia se cambia en el mapa.",
                 	"gravity": "w",
                 	"next": {
-                		"transparency-slider-changed": [ "forestClassification", 0.25 ]
+                		"transparency-slider-changed": [ "selvamis_t", 0.25 ]
                 	}
             	},
             	{
-                	"id": "forestClassification_transparency_slider",
-                	"text": "En el mapa ahora la clasificación forestal es transparente.",
+                	"id": "selvamis_t_transparency_slider",
+                	"text": "En el mapa ahora la selva Paranaense es transparente.",
                 	"gravity": "w",
                 	"next": {
  	              		"show-layer-panel" : [ "all_layers_selector" ],
@@ -149,16 +153,15 @@
                 	"gravity": "w"
             	},
             	{
-                	"id": "layer-row-forest_mask",
-                	"text": "Por ejemplo la capa con la máscara forestal. Vamos a visualizarla desde más cerca",
+                	"id": "layer-row-selvamis_t",
+                	"text": "Por ejemplo la capa con la selva Paranaense. Vamos a visualizarla desde más cerca",
                 	"gravity": "w",
                 	"next": {
-                		"layer-visibility" : ["forest_mask", true],
-                		"4zoom-in" : ""
+                		"zoom-in" : ""
                 	}
             	},
             	{
-                	"id": "layer-row-forest_mask",
+                	"id": "layer-row-selvamis_t",
                 	"text": "Podemos observar que tiene un año que se visualiza entre paréntesis.",
                 	"gravity": "w"
             	},
@@ -166,11 +169,11 @@
                 	"id": "time_slider_pane",
                 	"text": "La fecha del mapa se puede cambiar desde esta barra",
                 	"next": {
-                		"time-slider.selection" : [ "Xnew Date(Date.UTC(2000, 0, 1, 0, 0, 0, 0))" ]
+                		"time-slider.selection" : [ "Xnew Date(Date.UTC(1998, 0, 1, 0, 0, 0, 0))" ]
                 	}
             	},
             	{
-                	"id": "layer-row-forest_mask",
+                	"id": "layer-row-selvamis_t",
                 	"text": "Y eso debe cambiar la imagen del mapa y el año que hay entre paréntesis en la capa"
             	},
             	{
@@ -191,7 +194,7 @@
                 	"text": "...lo que nos permite modificar el instante temporal individualmente para una capa.",
                 	"gravity" : "w",
                 	"next": {
-	               		"layer-time-slider.selection" : [ "forest_mask",  "Xnew Date(Date.UTC(2010, 0, 1, 0, 0, 0, 0))"]
+	               		"layer-time-slider.selection" : [ "selvamis_t",  "Xnew Date(Date.UTC(2002, 0, 1, 0, 0, 0, 0))"]
                 	}
             	},
             	{
