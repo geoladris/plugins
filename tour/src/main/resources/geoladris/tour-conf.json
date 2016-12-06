@@ -149,36 +149,39 @@
             	},
             	{
                 	"id": "all_layers",
-                	"text": "Algunas capas tienen varias instancias temporales",
-                	"gravity": "w"
-            	},
-            	{
-                	"id": "layer-row-selvamis_t",
-                	"text": "Por ejemplo la capa con la selva Paranaense. Vamos a visualizarla desde más cerca",
+                	"text": "Algunas capas tienen varias instancias temporales.",
                 	"gravity": "w",
-                	"next": {
-                		"zoom-in" : ""
+                	"next" : {
+                		"layer-visibility" : ["pchbn06_3857", true]
                 	}
             	},
             	{
-                	"id": "layer-row-selvamis_t",
+                	"id": "layer-row-pchbn06_3857",
+                	"text": "Por ejemplo la capa con el Parque Chaqueño. Vamos a visualizarla desde más cerca.",
+                	"gravity": "w",
+                	"next": {
+                		"zoom-to" : { "x" : -61.2, "y" : -29.8, "zoomLevel" : 6 }
+                	}
+            	},
+            	{
+                	"id": "layer-row-pchbn06_3857",
                 	"text": "Podemos observar que tiene un año que se visualiza entre paréntesis.",
                 	"gravity": "w"
             	},
             	{
                 	"id": "time_slider_pane",
-                	"text": "La fecha del mapa se puede cambiar desde esta barra",
+                	"text": "La fecha del mapa se puede cambiar desde esta barra.",
                 	"next": {
                 		"time-slider.selection" : [ "Xnew Date(Date.UTC(1998, 0, 1, 0, 0, 0, 0))" ]
                 	}
             	},
             	{
-                	"id": "layer-row-selvamis_t",
-                	"text": "Y eso debe cambiar la imagen del mapa y el año que hay entre paréntesis en la capa"
+                	"id": "layer-row-pchbn06_3857",
+                	"text": "Y eso debe cambiar la imagen del mapa y el año que hay entre paréntesis en la capa."
             	},
             	{
                 	"id": "layer_slider_selector",
-                	"text": "Pero además podemos cambiar la instancia temporal de las capas de forma individual mediante el panel \"Temporal\"",
+                	"text": "Pero además podemos cambiar la instancia temporal de las capas de forma individual mediante el panel \"Temporal\".",
                 	"gravity" : "n",
                 	"next": {
 	               		"show-layer-panel" : [ "layer_slider_selector" ]
@@ -194,12 +197,12 @@
                 	"text": "...lo que nos permite modificar el instante temporal individualmente para una capa.",
                 	"gravity" : "w",
                 	"next": {
-	               		"layer-time-slider.selection" : [ "selvamis_t",  "Xnew Date(Date.UTC(2002, 0, 1, 0, 0, 0, 0))"]
+	               		"layer-time-slider.selection" : [ "pchbn06_3857",  "Xnew Date(Date.UTC(2002, 0, 1, 0, 0, 0, 0))"]
                 	}
             	},
             	{
                 	"id": "layerTimeSliders",
-                	"text": "Tras lo cual, nos queda el mapa en una fecha y sólo esta capa en otra",
+                	"text": "Tras lo cual, nos queda el mapa en una fecha y sólo esta capa en otra.",
                 	"gravity" : "w"
             	},
             	{
@@ -217,12 +220,12 @@
                 	"text": "Basta con hacer clic en un punto del mapa",
                 	"gravity" : "s",
                 	"next": {
-	               		"map-click" : [ -3, 18 ]
+	               		"map-click" : [ -34, -67.5 ]
                 	},
 					"wait" : "info-features"
             	},
             	{
-                	"id": "result_area",
+                	"id": "info_popup",
                 	"text": "y nos aparecerán en el diálogo de información los datos de los objetos en los que hemos pinchado.",
                 	"gravity" : "s",
                 	"next" : {
@@ -230,7 +233,7 @@
                 	}
             	},
             	{
-                	"id": "result_area",
+                	"id": "info_popup",
                 	"text": "Pasando el ratón por las tablas podemos ver el objeto resaltado en el mapa.",
                 	"gravity" : "s",
                 	"next" : {
@@ -238,7 +241,7 @@
                 	}
             	},
             	{
-                	"id": "info-magnifier-0",
+                	"id": "info-magnifier-limites_provinciales-0",
                 	"text": "Y pinchando en la lupa podemos hacer zoom al objeto",
                 	"gravity" : "s",
                 	"next" : {
