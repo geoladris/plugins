@@ -10,15 +10,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.geoladris.PortalRequestConfiguration;
 import org.geoladris.config.ModuleConfigurationProvider;
-import org.geoladris.config.PluginDescriptors;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
 public class LayersModuleConfigurationProvider implements ModuleConfigurationProvider {
+  private static final String PLUGIN_NAME = "base";
 
   @Override
-  public Map<String, JSONObject> getPluginConfig(PortalRequestConfiguration configurationContext,
+  public Map<String, JSONObject> getPluginConfig(PortalRequestConfiguration requestConfig,
       HttpServletRequest request) throws IOException {
     // We create return a pseudo-plugin descriptor containing all the
     // configuration to override/merge
@@ -30,13 +30,11 @@ public class LayersModuleConfigurationProvider implements ModuleConfigurationPro
     if (id == null) {
       id = "";
     }
-    String layersTemplate = IOUtils.toString(
-        new File(configurationContext.getConfigurationDirectory(), "layers" + id + ".json").toURI(),
-        "UTF-8");
-    JSONObject content =
-        (JSONObject) JSONSerializer.toJSON(configurationContext.localize(layersTemplate));
+    String layersTemplate = IOUtils
+        .toString(new File(requestConfig.getConfigDir(), "layers" + id + ".json").toURI(), "UTF-8");
+    JSONObject content = (JSONObject) JSONSerializer.toJSON(requestConfig.localize(layersTemplate));
     conf.put("layers", content);
-    return Collections.singletonMap(PluginDescriptors.UNNAMED_GEOLADRIS_CORE_PLUGIN, conf);
+    return Collections.singletonMap(PLUGIN_NAME, conf);
   }
 
   @Override

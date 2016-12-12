@@ -1,4 +1,10 @@
-define([ "message-bus", "layers-edit-form", "layers-api", "jquery", "jquery-ui" ], function(bus, forms, layerRoot, $) {
+define([ "message-bus", "./layers-edit-form", "./layers-api", "jquery", "jquery-ui" ], function(bus, forms, layerRoot, $) {
+
+	var layerRoot = null
+
+	bus.listen("layers-loaded", function(e, newLayerRoot) {
+		layerRoot = newLayerRoot;
+	});
 
 	bus.listen("before-adding-layers", function() {
 		bus.send("register-layer-action", function(layer) {

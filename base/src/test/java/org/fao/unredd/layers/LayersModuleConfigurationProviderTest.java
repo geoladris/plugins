@@ -33,7 +33,7 @@ public class LayersModuleConfigurationProviderTest {
     this.confDir.mkdir();
 
     this.portalConf = mock(PortalRequestConfiguration.class);
-    when(portalConf.getConfigurationDirectory()).thenReturn(confDir);
+    when(portalConf.getConfigDir()).thenReturn(confDir);
     this.request = mock(HttpServletRequest.class);
   }
 

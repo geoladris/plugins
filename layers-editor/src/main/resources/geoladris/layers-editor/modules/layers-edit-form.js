@@ -1,4 +1,6 @@
-define([ "layers-schema", "layers-api", "message-bus", "jquery", "jquery-ui" ], function(schema, layerRoot, bus, $) {
+define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui" ], function(schema, layerRoot, bus, $) {
+
+	var layerRoot = null;
 
 	var dialog;
 	var form;

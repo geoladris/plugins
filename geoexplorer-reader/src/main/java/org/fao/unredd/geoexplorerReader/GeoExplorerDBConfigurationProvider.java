@@ -15,26 +15,25 @@ import org.geoladris.DBUtils;
 import org.geoladris.PersistenceException;
 import org.geoladris.PortalRequestConfiguration;
 import org.geoladris.config.ModuleConfigurationProvider;
-import org.geoladris.config.PluginDescriptors;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
 public class GeoExplorerDBConfigurationProvider implements ModuleConfigurationProvider {
+  private static final String PLUGIN_NAME = "geoexplorer-reader";
 
   public GeoExplorerDBConfigurationProvider() {}
 
   @Override
-  public Map<String, JSONObject> getPluginConfig(PortalRequestConfiguration configurationContext,
+  public Map<String, JSONObject> getPluginConfig(PortalRequestConfiguration requestConfig,
       HttpServletRequest request) throws IOException {
     JSONObject conf = new JSONObject();
-    conf.put("geoexplorer-layers", getGeoExplorerLayers(configurationContext, request));
-    return Collections.singletonMap(PluginDescriptors.UNNAMED_GEOLADRIS_CORE_PLUGIN, conf);
+    conf.put("geoexplorer-layers", getGeoExplorerLayers(request));
+    return Collections.singletonMap(PLUGIN_NAME, conf);
   }
 
-  private JSON getGeoExplorerLayers(PortalRequestConfiguration configurationContext,
-      HttpServletRequest request) {
+  private JSON getGeoExplorerLayers(HttpServletRequest request) {
     try {
       String mapIdParameter = request.getParameter("mapId");
       int mapId;
