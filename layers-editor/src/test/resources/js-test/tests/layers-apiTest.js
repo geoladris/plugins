@@ -60,7 +60,7 @@ describe("layers-api", function() {
 			bus.send("layers-loaded", root);
 			var layer = api.getPortalLayer("blue-marble");
 			if (layer != null) { // to ignore reentering calls
-				layer.remove();
+				api.removePortalLayer(layer.id);
 				var group = api.getGroup("innerbase");
 				expect(group.items.length).toBe(0);
 				done();

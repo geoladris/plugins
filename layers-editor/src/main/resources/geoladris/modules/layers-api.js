@@ -96,10 +96,6 @@ define([ "jquery", "message-bus" ], function($, bus) {
 		group["getParent"] = function() {
 			return findById(layerRoot.groups, parentId);
 		};
-		group["remove"] = function() {
-			findAndDeleteGroup(layerRoot.groups, group.id);
-			bus.send("layers-set-root", layerRoot);
-		};
 	}
 
 	function decoratePortalLayer(portalLayer, groupId) {
@@ -113,22 +109,6 @@ define([ "jquery", "message-bus" ], function($, bus) {
 				}
 			});
 		}
-		portalLayer["remove"] = function() {
-			doDeleteLayer(portalLayer.id);
-			process(layerRoot.groups, function(group, i) {
-				if (group.hasOwnProperty("items")) {
-					var index = group["items"].indexOf(portalLayer.id);
-					if (index != -1) {
-						group["items"].splice(index, 1);
-						return true;
-					}
-				}
-
-				return false;
-			});
-
-			bus.send("layers-set-root", layerRoot);
-		};
 	}
 
 	function processGroup(parentId, group) {
@@ -163,22 +143,27 @@ define([ "jquery", "message-bus" ], function($, bus) {
 		getMapLayer : function(layerId) {
 			return findById(layerRoot.wmsLayers, layerId);
 		},
-		addGroup : function(group) {
+		addGroup : function(group, sendSetRoot) {
 			layerRoot.groups.push(group);
 			decorateGroup(null, group);
-			bus.send("layers-set-root", layerRoot);
+
+			if (sendSetRoot || sendSetRoot === undefined) {
+				bus.send("layers-set-root", layerRoot);
+			}
 		},
-		addLayer : function(groupId, portalLayer, wmsLayer) {
+		addLayer : function(groupId, portalLayer, wmsLayer, sendSetRoot) {
 			var group = findById(layerRoot.groups, groupId);
 			group.items.push(portalLayer.id);
 
 			layerRoot.wmsLayers.push(wmsLayer);
-			decorateMapLayer(wmsLayer);
+			decorateCommons(wmsLayer);
 
 			layerRoot.portalLayers.push(portalLayer);
 			decoratePortalLayer(portalLayer);
 
-			bus.send("layers-set-root", layerRoot);
+			if (sendSetRoot || sendSetRoot === undefined) {
+				bus.send("layers-set-root", layerRoot);
+			}
 		},
 		moveGroup : function(groupId, parentId, newPosition) {
 			var group = findById(layerRoot.groups, groupId);
@@ -235,6 +220,26 @@ define([ "jquery", "message-bus" ], function($, bus) {
 				bus.send("layers-set-root", layerRoot);
 			}
 		},
+		removeGroup : function(id) {
+			findAndDeleteGroup(layerRoot.groups, id);
+			bus.send("layers-set-root", layerRoot);
+		},
+		removePortalLayer : function(id) {
+			doDeleteLayer(id);
+			process(layerRoot.groups, function(group, i) {
+				if (group.hasOwnProperty("items")) {
+					var index = group["items"].indexOf(id);
+					if (index != -1) {
+						group["items"].splice(index, 1);
+						return true;
+					}
+				}
+
+				return false;
+			});
+
+			bus.send("layers-set-root", layerRoot);
+		},
 		getDefaultServer : function() {
 			var ret = layerRoot["default-server"];
 			if (ret) {
@@ -244,6 +249,9 @@ define([ "jquery", "message-bus" ], function($, bus) {
 				}
 			}
 			return ret;
+		},
+		get : function() {
+			return layerRoot;
 		}
 	};
 });

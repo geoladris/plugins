@@ -4,7 +4,7 @@
             "steps" : [
             	{
                 	"id": "map",
-                	"text": "Este es el mapa donde se muestran los datos",
+                	"text": "Éste es el mapa donde se muestran los datos.",
                 	"gravity": "s",
                 	"next": {
                 		"initial-zoom" : []
@@ -12,18 +12,18 @@
             	},
             	{
                 	"id": "map",
-                	"text": "Como todos los mapas dinámicos, tiene herramientas para navegar"
+                	"text": "Como todos los mapas dinámicos, tiene herramientas para navegar."
             	},
             	{
                 	"id": "map",
-                	"text": "Con el ratón podemos arrastrar para desplazar el mapa, y acercarnos y alejarnos con la rueda",
+                	"text": "Con el ratón podemos arrastrar para desplazar el mapa, y acercarnos y alejarnos con la rueda.",
                 	"next": {
                 		"zoom-out" : []
                 	}
             	},
             	{
                 	"id": "zoom_out",
-                	"text": "Con este botón podemos alejarnos",
+                	"text": "Con este botón podemos alejarnos,",
                 	"gravity" : "w",
                 	"next": {
                 		"zoom-in" : []
@@ -31,7 +31,7 @@
             	},
             	{
                 	"id": "zoom_in",
-                	"text": "Con este acercarnos",
+                	"text": "con este acercarnos,",
                 	"gravity" : "w",
                 	"next": {
                 		"9zoom-in" : []
@@ -39,47 +39,51 @@
             	},
             	{
                 	"id": "map",
-                	"text": "Y si no sabemos donde nos encontramos...",
+                	"text": "y si no sabemos donde nos encontramos...",
                 	"next": {
                 		"initial-zoom" : []
                 	}
             	},
             	{
                 	"id": "zoom_to_max_extent",
-                	"text": "... podemos pinchar en este botón y volver al encuadre inicial",
+                	"text": "... podemos pinchar en este botón y volver al encuadre inicial.",
                 	"gravity" : "w"
             	},
             	{
                 	"id": "all_layers",
-                	"text": "Esta es la lista con las capas. Pincha en un grupo y se desplegarán las capas contenidas en él",
+                	"text": "Ésta es la lista con las capas. Pincha en un grupo y se desplegarán las capas contenidas en él.",
                 	"gravity": "s",
                 	"next": {
                 		"show-layer-group" : ["base"]
                 	}
             	},
             	{
-                	"id": "layer-row-blue-marble",
+                	"id": "layer-row-osm",
                 	"text": "Aquí están cada una de las capas que se visualizan en el mapa. Veamos qué opciones hay.",
                 	"gravity": "w"
             	},
             	{
-                	"id": "blue-marble_visibility_checkbox",
+                	"id": "osm_visibility_checkbox",
                 	"text": "Es posible hacer las capas visibles o invisibles pinchando en este checkbox. Vamos a esconder esta capa.",
                 	"gravity": "w",
                 	"next": {
-                		"layer-visibility" : ["blue-marble", false]
+                		"layer-visibility" : ["osm", false]
                 	}
             	},
             	{
-                	"id": "blue-marble_visibility_checkbox",
-                	"text": "Ves qué fácil?."
+                	"id": "osm_visibility_checkbox",
+                	"text": "¿Ves qué fácil?",
+                	"next" : {
+                		"show-layer-group" : ["landcover"],
+                		"layer-visibility" : ["selvamis_t", true]
+                	}
             	},
             	{
-                	"id": "inline-legend-button-forestClassification",
-                	"text": "Tambien podemos mostrar la leyenda de algunas capas pinchando en este icono.",
+                	"id": "inline-legend-button-selvamis_t",
+                	"text": "También podemos mostrar la leyenda de algunas capas pinchando en este icono.",
                 	"gravity": "w",
                 	"next": {
-                		"open-legend" : ["forestClassification"]
+                		"open-legend" : ["selvamis_t"]
                 	}
                 	
             	},
@@ -100,14 +104,14 @@
             	},
 
             	{
-                	"id": "layer_info_button_forestClassification",
+                	"id": "layer_info_button_selvamis_t",
                 	"text": "Otra de las cosas que se puede hacer con las capas es ver la información asociada, pinchando en este botón.",
                 	"next": {
-                		"show-layer-info" : "forestClassification"
+                		"show-layer-info" : "selvamis_t"
                 	}
             	},
             	{
-                	"id": "layer_info_button_forestClassification",
+                	"id": "layer_info_button_selvamis_t",
                 	"text": "El panel se puede cerrar pulsando escape o el aspa que hay en la ventana emergente.",
                 	"next": {
                 		"hide-info" : ""
@@ -127,16 +131,16 @@
                 	"gravity": "n"
             	},
             	{
-                	"id": "forestClassification_transparency_slider",
+                	"id": "selvamis_t_transparency_slider",
                 	"text": "Al mover la barra, la transparencia se cambia en el mapa.",
                 	"gravity": "w",
                 	"next": {
-                		"transparency-slider-changed": [ "forestClassification", 0.25 ]
+                		"transparency-slider-changed": [ "selvamis_t", 0.25 ]
                 	}
             	},
             	{
-                	"id": "forestClassification_transparency_slider",
-                	"text": "En el mapa ahora la clasificación forestal es transparente.",
+                	"id": "selvamis_t_transparency_slider",
+                	"text": "En el mapa ahora la selva Paranaense es transparente.",
                 	"gravity": "w",
                 	"next": {
  	              		"show-layer-panel" : [ "all_layers_selector" ],
@@ -145,37 +149,39 @@
             	},
             	{
                 	"id": "all_layers",
-                	"text": "Algunas capas tienen varias instancias temporales",
-                	"gravity": "w"
-            	},
-            	{
-                	"id": "layer-row-forest_mask",
-                	"text": "Por ejemplo la capa con la máscara forestal. Vamos a visualizarla desde más cerca",
+                	"text": "Algunas capas tienen varias instancias temporales.",
                 	"gravity": "w",
-                	"next": {
-                		"layer-visibility" : ["forest_mask", true],
-                		"4zoom-in" : ""
+                	"next" : {
+                		"layer-visibility" : ["pchbn06_3857", true]
                 	}
             	},
             	{
-                	"id": "layer-row-forest_mask",
+                	"id": "layer-row-pchbn06_3857",
+                	"text": "Por ejemplo la capa con el Parque Chaqueño. Vamos a visualizarla desde más cerca.",
+                	"gravity": "w",
+                	"next": {
+                		"zoom-to" : { "x" : -61.2, "y" : -29.8, "zoomLevel" : 6 }
+                	}
+            	},
+            	{
+                	"id": "layer-row-pchbn06_3857",
                 	"text": "Podemos observar que tiene un año que se visualiza entre paréntesis.",
                 	"gravity": "w"
             	},
             	{
                 	"id": "time_slider_pane",
-                	"text": "La fecha del mapa se puede cambiar desde esta barra",
+                	"text": "La fecha del mapa se puede cambiar desde esta barra.",
                 	"next": {
-                		"time-slider.selection" : [ "Xnew Date(Date.UTC(2000, 0, 1, 0, 0, 0, 0))" ]
+                		"time-slider.selection" : [ "Xnew Date(Date.UTC(1998, 0, 1, 0, 0, 0, 0))" ]
                 	}
             	},
             	{
-                	"id": "layer-row-forest_mask",
-                	"text": "Y eso debe cambiar la imagen del mapa y el año que hay entre paréntesis en la capa"
+                	"id": "layer-row-pchbn06_3857",
+                	"text": "Y eso debe cambiar la imagen del mapa y el año que hay entre paréntesis en la capa."
             	},
             	{
                 	"id": "layer_slider_selector",
-                	"text": "Pero además podemos cambiar la instancia temporal de las capas de forma individual mediante el panel \"Temporal\"",
+                	"text": "Pero además podemos cambiar la instancia temporal de las capas de forma individual mediante el panel \"Temporal\".",
                 	"gravity" : "n",
                 	"next": {
 	               		"show-layer-panel" : [ "layer_slider_selector" ]
@@ -191,12 +197,12 @@
                 	"text": "...lo que nos permite modificar el instante temporal individualmente para una capa.",
                 	"gravity" : "w",
                 	"next": {
-	               		"layer-time-slider.selection" : [ "forest_mask",  "Xnew Date(Date.UTC(2010, 0, 1, 0, 0, 0, 0))"]
+	               		"layer-time-slider.selection" : [ "pchbn06_3857",  "Xnew Date(Date.UTC(2002, 0, 1, 0, 0, 0, 0))"]
                 	}
             	},
             	{
                 	"id": "layerTimeSliders",
-                	"text": "Tras lo cual, nos queda el mapa en una fecha y sólo esta capa en otra",
+                	"text": "Tras lo cual, nos queda el mapa en una fecha y sólo esta capa en otra.",
                 	"gravity" : "w"
             	},
             	{
@@ -214,12 +220,12 @@
                 	"text": "Basta con hacer clic en un punto del mapa",
                 	"gravity" : "s",
                 	"next": {
-	               		"map-click" : [ -3, 18 ]
+	               		"map-click" : [ -34, -67.5 ]
                 	},
 					"wait" : "info-features"
             	},
             	{
-                	"id": "result_area",
+                	"id": "info_popup",
                 	"text": "y nos aparecerán en el diálogo de información los datos de los objetos en los que hemos pinchado.",
                 	"gravity" : "s",
                 	"next" : {
@@ -227,7 +233,7 @@
                 	}
             	},
             	{
-                	"id": "result_area",
+                	"id": "info_popup",
                 	"text": "Pasando el ratón por las tablas podemos ver el objeto resaltado en el mapa.",
                 	"gravity" : "s",
                 	"next" : {
@@ -235,7 +241,7 @@
                 	}
             	},
             	{
-                	"id": "info-magnifier-0",
+                	"id": "info-magnifier-limites_provinciales-0",
                 	"text": "Y pinchando en la lupa podemos hacer zoom al objeto",
                 	"gravity" : "s",
                 	"next" : {
@@ -243,24 +249,11 @@
                 	}
             	},
             	{
-                	"id": "info-indicator-0",
-                	"text": "Cuando este icono aparece, significa que se pueden mostrar algunos informes estadísticos acerca de este objeto",
-                	"gravity" : "s"
-            	},
-            	{
-                	"id": "info-indicator-0",
-                	"text": "Sólo tenemos que pinchar en él",
-                	"gravity" : "s",
-                	"next" : {
-                		"show-feature-indicator" : [ "bosques_umsef_db:limites_provinciales", 0, 0 ]
-                	}
-            	},
-            	{
                 	"id": "map",
                 	"text": "El panel se puede cerrar pulsando escape o el aspa que hay en la ventana emergente.",
                 	"gravity" : "s",
                 	"next": {
-                		"hide-info" : ""
+                		"hide-info-features" : ""
                 	}
             	},
             	{

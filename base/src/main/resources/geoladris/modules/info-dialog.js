@@ -184,6 +184,12 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "hig
 				infoPopup.dialog('moveToTop');
 			}
 		}
+
+		bus.listen("hide-info-features", function() {
+			if (infoPopup) {
+				infoPopup.dialog('close');
+			}
+		});
 	});
 
 	bus.listen("feature-indicators-received", function(event, wmsName, wmsLayerId, infoFeatureIndex, indicators) {
@@ -238,5 +244,4 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "hig
 		highlightLayer.removeAllFeatures();
 		highlightLayer.redraw();
 	});
-
 });

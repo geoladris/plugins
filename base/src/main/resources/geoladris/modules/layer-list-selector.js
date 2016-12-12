@@ -69,6 +69,7 @@ define([ "jquery", "message-bus", "layout", "customization", "i18n", "jquery-ui"
 			if (i == 0) {
 				bp.btn.attr("checked", "true");
 			} else {
+				bp.btn.attr("checked", null);
 				bp.div.hide();
 			}
 			divLayerListSelector.append(bp.btn);

@@ -14,12 +14,12 @@ define([ "message-bus", "layers-edit-form", "layers-api", "jquery", "jquery-ui" 
 		});
 		bus.send("register-layer-action", function(layer) {
 			return $("<a/>").addClass("editable-layer-list-button").addClass("layer_deleteLayer_button").click(function() {
-				layer.remove();
+				layerRoot.removePortalLayer(layer.id);
 			});
 		});
 		bus.send("register-group-action", function(group) {
 			return $("<a/>").addClass("editable-layer-list-button").addClass("layer_deleteGroup_button").click(function() {
-				group.remove();
+				layerRoot.removeGroup(group.id);
 			});
 		});
 	});

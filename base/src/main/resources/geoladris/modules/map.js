@@ -217,7 +217,7 @@ define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout
 	}
 
 	bus.listen("zoom-to", function(event, msg) {
-		if (msg instanceof Array) {
+		if (msg instanceof OpenLayers.Bounds) {
 			map.zoomToExtent(msg);
 		} else if (msg instanceof Object) {
 			var center = new OpenLayers.LonLat(msg.x, msg.y);

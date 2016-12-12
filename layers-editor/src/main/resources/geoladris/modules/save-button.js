@@ -1,9 +1,4 @@
-define([ "message-bus", "toolbar", "jquery" ], function(bus, toolbar, $) {
-
-	var layerRoot;
-	bus.listen("layers-loaded", function(e, root) {
-		layerRoot = root;
-	});
+define([ "message-bus", "toolbar", "jquery", "layers-api" ], function(bus, toolbar, $, layerRoot) {
 
 	var btn = $("<a/>")//
 	.attr("id", "save-layers-button")//
@@ -14,7 +9,7 @@ define([ "message-bus", "toolbar", "jquery" ], function(bus, toolbar, $) {
 			type : 'PUT',
 			url : 'layers.json',
 			contentType : "application/json; charset=utf-8",
-			data : JSON.stringify(layerRoot, null, 4),
+			data : JSON.stringify(layerRoot.get(), null, 4),
 			success : function(data, textStatus, jqXHR) {
 				require([ "text!../layers.json?a=" + new Date().getTime() ], function(newLayerRoot) {
 					bus.send("layers-set-root", JSON.parse(newLayerRoot));
