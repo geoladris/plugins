@@ -1,4 +1,4 @@
-define([ "message-bus", "toolbar", "jquery", "layers-api" ], function(bus, toolbar, $, layerRoot) {
+define([ "message-bus", "toolbar", "jquery", "./layers-api" ], function(bus, toolbar, $, layerRoot) {
 
 	var btn = $("<a/>")//
 	.attr("id", "save-layers-button")//
