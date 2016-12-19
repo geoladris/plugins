@@ -28,10 +28,11 @@ public class LayersServlet extends HttpServlet {
 
   private static Logger logger = Logger.getLogger(ClientContentServlet.class);
 
-  private static final String APPLICATION_JSON = "application/json";
+  public static final String APPLICATION_JSON = "application/json";
+  public static final String UTF_8 = "UTF-8";
+  public static final String LAYERS_JSON = "layers.json";
+
   private static final String CONFIG = "config";
-  private static final String UTF_8 = "UTF-8";
-  private static final String LAYERS_JSON = "layers.json";
   private static final String BACKUP_FOLDER = "backup";
   private static final long serialVersionUID = 1L;
 

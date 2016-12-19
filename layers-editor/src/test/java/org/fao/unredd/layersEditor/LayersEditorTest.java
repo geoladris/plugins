@@ -3,17 +3,25 @@
  */
 package org.fao.unredd.layersEditor;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Iterator;
 
@@ -105,5 +113,42 @@ public class LayersEditorTest {
     InputStream againOriginalLayerJSONIs = new FileInputStream(new File(url.getFile()));
     equals = IOUtils.contentEquals(afterPutBackupIs, againOriginalLayerJSONIs);
     assertFalse(equals);
+  }
+
+  @Test
+  public void returnsErrorIfNoLayersJSON() throws Exception {
+    HttpServletRequest req = mock(HttpServletRequest.class);
+    HttpServletResponse resp = mock(HttpServletResponse.class);
+
+    when(defaultconfig.getDir()).thenReturn(testFolder.getRoot());
+
+    InputStreamReader input = new InputStreamReader(getClass().getResourceAsStream("/layers.json"));
+    BufferedReader readerLayers = new BufferedReader(input);
+    when(req.getReader()).thenReturn(readerLayers);
+
+    servlet.doPut(req, resp);
+
+    verify(resp).sendError(eq(HttpServletResponse.SC_INTERNAL_SERVER_ERROR), anyString());
+  }
+
+  @Test
+  public void doGet() throws Exception {
+    HttpServletResponse resp = mock(HttpServletResponse.class);
+
+    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    PrintWriter writer = new PrintWriter(bos);
+    when(resp.getWriter()).thenReturn(writer);
+
+    when(defaultconfig.getDir()).thenReturn(testFolder.getRoot());
+    File file = testFolder.newFile(LayersServlet.LAYERS_JSON);
+    IOUtils.copy(getClass().getResourceAsStream("/layers.json"), new FileOutputStream(file));
+    servlet.doGet(mock(HttpServletRequest.class), resp);
+
+    writer.flush();
+
+    verify(resp).setContentType(LayersServlet.APPLICATION_JSON);
+    verify(resp).setCharacterEncoding(LayersServlet.UTF_8);
+    String original = IOUtils.toString(getClass().getResourceAsStream("/layers.json"));
+    assertEquals(original, bos.toString());
   }
 }
