@@ -41,11 +41,17 @@ define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui"
 			saveLayer();
 		});
 
+		definitions["toc"]["id"].disabled = true;
+		definitions["wmsLayer-base"]["id"].disabled = true;
+
 		var portalValues = layerRoot.getPortalLayer(id);
 		addPortalLayerFields(form, portalValues);
 
 		var wmsValues = layerRoot.getMapLayer(portalValues.layers[0]);
 		addWmsLayerFields(form, wmsValues);
+
+		definitions["toc"]["id"].disabled = undefined;
+		definitions["wmsLayer-base"]["id"].disabled = undefined;
 	}
 
 	function editGroup(id) {
@@ -62,14 +68,17 @@ define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui"
 			addNewLayer(groupId);
 		});
 
+		var id = "unique-id-" + new Date().getTime();
 		var portalValues = {
-			"id" : "unique-id-" + (new Date()).getTime(),
+			"id" : id,
 			"label" : "Nueva capa", // TODO i18n
 			"active" : "true"
 		};
 		addPortalLayerFields(form, portalValues);
 
-		var wmsValues = {};
+		var wmsValues = {
+			"id" : id
+		};
 		addWmsLayerFields(form, wmsValues);
 	}
 
@@ -227,6 +236,10 @@ define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui"
 		} else {
 			$("<span/>").addClass("layers-editor-type-not-implemented").text("Editor not implemented for this field type").appendTo(div); // TODO
 			// i18n
+		}
+
+		if (input && definition.disabled) {
+			input.attr("disabled", "true");
 		}
 	}
 
