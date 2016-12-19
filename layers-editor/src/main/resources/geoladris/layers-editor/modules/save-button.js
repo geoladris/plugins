@@ -1,9 +1,9 @@
-define([ "message-bus", "toolbar", "jquery", "./layers-api" ], function(bus, toolbar, $, layerRoot) {
+define([ "jquery", "message-bus", "toolbar", "i18n", "./layers-api" ], function($, bus, toolbar, i18n, layerRoot) {
 
 	var btn = $("<a/>")//
 	.attr("id", "save-layers-button")//
 	.addClass("blue_button toolbar_button")//
-	.html("Guardar capas")//
+	.html(i18n["layers-editor.save_layers"])//
 	.click(function() {
 		bus.send("ajax", {
 			type : 'PUT',
@@ -15,7 +15,7 @@ define([ "message-bus", "toolbar", "jquery", "./layers-api" ], function(bus, too
 					bus.send("layers-set-root", JSON.parse(newLayerRoot));
 				});
 			},
-			errorMsg : "Error uploading layers.json to the server" // TODO i18n
+			errorMsg : i18n["layers-editor.error_saving"]
 		});
 	})//
 	.appendTo(toolbar);
