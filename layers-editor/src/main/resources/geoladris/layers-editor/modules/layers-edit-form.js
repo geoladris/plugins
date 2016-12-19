@@ -1,4 +1,4 @@
-define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui" ], function(schema, layerRoot, bus, $) {
+define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui" ], function(i18n, schema, layerRoot, bus, $) {
 
 	var dialog;
 	var form;
@@ -29,15 +29,14 @@ define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui"
 	// property
 
 	function editServer() {
-		var form = createDialog("Edit Portal Properties", "portal"); // TODO
-		// i18n
-		addFields("Server", "server", form, {
+		var form = createDialog(i18n["layers-editor.edit_server_title"], "portal");
+		addFields(i18n["layers-editor.server"], "server", form, {
 			"default-server" : layerRoot.getDefaultServer()
-		}); // TODO i18n
+		});
 	}
 
 	function editLayer(id) {
-		form = createDialog("Edit Layer", function() { // TODO i18n
+		form = createDialog(i18n["layers-editor.edit_layer_title"], function() {
 			saveLayer();
 		});
 
@@ -55,7 +54,7 @@ define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui"
 	}
 
 	function editGroup(id) {
-		form = createDialog("Edit Group", function() { // TODO i18n
+		form = createDialog(i18n["layers-editor.edit_group_title"], function() {
 			saveGroup();
 		});
 
@@ -64,14 +63,14 @@ define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui"
 	}
 
 	function newLayer(groupId) {
-		form = createDialog("New Layer", function() { // TODO i18n
+		form = createDialog(i18n["layers-editor.new_layer_title"], function() {
 			addNewLayer(groupId);
 		});
 
 		var id = "unique-id-" + new Date().getTime();
 		var portalValues = {
 			"id" : id,
-			"label" : "Nueva capa", // TODO i18n
+			"label" : i18n["layers-editor.new_layer_label"],
 			"active" : "true"
 		};
 		addPortalLayerFields(form, portalValues);
@@ -83,13 +82,13 @@ define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui"
 	}
 
 	function newGroup() {
-		form = createDialog("New Group", function() { // TODO i18n
+		form = createDialog(i18n["layers-editor.new_group_title"], function() {
 			addNewGroup();
 		});
 
 		var groupValues = {
 			"id" : "unique-id-" + (new Date()).getTime(),
-			"label" : "Nuevo grupo" // TODO i18n
+			"label" : i18n["layers-editor.new_group"]
 		};
 		addTocFields(form, groupValues);
 	}
@@ -112,12 +111,10 @@ define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui"
 		});
 
 		var form = $("<form/>").addClass("layers-editor-form").appendTo(dialog);
-		var cancelButton = $("<div/>").html("Cancel").appendTo(dialog); // TODO
-		// i18n
+		var cancelButton = $("<div/>").html(i18n["layers-editor.cancel"]).appendTo(dialog);
 		cancelButton.button().click(closeDialog);
 
-		var applyButton = $("<div/>").html("Apply changes").appendTo(dialog); // TODO
-		// i18n
+		var applyButton = $("<div/>").html(i18n["layers-editor.apply"]).appendTo(dialog);
 		applyButton.button().click(function() {
 			applyCallback();
 			closeDialog();
@@ -126,17 +123,16 @@ define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui"
 	}
 
 	function addTocFields(form, values) {
-		addFields("Layer Description", "toc", form, values); // TODO i18n
+		addFields(i18n["layers-editor.panel_layer_description"], "toc", form, values);
 	}
 
 	function addPortalLayerFields(form, values) {
 		addTocFields(form, values);
-		addFields("Layer Properties", "portalLayer", form, values); // TODO i18n
+		addFields(i18n["layers-editor.panel_layer_properties"], "portalLayer", form, values);
 	}
 
 	function addWmsLayerFields(form, values) {
-		var fieldset = addFields("Layer Datasource", "wmsLayer-base", form, values); // TODO
-		// i18n
+		var fieldset = addFields(i18n["layers-editor.panel_layer_datasource"], "wmsLayer-base", form, values);
 
 		fieldset.find("select[name=type]").change({
 			form : form,
@@ -151,15 +147,15 @@ define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui"
 	function setLayerType(type, form, values) {
 		var types = {
 			wms : {
-				label : "WMS", // TODO i18n
+				label : i18n["layers-editor.wms"],
 				definition : "wmsLayer-wmsType"
 			},
 			osm : {
-				label : "OSM", // TODO i18n
+				label : i18n["layers-editor.osm"],
 				definition : "wmsLayer-osmType"
 			},
 			gmaps : {
-				label : "Google Maps", // TODO i18n
+				label : i18n["layers-editor.google"],
 				definition : "wmsLayer-gmapsType"
 			}
 		};
@@ -234,8 +230,7 @@ define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui"
 				}
 			}
 		} else {
-			$("<span/>").addClass("layers-editor-type-not-implemented").text("Editor not implemented for this field type").appendTo(div); // TODO
-			// i18n
+			$("<span/>").addClass("layers-editor-type-not-implemented").text(i18n["layers-editor.unsupported_field"]).appendTo(div);
 		}
 
 		if (input && definition.disabled) {

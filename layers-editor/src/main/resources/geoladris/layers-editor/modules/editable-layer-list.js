@@ -42,10 +42,6 @@ define([ "message-bus", "./layers-edit-form", "./layers-api", "jquery", "jquery-
 		})//
 		.appendTo($("#layers_container"));//
 
-		// var add = $("<div/>").addClass("root_group_placeholder").append("Add
-		// Group ").append($("<div/>").addClass("fa fa-plus")); // TODO i18n
-		// $("#layers_container").append(add);
-
 		// Añadir placeholder para soltar subgrupos
 		$(".group").each(function(i, el) {
 			var groupInfo = layerRoot.getGroup($(el).attr("data-group"));
