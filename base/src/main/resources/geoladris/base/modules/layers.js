@@ -45,7 +45,7 @@ define([ "jquery", "message-bus", "customization", "module" ], function($, bus, 
 		}
 
 		if (mapLayer.legend) {
-			if (mapLayer.legend == "auto") {
+			if (mapLayer.legend == "auto" && mapLayer.type == "wms") {
 				mapLayer.legendURL = getGetLegendGraphicUrl(mapLayer);
 			} else {
 				mapLayer.legendURL = "static/loc/" + customization.languageCode + "/images/" + mapLayer.legend;
@@ -87,10 +87,14 @@ define([ "jquery", "message-bus", "customization", "module" ], function($, bus, 
 		portalLayer.mapLayers = layerInfoArray;
 
 		if (portalLayer.inlineLegendUrl) {
-			if (portalLayer.inlineLegendUrl == "auto" && portalLayer.mapLayers.length > 0) {
-				var firstMapLayer = portalLayer.mapLayers[0];
-				portalLayer.inlineLegendUrl = getGetLegendGraphicUrl(firstMapLayer);
-			} else if (legend.charAt(0) == "/" && defaultServer) {
+			if (portalLayer.inlineLegendUrl == "auto") {
+				var mapLayers = portalLayer.mapLayers;
+				if (mapLayers.length > 0 && mapLayers[0].type == "wms") {
+					portalLayer.inlineLegendUrl = getGetLegendGraphicUrl(mapLayers[0]);
+				} else {
+					portalLayer.inlineLegendUrl = null;
+				}
+			} else if (portalLayer.inlineLegendUrl.charAt(0) == "/" && defaultServer) {
 				portalLayer.inlineLegendUrl = defaultServer + portalLayer.inlineLegendUrl;
 			}
 		}
