@@ -11,6 +11,10 @@ define([ "jquery", "message-bus" ], function($, bus) {
 	}
 
 	function findById(array, id) {
+		if (id == null) {
+			return null;
+		}
+
 		var ret = null;
 		process(array, function(o) {
 			if (o["id"] == id) {

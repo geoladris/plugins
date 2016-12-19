@@ -1,7 +1,5 @@
 define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui" ], function(schema, layerRoot, bus, $) {
 
-	var layerRoot = null;
-
 	var dialog;
 	var form;
 
@@ -263,9 +261,7 @@ define([ "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui"
 					values[name] = value;
 				} else if (definition.type == "string") {
 					// No text => no key entry
-					if (value.length > 0) {
-						values[name] = value;
-					}
+					values[name] = value;
 				} else if (definition.type == "array") {
 					// Split string by line
 					values[name] = value.match(/[^\r\n]+/g);
