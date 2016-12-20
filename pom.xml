@@ -25,6 +25,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<core.version>6.0-SNAPSHOT</core.version>
+		<csgis.geoladris.version>1.0-SNAPSHOT</csgis.geoladris.version>
 	</properties>
 
 	<distributionManagement>
@@ -46,6 +47,14 @@
 		<repository>
 			<id>geoladris snapshots</id>
 			<url>http://nullisland.geomati.co:8082/repository/snapshots/</url>
+		</repository>
+		<repository>
+			<id>csgis releases</id>
+			<url>http://service-aws.csgis.de:8081/repository/releases/</url>
+		</repository>
+		<repository>
+			<id>csgis snapshots</id>
+			<url>http://service-aws.csgis.de:8081/repository/snapshots/</url>
 		</repository>
 	</repositories>
 	<build>
