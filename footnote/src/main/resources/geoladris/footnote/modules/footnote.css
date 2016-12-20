@@ -14,12 +14,12 @@
 	font-size: smaller;
 }
 
-.footnote a {
+.footnote-link {
 	color: #fff;
 	font-weight: bold;
 	text-decoration: none;
 }
 
-.footnote a:hover {
+.footnote-link:hover {
 	text-decoration: underline;
 }
