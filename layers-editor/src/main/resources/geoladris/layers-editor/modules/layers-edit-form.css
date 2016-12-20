@@ -58,3 +58,25 @@
 	font-weight: bold;
 	font-style: italic;
 }
+
+.layers-editor-form select[name=wmsName] {
+	float: left;
+}
+
+div.layers-editor-wms-error,div.layers-editor-wms-loading {
+	width: 0px;
+	height: 0px;
+	background-size: cover;
+	float: left;
+	clear: none;
+	padding: 10px;
+	margin-left: 10px;
+}
+
+div.layers-editor-wms-loading {
+	background-image: url('images/loading.gif');
+}
+
+div.layers-editor-wms-error {
+	background-image: url('images/error.png');
+}

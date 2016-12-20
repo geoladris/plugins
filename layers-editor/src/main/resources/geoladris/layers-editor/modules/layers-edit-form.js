@@ -163,6 +163,50 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 			removePanel(types[t].definition, form);
 		}
 		addFields(types[type].label, types[type].definition, form, values);
+
+		if (type == "wms") {
+			var input = $("fieldset[class='" + types.wms.definition + "']").find("input[name='baseUrl']")
+			var wmsName = $("fieldset[class='" + types.wms.definition + "']").find("select[name='wmsName']");
+			var loading = $("<div/>").addClass("layers-editor-wms-loading").appendTo(wmsName.parent());
+			var error = $("<div/>").addClass("layers-editor-wms-error").appendTo(wmsName.parent());
+
+			var change = function() {
+				var url = input.val() + "?SERVICE=wms&VERSION=1.1.1&REQUEST=GetCapabilities";
+				if (!url.startsWith("http")) {
+					url = layerRoot.getDefaultServer() + url;
+				}
+				wmsName.empty();
+				loading.show();
+				error.hide();
+
+				$.ajax({
+				    type: "GET",
+				    url: "proxy?url=" + encodeURIComponent(url),
+				    dataType: "xml",
+				}).success(function(response) {
+					var iterator = response.evaluate("//Capability/Layer/Layer", response, null, 0, null);
+					var layer = iterator.iterateNext();
+
+					while (layer) {
+						var name = layer.getElementsByTagName("Name")[0].textContent;
+						var option = $("<option>").attr("value", name).text(name).appendTo(wmsName);
+						layer = iterator.iterateNext();
+					}
+				}).error(function(e) {
+					error.show();
+					console.log(e);
+				}).always(function() {
+					loading.hide();
+				});
+			}
+
+			input.blur(change);
+			input.keypress(function(e) {
+				if (e.which == 13) change();
+			});
+
+			change();
+		}
 	}
 
 	function removePanel(name, form) {
@@ -188,7 +232,7 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 		var label = $("<label/>").text(definition.title).appendTo(div);
 		var input;
 
-		if (definition.enum && definition.enum.length) {
+		if (definition.enum) {
 			input = $("<select/>").attr("name", definition.id).appendTo(div);
 			for ( var e in definition.enum) {
 				var item = definition.enum[e];

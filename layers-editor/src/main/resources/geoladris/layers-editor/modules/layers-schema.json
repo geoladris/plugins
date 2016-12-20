@@ -84,7 +84,8 @@
             },
             "wmsName":{
               "title":"WMS Layername",
-              "type":"string"
+              "type":"string",
+              "enum" : []
             },
             "imageFormat":{
               "title":"Image Format",
