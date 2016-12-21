@@ -31,7 +31,7 @@ define([ "jquery", "message-bus", "i18n", "auth-user", "module", "jquery-ui" ], 
 			bus.send("error", i18n["auth.login_error"]);
 		}
 
-		bus.send("show-wait-mask", i18n["auth.wait"]);
+		bus.send("ui-loading:start", i18n["auth.wait"]);
 		bus.send("ajax", {
 			type : 'POST',
 			url : LOGIN,
@@ -42,7 +42,7 @@ define([ "jquery", "message-bus", "i18n", "auth-user", "module", "jquery-ui" ], 
 			success : loginSuccess,
 			errorMsg : i18n["auth.login_error"],
 			complete : function() {
-				bus.send("hide-wait-mask");
+				bus.send("ui-loading:end", i18n["auth.wait"]);
 			}
 		});
 	}

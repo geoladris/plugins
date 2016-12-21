@@ -1,15 +1,17 @@
-define([ "jquery", "message-bus" ], function($, bus) {
-
-	var btnZoomOut = $("<a/>").attr("id", "zoom_out").appendTo("body");
-	btnZoomOut.click(function() {
-		bus.send("zoom-out");
+define([ "jquery", "message-bus", "layout" ], function($, bus, layout) {
+	bus.send("ui-button:create", {
+		div : "zoom_out",
+		parentDiv : layout.map.attr("id"),
+		sendEventName : "zoom-out"
 	});
-	var btnZoomIn = $("<a/>").attr("id", "zoom_in").appendTo("body");
-	btnZoomIn.click(function() {
-		bus.send("zoom-in");
+	bus.send("ui-button:create", {
+		div : "zoom_in",
+		parentDiv : layout.map.attr("id"),
+		sendEventName : "zoom-in"
 	});
-	var btnZoomFull = $("<a/>").attr("id", "zoom_to_max_extent").appendTo("body");
-	btnZoomFull.click(function() {
-		bus.send("initial-zoom");
+	bus.send("ui-button:create", {
+		div : "zoom_to_max_extent",
+		parentDiv : layout.map.attr("id"),
+		sendEventName : "initial-zoom"
 	});
 });

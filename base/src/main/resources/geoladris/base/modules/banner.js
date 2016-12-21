@@ -1,18 +1,37 @@
-define([ "jquery", "layout", "i18n", "message-bus", "module" ], function($, layout, i18n, bus, module) {
+define([ "jquery", "layout", "i18n", "message-bus", "module", "ui/ui" ], function($, layout, i18n, bus, module) {
 
 	var config = module.config();
 
 	if (!config["hide"]) {
-		var divBanner = $("<div/>").attr("id", "banner");
-		layout.header.prepend(divBanner);
+		bus.send("ui-html:create", {
+			div : "banner",
+			parentDiv : layout.header.attr("id"),
+			priority : 1
+		});
 
 		if (config["show-flag"]) {
-			$("<div/>").attr("id", "flag").appendTo(divBanner);
+			bus.send("ui-html:create", {
+				div : "flag",
+				parentDiv : "banner"
+			});
 		}
+
 		if (config["show-logos"]) {
-			$("<div/>").attr("id", "logos").appendTo(divBanner);
+			bus.send("ui-html:create", {
+				div : "logos",
+				parentDiv : "banner"
+			});
 		}
-		$("<span/>").attr("id", "title").html(i18n["title"]).appendTo(divBanner);
-		$("<div/>").attr("id", "banner-izq").appendTo(divBanner);
+
+		bus.send("ui-html:create", {
+			div : "title",
+			parentDiv : "banner",
+			html : i18n["title"]
+		});
+		bus.send("ui-html:create", {
+			div : "banner-izq",
+			parentDiv : "banner",
+			html : i18n["title"]
+		});
 	}
 });
