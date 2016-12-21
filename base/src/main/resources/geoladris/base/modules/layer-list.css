@@ -77,6 +77,11 @@ td.layer_visibility {
 	padding: 0;
 	text-decoration: none;
 	width: 16px;
+	cursor: pointer;
+}
+
+.layer-list-layer-container {
+  display: table;
 }
 
 .group_info_button {
@@ -95,6 +100,8 @@ td.layer_visibility {
 		transparent;
 	display: block;
 	cursor: default;
+	float: left;
+	margin: 5px;
 }
 
 .inline-legend-button.visible {

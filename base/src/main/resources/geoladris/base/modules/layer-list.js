@@ -1,38 +1,32 @@
 define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "jquery-ui", "fancy-box" ], function($, bus, layerListSelector, i18n, moment) {
 
-	var layerActions, groupActions, temporalLayers, groupIdAccordionIndex, numTopLevelGroups, divLayers;
+	var layerActions = [];
+	var groupActions = [];
+	var temporalLayers = [];
+	var groupIdAccordionIndex = {};
+	var numTopLevelGroups = 0;
+	var layerGroups = {};
 
-	var draw = function() {
+	bus.send("ui-accordion:create", {
+		div : "all_layers",
+		parentDiv : "layers_container",
+		css : "layers-accordion"
+	});
+
+	layerListSelector.registerLayerPanel("all_layers_selector", 10, i18n.layers, $("#all_layers"));
+
+	bus.listen("reset-layers", function() {
 		layerActions = [];
 		groupActions = [];
 		temporalLayers = [];
 		groupIdAccordionIndex = {};
 		numTopLevelGroups = 0;
 
-		if (divLayers) {
-			divLayers.remove();
-			layerListSelector.removeLayerPanel("all_layers_selector");
-		}
-		divLayers = $("<div/>").attr("id", "all_layers");
-		divLayers.addClass("group-container");
-		divLayers.addClass("ui-accordion-icons");
-
-		divLayers.accordion({
-			"animate" : false,
-			"header" : "> div > div.group-title",
-			"heightStyle" : "content",
-			// Collapse all content since otherwise the accordion sets the
-			// 'display'
-			// to 'block' instead than to 'table'
-			"collapsible" : true,
-			"active" : false
+		bus.send("ui-set-content", {
+			div : "all_layers",
+			html : ""
 		});
-		layerListSelector.registerLayerPanel("all_layers_selector", 10, i18n.layers, divLayers);
-	};
-
-	draw();
-
-	bus.listen("reset-layers", draw);
+	});
 
 	bus.listen("register-layer-action", function(event, action) {
 		layerActions.push(action);
@@ -43,166 +37,115 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "jque
 	});
 
 	bus.listen("add-group", function(event, groupInfo) {
-
-		var divTitle = $("<div/>").html(groupInfo.label).disableSelection();
-		divTitle.addClass("group-title");
-
-		for (var i = 0; i < groupActions.length; i++) {
-			var groupAction = groupActions[i];
-			var element = groupAction(groupInfo);
-			if (element != null) {
-				// prevent accordion item from expanding
-				// when clicking on the info button
-				element.click(function(event) {
-					event.stopPropagation()
-				});
-				element.addClass("group_info_button");
-				divTitle.prepend(element);
-			}
-		}
-
-		var tblLayerGroup = $("<table/>");
-		tblLayerGroup.attr("id", "group-content-table-" + groupInfo.id);
-		$("<tbody/>").addClass("layer-container").appendTo(tblLayerGroup);
-
-		var divGroup = $("<div/>").addClass("group").attr("data-group", groupInfo.id);
-
+		var accordion;
 		if (groupInfo.parentId) {
-			var parentId = groupInfo.parentId;
-			var tblParentLayerGroup = $("#group-content-table-" + parentId);
-			tblParentLayerGroup.addClass("group-container");
-			if (tblParentLayerGroup.length == 0) {
-				bus.send("error", "Group " + groupInfo.label + " references nonexistent group: " + parentId);
-			}
-			tblParentLayerGroup.append(divGroup);
-			divGroup.append(divTitle).append(tblLayerGroup);
+			accordion = "all_layers_group_" + groupInfo.parentId;
 		} else {
-			divLayers.append(divGroup);
-			divTitle.addClass("header");
-			divGroup.append(divTitle);
-			var divContent = $("<div/>").css("padding", "10px 2px 10px 2px");
-			divContent.append(tblLayerGroup);
-			divGroup.append(divContent);
-			divLayers.accordion("refresh");
+			accordion = "all_layers";
 			groupIdAccordionIndex[groupInfo.id] = numTopLevelGroups;
 			numTopLevelGroups++;
+		}
+
+		bus.send("ui-accordion:add-group", {
+			accordion : accordion,
+			id : "all_layers_group_" + groupInfo.id,
+			title : groupInfo.label
+		});
+
+		bus.send("ui-add-class", {
+			div : "all_layers_group_" + groupInfo.id,
+			cssClass : "layer-list-accordion-content"
+		});
+
+		bus.send("ui-selectable-list:create", {
+			div : "all_layers_group_" + groupInfo.id
+		});
+
+		bus.listen("ui-selectable-list:all_layers_group_" + groupInfo.id + ":item-selected", function(e, id) {
+			bus.send("layer-visibility", [ id, true ]);
+		});
+		bus.listen("ui-selectable-list:all_layers_group_" + groupInfo.id + ":item-unselected", function(e, id) {
+			bus.send("layer-visibility", [ id, false ]);
+		});
+
+		for (var i = 0; i < groupActions.length; i++) {
+			$("#all_layers_group_" + groupInfo.id + "-header").append(groupActions[i](groupInfo));
 		}
 	});
 
 	bus.listen("add-layer", function(event, portalLayer) {
-		var tblLayerGroup, trLayer, tdLegend, tdVisibility, divCheckbox, tdName, tdInfo, aLink, inlineLegend;
+		layerGroups[portalLayer.id] = portalLayer.groupId;
 
-		tblLayerGroup = $("#group-content-table-" + portalLayer.groupId);
-		if (tblLayerGroup.length == 0) {
-			bus.send("error", "Layer " + portalLayer.label + " references nonexistent group: " + portalLayer.groupId);
+		var container = "all_layers_group_" + portalLayer.groupId;
+
+		if (portalLayer.inlineLegendUrl != null) {
+			bus.send("ui-html:create", {
+				div : "layer_list_legend_" + portalLayer.id,
+				parentDiv : container,
+				css : "inline-legend"
+			});
 		} else {
-			trLayer = $("<tr/>").attr("id", "layer-row-" + portalLayer.id).addClass("layer_row");
-			trLayer.attr("data-layer", portalLayer.id);
+			var wmsLayersWithLegend = portalLayer.mapLayers.filter(function(layer) {
+				return layer.hasOwnProperty("legend");
+			});
+			var wmsLayerWithLegend = wmsLayersWithLegend[0];
 
-			tdLegend = $("<td/>").addClass("layer_legend");
-
-			if (portalLayer.inlineLegendUrl != null) {
-				inlineLegend = $('<img class="inline-legend" src="' + portalLayer.inlineLegendUrl + '">');
-				tdLegend.append(inlineLegend);
-			} else {
-				var wmsLayersWithLegend = portalLayer.mapLayers.filter(function(layer) {
-					return layer.hasOwnProperty("legend");
+			if (wmsLayerWithLegend) {
+				bus.send("ui-button:create", {
+					div : "inline-legend-button-" + portalLayer.id,
+					parentDiv : container,
+					css : "inline-legend-button",
+					sendEventName : "open-legend",
+					sendEventMessage : wmsLayerWithLegend.id
 				});
-				var wmsLayerWithLegend = wmsLayersWithLegend[0];
 
-				if (wmsLayerWithLegend) {
-					inlineLegend = $("<td/>");
-					inlineLegend.addClass("inline-legend-button");
-					inlineLegend.attr("id", "inline-legend-button-" + portalLayer.id);
+				if (portalLayer.active) {
+					bus.send("ui-add-class", {
+						div : "inline-legend-button-" + portalLayer.id,
+						cssClass : "visible"
+					});
+				}
 
-					if (portalLayer.active) {
-						inlineLegend.addClass("visible");
+				bus.listen("layer-visibility", function(event, layerId, visibility) {
+					if (layerId != portalLayer.id) {
+						return;
 					}
 
-					bus.listen("layer-visibility", function(event, layerId, visibility) {
-						if (layerId != portalLayer.id) {
-							return;
-						}
-
-						if (visibility) {
-							inlineLegend.addClass("visible");
-						} else {
-							inlineLegend.removeClass("visible");
-						}
-					});
-
-					inlineLegend.click(function() {
-						if ($("#" + portalLayer.id + "_visibility_checkbox").hasClass("checked")) {
-							bus.send("open-legend", wmsLayerWithLegend.id);
-						}
-					});
-
-					tdLegend.append(inlineLegend);
-				}
+					bus.send("ui-button:inline-legend-button-" + portalLayer.id + ":enable", visibility);
+				});
 			}
-			trLayer.append(tdLegend);
+		}
 
-			tdVisibility = $("<td/>").css("width", "16px");
-			divCheckbox = $("<div/>").attr("id", portalLayer.id + "_visibility_checkbox").addClass("layer_visibility");
-			if (portalLayer.active) {
-				divCheckbox.addClass("checked");
-			}
-			divCheckbox.mousedown(function() {
-				divCheckbox.addClass("mousedown");
-			}).mouseup(function() {
-				divCheckbox.removeClass("mousedown");
-			}).mouseenter(function() {
-				divCheckbox.addClass("in");
-			}).mouseleave(function() {
-				divCheckbox.removeClass("in");
-			}).click(function() {
-				divCheckbox.toggleClass("checked");
-				bus.send("layer-visibility", [ portalLayer.id, divCheckbox.hasClass("checked") ]);
-			});
+		bus.send("ui-selectable-list:" + container + ":add-item", {
+			id : portalLayer.id,
+			text : portalLayer.label
+		});
+		bus.send("ui-add-class", {
+			div : portalLayer.id + "-container",
+			cssClass : "layer-list-layer-container"
+		});
+		bus.send("ui-accordion:" + container + ":visibility", {
+			header : true
+		});
 
-			if (portalLayer.mapLayers && portalLayer.mapLayers.length > 0) {
-				tdVisibility.append(divCheckbox);
-			}
+		for (var i = 0; i < layerActions.length; i++) {
+			$("#" + portalLayer.id + "-container").append(layerActions[i](portalLayer));
+		}
 
-			trLayer.append(tdVisibility);
-
-			tdName = $("<td/>").addClass("layer_name");
-			tdName.html(portalLayer.label);
-			trLayer.append(tdName);
-
-			for (var i = 0; i < layerActions.length; i++) {
-				var layerAction = layerActions[i];
-				var element = layerAction(portalLayer);
-				tdAction = $("<td/>").addClass("layer_action").appendTo(trLayer);
-				if (element != null) {
-					tdAction.append(element);
-				}
-			}
-
-			if (portalLayer.timestamps && portalLayer.timestamps.length > 0) {
-				temporalLayers.push(portalLayer);
-			}
-
-			tblLayerGroup.append(trLayer);
-			try {
-				divLayers.accordion("refresh");
-			} catch (e) {
-				console.log(e);
-			}
+		if (portalLayer.timestamps && portalLayer.timestamps.length > 0) {
+			temporalLayers.push(portalLayer);
 		}
 	});
 
 	bus.listen("layer-visibility", function(event, layerId, visible) {
-		var divCheckbox = $("#" + layerId + "_visibility_checkbox");
-		if (visible) {
-			divCheckbox.addClass("checked");
-		} else {
-			divCheckbox.removeClass("checked");
-		}
+		bus.send("ui-selectable-list:all_layers_group_" + layerGroups[layerId] + ":set-item", {
+			id : layerId,
+			selected : visible
+		});
 	});
 
 	var updateLabel = function(layerId, layerFormat, date) {
-		var tdLayerName = $("#layer-row-" + layerId + " .layer_name");
+		var tdLayerName = $("#" + layerId + "-container").children(".selectable-list-text");
 		tdLayerName.find("span").remove();
 		var format;
 		if (layerFormat) {
@@ -278,10 +221,9 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "jque
 	});
 
 	bus.listen("show-layer-group", function(event, groupId) {
-		if (groupIdAccordionIndex.hasOwnProperty(groupId)) {
-			divLayers.accordion({
-				"active" : groupIdAccordionIndex[groupId]
-			});
-		}
+		bus.send("ui-accordion:all_layers_group_" + groupId + ":visibility", {
+			header : true,
+			content : true
+		});
 	});
 });

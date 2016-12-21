@@ -1,4 +1,4 @@
-define([ "jquery", "i18n", "customization", "message-bus" ], function($, i18n, customization, bus) {
+define([ "jquery", "i18n", "customization", "message-bus", "layout", "ui/ui" ], function($, i18n, customization, bus, layout) {
 
 	/*
 	 * keep the information about layer legends that will be necessary when they
@@ -6,95 +6,96 @@ define([ "jquery", "i18n", "customization", "message-bus" ], function($, i18n, c
 	 */
 	var legendArrayInfo = {};
 
-	var dialog = null;
+	var dialogId = "legend_panel";
 	var divContent = null;
 
-	var getDialog = function() {
-		if (dialog == null) {
-			dialog = $("<div/>");
-			dialog.attr("title", i18n["legend_button"]);
-			dialog.attr("id", "legend_pane");
-			divContent = $("<div/>");
-			divContent.appendTo(dialog);
-			divContent.attr("id", "legend_pane_content");
-			dialog.dialog({
-				position : {
-					my : "right top",
-					at : "right bottom+15",
-					of : "#toggle_legend"
-				},
-				closeOnEscape : false,
-				autoOpen : false,
-				height : 300,
-				minHeight : 400,
-				maxHeight : 400,
-				width : 325,
-				zIndex : 2000,
-				resizable : true
-			});
-		}
+	bus.send("ui-dialog:create", {
+		div : dialogId,
+		parentDiv : layout.map.attr("id"),
+		title : i18n["legend_button"],
+		closeButton : true
+	});
 
-		return dialog;
-	};
-
-	var getDivContent = function() {
-		if (divContent == null) {
-			getDialog();
-		}
-
-		return divContent;
-	};
+	bus.send("ui-html:create", {
+		div : dialogId + "_content",
+		parentDiv : dialogId
+	});
 
 	var refreshLegendArray = function(legendArray) {
-		var idPrefix = "legend_panel_";
+		bus.send("ui-set-content", {
+			div : dialogId + "_content",
+			html : ""
+		});
+
 		for (var i = 0; i < legendArray.length; i++) {
 			var legendInfo = legendArray[i];
-			if (legendInfo.visibility) {
-				var id = idPrefix + legendInfo.id;
-				var img = $("#" + id + "_img");
-				if (img.length == 0) {
-					var tblLegend = $("<table/>").appendTo(getDivContent());
-					tblLegend.attr("id", id);
-					tblLegend.addClass("layer_legend");
-
-					var trTitle = $("<tr/>").appendTo(tblLegend).addClass("legend_header");
-					$("<td/>").appendTo(trTitle).addClass("legend_layer_name").html(legendInfo.label);
-					if (typeof legendInfo["sourceLink"] != "undefined" && typeof legendInfo["sourceLabel"] != "undefined") {
-						var tdSourceLink = $("<td/>").appendTo(trTitle).addClass("data_source_link");
-						$("<span/>").appendTo(tdSourceLink).addClass("lang").html(i18n["data_source"] + ":");
-						$("<a/>").appendTo(tdSourceLink).attr("target", "_blank").attr("href", legendInfo.sourceLink).html(legendInfo.sourceLabel);
-					}
-					var trImage = $("<tr/>").appendTo(tblLegend).addClass("legend_image");
-					var tdImage = $("<td/>").attr("colspan", "2").appendTo(trImage);
-					img = $("<img/>").attr("id", id + "_img").appendTo(tdImage);
-				}
-				var url = legendInfo.legendUrl;
-				if (legendInfo.timeDependent && legendInfo.timestamp) {
-					url = url + "&STYLE=" + legendInfo.timestyle + "&TIME=" + legendInfo.timestamp.toISO8601String();
-				}
-				img.attr("src", url);
-			} else {
-				$("#" + idPrefix + legendInfo.id).remove();
+			if (!legendInfo.visibility) {
+				continue;
 			}
+
+			var id = dialogId + legendInfo.id;
+			bus.send("ui-html:create", {
+				div : id + "_container",
+				parentDiv : dialogId + "_content",
+				css : "layer_legend_container"
+			});
+			bus.send("ui-html:create", {
+				div : id + "_header",
+				parentDiv : id + "_container",
+
+				css : "layer_legend_header"
+			});
+			bus.send("ui-html:create", {
+				div : id + "_layer_name",
+				parentDiv : id + "_header",
+				html : legendInfo.label,
+				css : "layer_legend_name"
+			});
+
+			if (typeof legendInfo["sourceLink"] != "undefined" && typeof legendInfo["sourceLabel"] != "undefined") {
+				bus.send("ui-html:create", {
+					div : id + "_source_label",
+					parentDiv : id + "_header",
+					html : i18n["data_source"] + ": ",
+					css : "layer_legend_source_label"
+				});
+				bus.send("ui-button:create", {
+					div : id + "_source_link",
+					parentDiv : id + "_header",
+					text : legendInfo.sourceLabel,
+					css : "layer_legend_source_link",
+					sendEventName : "ui-open-url",
+					sendEventMessage : {
+						url : legendInfo.sourceLink,
+						target : "_blank"
+					}
+				});
+			}
+			bus.send("ui-html:create", {
+				div : id + "_img",
+				parentDiv : id + "_container",
+				css : "legend_image",
+			});
+
+			var url = legendInfo.legendUrl;
+			if (legendInfo.timeDependent && legendInfo.timestamp) {
+				url = url + "&STYLE=" + legendInfo.timestyle + "&TIME=" + legendInfo.timestamp.toISO8601String();
+			}
+			bus.send("ui-html:create", {
+				div : id + "_img",
+				parentDiv : id + "_container",
+				css : "legend_image",
+				html : "<img src='" + url + "'>"
+			});
 		}
 	}
 
 	bus.listen("open-legend", function(event, layerId) {
-		getDialog().dialog("open");
-		var table = $("#legend_panel_" + layerId);
-		var dialog = getDialog();
-		dialog.animate({
-			scrollTop : table.offset().top - dialog.offset().top + dialog.scrollTop()
-		});
+		bus.send("ui-show", dialogId);
 	});
 
 	bus.listen("toggle-legend", function() {
-		var dialog = getDialog();
-		if (!dialog.dialog("isOpen")) {
-			getDialog().dialog("open");
-		} else {
-			getDialog().dialog("close");
-		}
+		bus.send("ui-toggle", dialogId);
 	});
 
 	bus.listen("reset-layers", function() {
