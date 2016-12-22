@@ -170,9 +170,14 @@ define([ "map", "message-bus", "customization", "openlayers", "jquery" ], functi
 			} else {
 				var lastXY = null;
 
+				var url = mapLayer.baseUrl;
+				if (url instanceof Array) {
+					url = url[0];
+				}
+
 				var control = new OpenLayers.Control.WMSGetFeatureInfo({
 					url : queryUrl,
-					layerUrls : [ mapLayer.baseUrl ],
+					layerUrls : [ url ],
 					title : 'Identify features by clicking',
 					infoFormat : 'application/vnd.ogc.gml',
 					drillDown : false,
