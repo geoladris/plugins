@@ -1,97 +1,112 @@
-define([ "message-bus", "customization", "map", "toolbar", "i18n", "jquery", "jquery-ui", "openlayers", "./edit-controls" ],//
+define([ "message-bus", "customization", "map", "toolbar", "i18n", "jquery", "jquery-ui", "openlayers", "./edit-controls", "ui/ui" ],//
 function(bus, customization, map, toolbar, i18n, $) {
 
-	var feedbackLayers = new Array();
+	var feedbackLayers = {};
 
 	// Dialog controls
 	var dlg;
+	var dialogId = "feedback_popup";
 	var cmbLayer;
 	var lblTimestamp;
-	var txtEmail;
-	var txtComment;
 	var editToolbar;
 
 	var feedbackLayer = new OpenLayers.Layer.Vector("Feedback");
 
-	var btn = $("<a/>").attr("id", "feedback-button").addClass("blue_button toolbar_button").html("Feedback");
+	bus.send("ui-button:create", {
+		div : "feedback-button",
+		parentDiv : toolbar.attr("id"),
+		css : "blue_button toolbar_button",
+		text : "Feedback",
+		sendEventName : "activate-feedback"
+	});
 
-	var initializeDialog = function() {
-		dlg = $("<div/>").attr("id", "feedback_popup");
-		$("<label/>").addClass("feedback-form-left").html("Capa:").appendTo(dlg);
-		cmbLayer = $("<select/>").attr("id", "feedback-layer-combo").appendTo(dlg);
-		cmbLayer.change(refreshYear);
-		lblTimestamp = $("<span/>").appendTo(dlg);
+	bus.send("ui-dialog:create", {
+		div : dialogId,
+		parentDiv : "map",
+		title : i18n["feedback_title"],
+		closeButton : true
+	});
+	dlg = $("#" + dialogId);
 
-		dlg.append("<br/>");
-		$("<label/>").addClass("feedback-form-left").html("Drawing tools:").appendTo(dlg);
-		$("<div/>").attr("id", "fb_toolbar").addClass("olControlPortalToolbar").appendTo(dlg);
+	bus.send("ui-choice-field:create", {
+		div : "feedback-input-layer",
+		parentDiv : dialogId,
+		label : "Capa: " // i18n["Feedback.layer"]
+	});
+	cmbLayer = $("#feedback-input-layer").find("select");
 
-		dlg.append("<br/>");
-		$("<label/>").addClass("feedback-form-left").html("Email:").appendTo(dlg);
-		txtEmail = $("<input/>").attr("type", "text").attr("size", "40").appendTo(dlg);
+	cmbLayer.change(refreshYear);
+	lblTimestamp = $("<span/>").appendTo(dlg);
+	$("<label/>").addClass("feedback-form-left").html("Drawing tools:").appendTo(dlg);
+	$("<div/>").attr("id", "fb_toolbar").addClass("olControlPortalToolbar").appendTo(dlg);
 
-		dlg.append("<br/>");
-		$("<label/>").addClass("feedback-form-left").html("Comentario:").appendTo(dlg);
-		txtComment = $("<textarea/>").attr("cols", "40").attr("rows", "6").appendTo(dlg);
+	bus.send("ui-input-field:create", {
+		div : "feedback-input-email",
+		parentDiv : dialogId,
+		label : "Email: " // i18n["Feedback.email"]
+	});
 
-		dlg.append("<br/>");
-		var btnClose = $("<div/>").html("Cerrar").appendTo($("<div/>").addClass("feedback-form-left").appendTo(dlg));
-		btnClose.button().click(function() {
-			dlg.dialog('close');
-		});
-		var btnSubmit = $("<div/>").html("Enviar").appendTo(dlg);
-		btnSubmit.button().click(function() {
-			submit();
-		});
+	bus.send("ui-text-area-field:create", {
+		div : "feedback-input-comment",
+		parentDiv : dialogId,
+		label : "Comentario: ", // i18n["Feedback.comment"]
+		cols : 40,
+		rows : 6
+	});
 
-		dlg.dialog({
-			autoOpen : false,
-			closeOnEscape : false,
-			width : "auto",
-			zIndex : 2000,
-			resizable : false,
-			position : {
-				my : "left top",
-				at : "left bottom+40",
-				of : btn
-			},
-			title : i18n["feedback_title"],
-			close : deactivateFeedback
-		});
+	bus.send("ui-button:create", {
+		div : "feedback-send",
+		parentDiv : dialogId,
+		css : "dialog-ok-button",
+		text : "Send"
+	});
 
-		// Need to create after the dialog is in the DOM otherwise the call to
-		// getElementById returns null
-		editToolbar = new OpenLayers.Control.PortalToolbar(feedbackLayer, {
-			div : document.getElementById("fb_toolbar")
-		});
+	bus.send("ui-button:create", {
+		div : "feedback-cancel",
+		parentDiv : dialogId,
+		css : "dialog-ok-button",
+		text : "Cancel",
+		sendEventName : "ui-hide",
+		sendEventMessage : dialogId
+	});
 
-	}
+	bus.send("ui-form-collector:extend", {
+		button : "feedback-send",
+		sendEventName : "feedback-send",
+		divs : [ "feedback-input-layer", "feedback-input-email", "feedback-input-comment" ],
+		names : [ "layer", "email", "comment" ]
+	});
 
-	var submit = function() {
+	// Need to create after the dialog is in the DOM otherwise the call to
+	// getElementById returns null
+	editToolbar = new OpenLayers.Control.PortalToolbar(feedbackLayer, {
+		div : document.getElementById("fb_toolbar")
+	});
+
+	bus.listen("feedback-send", function(e, msg) {
 		var mailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		if (cmbLayer.val() == null) {
+		if (msg.layer == null) {
 			bus.send("error", i18n["Feedback.no-layer-selected"]);
-		} else if (!mailRegex.test(txtEmail.val())) {
+		} else if (!mailRegex.test(msg.email)) {
 			bus.send("error", i18n["Feedback.invalid-email-address"]);
 		} else if (!editToolbar.hasFeatures()) {
 			bus.send("error", i18n["Feedback.no-geometries"]);
 		} else {
 			// Do submit
-
 			var data = {
 				"lang" : customization.languageCode,
-				"comment" : txtComment.val(),
+				"comment" : msg.comment,
 				"geometry" : editToolbar.getFeaturesAsWKT(),
-				"layerName" : cmbLayer.val(),
-				"email" : txtEmail.val()
+				"layerName" : msg.layer,
+				"email" : msg.email
 			};
 
-			var timestamp = feedbackLayers[cmbLayer.val()].timestamp;
+			var timestamp = feedbackLayers[msg.layer].timestamp;
 			if (timestamp != null) {
 				data.date = timestamp.getDate() + "/" + (timestamp.getMonth() + 1) + "/" + timestamp.getFullYear();
 			}
 
-			bus.send("show-wait-mask", i18n["Feedback.wait"]);
+			bus.send("ui-loading:start", i18n["Feedback.wait"]);
 
 			bus.send("ajax", {
 				type : 'POST',
@@ -99,39 +114,39 @@ function(bus, customization, map, toolbar, i18n, $) {
 				data : data,
 				success : function(data, textStatus, jqXHR) {
 					bus.send("info", i18n["Feedback.verify_mail_sent"]);
-					dlg.dialog('close');
+					bus.send("ui-hide", dialogId);
 				},
 				errorMsg : i18n["Feedback.submit_error"],
 				complete : function() {
-					bus.send("hide-wait-mask");
+					bus.send("ui-loading:end", i18n["Feedback.wait"]);
 				}
 			});
 		}
-	}
+	});
 
 	var activateFeedback = function() {
-		if (!btn.hasClass("selected")) {
-			if (cmbLayer.find("option").length == 0) {
-				bus.send("error", i18n["Feedback.no_layer_visible"]);
-			} else {
-				$("#button_feedback").addClass('selected');
-				txtEmail.val("");
-				txtComment.val("");
-				bus.send("activate-exclusive-control", editToolbar);
-				map.addLayer(feedbackLayer);
-				dlg.dialog("open");
-			}
+		if (cmbLayer.find("option").length == 0) {
+			bus.send("error", i18n["Feedback.no_layer_visible"]);
+		} else {
+			map.addLayer(feedbackLayer);
+			bus.send("ui-button:feedback-button:activate", true);
+			bus.send("ui-text-area-field:feedback-input-comment:set-value", "");
+			bus.send("ui-text-area-field:feedback-input-email:set-value", "");
+			bus.send("activate-exclusive-control", editToolbar);
+			bus.send("ui-show", "feedback_popup");
 		}
 	}
 
-	var deactivateFeedback = function() {
+	bus.listen("ui-hide", function(e, id) {
+		if (id != dialogId) {
+			return;
+		}
 		feedbackLayer.removeAllFeatures();
-		bus.send("activate-default-exclusive-control");
 		editToolbar.deactivate();
 		map.removeLayer(feedbackLayer);
-		$("#button_feedback").removeClass('selected');
-		dlg.dialog("close");
-	}
+		bus.send("activate-default-exclusive-control");
+		bus.send("ui-button:feedback-button:activate", false);
+	});
 
 	var refreshYear = function() {
 		var text = "";
@@ -145,33 +160,25 @@ function(bus, customization, map, toolbar, i18n, $) {
 		lblTimestamp.html(text);
 	}
 
-	initializeDialog();
-
-	// Install feedback button
-	btn.appendTo(toolbar);
-	btn.click(function() {
-		activateFeedback();
-		return false;
-	});
-
 	bus.listen("activate-feedback", activateFeedback);
-	bus.listen("deactivate-feedback", function() {
-		// Enough, the close listener will clean up, as when manually closed
-		dlg.dialog("close");
-	});
 
 	// Listen events
 	bus.listen("layer-visibility", function(event, layerId, visibility) {
 		if (layerId in feedbackLayers) {
 			feedbackLayers[layerId].visibility = visibility;
 			var currentValue = cmbLayer.val();
-			cmbLayer.empty();
+			var values = [];
 			for (layerId in feedbackLayers) {
 				var layerInfo = feedbackLayers[layerId];
 				if (layerInfo["visibility"]) {
-					$("<option/>").attr("value", layerId).html(layerInfo.name).appendTo(cmbLayer);
+					values.push({
+						text : layerInfo.name,
+						value : layerId
+					});
 				}
 			}
+
+			bus.send("ui-choice-field:feedback-input-layer:set-values", [ values ]);
 			if (currentValue != null && cmbLayer.find("option[value='" + currentValue + "']").length > 0) {
 				cmbLayer.val(currentValue);
 			} else {
@@ -182,7 +189,7 @@ function(bus, customization, map, toolbar, i18n, $) {
 	});
 
 	bus.listen("reset-layers", function() {
-		feedbackLayers = new Array();
+		feedbackLayers = {};
 	});
 
 	bus.listen("add-layer", function(event, portalLayer) {
