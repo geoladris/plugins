@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.fao.unredd.layers.Layer;
 import org.fao.unredd.layers.LayerFactory;
 import org.fao.unredd.layers.Outputs;
-import org.geoladris.StatusServletException;
+import org.geoladris.servlet.StatusServletException;
 
 public class IndicatorListServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;

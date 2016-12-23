@@ -13,8 +13,8 @@ import org.fao.unredd.feedback.CannotSendMailException;
 import org.fao.unredd.feedback.Feedback;
 import org.fao.unredd.feedback.MissingArgumentException;
 import org.geoladris.PersistenceException;
-import org.geoladris.StatusServletException;
 import org.geoladris.config.Config;
+import org.geoladris.servlet.StatusServletException;
 
 public class CreateCommentServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;

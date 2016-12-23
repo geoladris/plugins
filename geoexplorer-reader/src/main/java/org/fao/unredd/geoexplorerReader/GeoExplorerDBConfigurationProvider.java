@@ -10,11 +10,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.geoladris.ConfigurationException;
 import org.geoladris.DBUtils;
 import org.geoladris.PersistenceException;
-import org.geoladris.PortalRequestConfiguration;
+import org.geoladris.config.ConfigException;
 import org.geoladris.config.ModuleConfigurationProvider;
+import org.geoladris.config.PortalRequestConfiguration;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
@@ -41,14 +41,14 @@ public class GeoExplorerDBConfigurationProvider implements ModuleConfigurationPr
         try {
           mapId = Integer.parseInt(mapIdParameter);
         } catch (NumberFormatException e) {
-          throw new ConfigurationException("mapId must be an integer");
+          throw new ConfigException("mapId must be an integer");
         }
       } else {
-        throw new ConfigurationException("mapId parameter must be configured");
+        throw new ConfigException("mapId parameter must be configured");
       }
       return getGeoExplorerLayers(mapId);
     } catch (PersistenceException e) {
-      throw new ConfigurationException("Cannot read geoexplorer database", e);
+      throw new ConfigException("Cannot read geoexplorer database", e);
     }
   }
 

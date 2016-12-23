@@ -14,8 +14,8 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.geoladris.PortalRequestConfiguration;
 import org.geoladris.config.Config;
+import org.geoladris.config.PortalRequestConfiguration;
 import org.geoladris.servlet.AppContextListener;
 import org.junit.Before;
 import org.junit.Test;

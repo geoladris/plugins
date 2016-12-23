@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.fao.unredd.feedback.Feedback;
 import org.fao.unredd.feedback.VerificationCodeNotFoundException;
 import org.geoladris.PersistenceException;
-import org.geoladris.StatusServletException;
 import org.geoladris.config.Config;
+import org.geoladris.servlet.StatusServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

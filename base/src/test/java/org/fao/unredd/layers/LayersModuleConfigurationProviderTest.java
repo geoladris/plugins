@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
-import org.geoladris.PortalRequestConfiguration;
+import org.geoladris.config.PortalRequestConfiguration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
