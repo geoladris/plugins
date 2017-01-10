@@ -1,7 +1,13 @@
 define([ "geoladris-tests" ], function(tests) {
 	describe("layers-api", function() {
+		var injector;
+		var bus;
+
 		beforeEach(function() {
-			tests.init({});
+			var initialization = tests.init("layers-editor", {});
+			injector = initialization.injector;
+			bus = initialization.bus;
+
 			injector.mock("customization", {
 				languageCode : "fr"
 			});

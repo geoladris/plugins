@@ -10,9 +10,13 @@ define([ "geoladris-tests" ], function(tests) {
 			"layers-editor.save_layers" : "Save my layers!",
 			"layers-editor.error_saving" : "Could not save them!"
 		};
+		var injector;
+		var bus;
 
 		beforeEach(function() {
-			tests.init({});
+			var initialization = tests.init("layers-editor", {});
+			injector = initialization.injector;
+			bus = initialization.bus;
 
 			toolbar = $("<div/>").attr("id", "toolbar");
 			$("body").append(toolbar);

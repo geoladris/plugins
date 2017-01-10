@@ -22,8 +22,7 @@ require.config({
   paths : {
 	  "jquery" : "target/unpacked-core/geoladris/core/jslib/jquery-2.1.0",
 		"message-bus" : "target/unpacked-core/geoladris/core/modules/message-bus",
-		"Squire" : "node_modules/squirejs/src/Squire",
-		"geoladris-tests" : "src/test/resources/js/geoladris-tests"
+		"Squire" : "node_modules/squirejs/src/Squire"
 	},
 	deps : allTestFiles,
 	callback : function() {

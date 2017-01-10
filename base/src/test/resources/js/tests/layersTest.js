@@ -1,7 +1,10 @@
 define([ "geoladris-tests" ], function(tests) {
 	describe("layers", function() {
+		var bus;
+		var injector;
+
 		beforeEach(function() {
-			tests.init({
+			var initialization = tests.init("base", {
 				"layers" : {
 					"default-server" : "http://demo1.geo-solutions.it",
 					"wmsLayers" : [ {
@@ -26,6 +29,8 @@ define([ "geoladris-tests" ], function(tests) {
 					} ]
 				}
 			});
+			injector = initialization.injector;
+			bus = initialization.bus;
 
 			injector.mock("customization", {
 				languageCode : "fr"

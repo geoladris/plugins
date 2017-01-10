@@ -6,7 +6,7 @@ module.exports = function(config) {
 	config.set({
 	  basePath : basedir,
 		frameworks : [ 'jasmine', 'requirejs' ],
-		files : [ tests + 'test-main.js', core + 'jslib/jquery-2.1.0.js', //
+		files : [ tests + 'test-main.js', tests + 'geoladris-tests.js', core + 'jslib/jquery-2.1.0.js', //
 		{
 			pattern : core + 'modules/message-bus.js',
 			included : false
@@ -15,6 +15,9 @@ module.exports = function(config) {
 			included : false
 		}, {
 			pattern : 'src/main/resources/geoladris/*/modules/**/*.js',
+			included : false
+		}, {
+			pattern : 'src/main/resources/geoladris/*/jslib/**/*.js',
 			included : false
 		}, {
 			pattern : 'src/test/resources/js/**/*.js',
