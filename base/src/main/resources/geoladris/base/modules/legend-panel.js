@@ -1,4 +1,4 @@
-define([ "jquery", "i18n", "customization", "message-bus", "layout", "ui/ui" ], function($, i18n, customization, bus, layout) {
+define([ "jquery", "i18n", "customization", "message-bus", "layout", "ui/ui" ], function($, i18n, customization, bus, layout, ui) {
 
 	/*
 	 * keep the information about layer legends that will be necessary when they
@@ -9,23 +9,20 @@ define([ "jquery", "i18n", "customization", "message-bus", "layout", "ui/ui" ], 
 	var dialogId = "legend_panel";
 	var divContent = null;
 
-	bus.send("ui-dialog:create", {
-		div : dialogId,
-		parentDiv : layout.map.attr("id"),
+	ui.create("dialog", {
+		id : dialogId,
+		parent : layout.map.attr("id"),
 		title : i18n["legend_button"],
 		closeButton : true
 	});
 
-	bus.send("ui-html:create", {
-		div : dialogId + "_content",
-		parentDiv : dialogId
+	var content = ui.create("div", {
+		id : dialogId + "_content",
+		parent : dialogId
 	});
 
 	var refreshLegendArray = function(legendArray) {
-		bus.send("ui-set-content", {
-			div : dialogId + "_content",
-			html : ""
-		});
+		content.innerHTML = "";
 
 		for (var i = 0; i < legendArray.length; i++) {
 			var legendInfo = legendArray[i];
@@ -34,34 +31,33 @@ define([ "jquery", "i18n", "customization", "message-bus", "layout", "ui/ui" ], 
 			}
 
 			var id = dialogId + legendInfo.id;
-			bus.send("ui-html:create", {
-				div : id + "_container",
-				parentDiv : dialogId + "_content",
+			ui.create("div", {
+				id : id + "_container",
+				parent : dialogId + "_content",
 				css : "layer_legend_container"
 			});
-			bus.send("ui-html:create", {
-				div : id + "_header",
-				parentDiv : id + "_container",
-
+			ui.create("div", {
+				id : id + "_header",
+				parent : id + "_container",
 				css : "layer_legend_header"
 			});
-			bus.send("ui-html:create", {
-				div : id + "_layer_name",
-				parentDiv : id + "_header",
+			ui.create("div", {
+				id : id + "_layer_name",
+				parent : id + "_header",
 				html : legendInfo.label,
 				css : "layer_legend_name"
 			});
 
 			if (typeof legendInfo["sourceLink"] != "undefined" && typeof legendInfo["sourceLabel"] != "undefined") {
-				bus.send("ui-html:create", {
-					div : id + "_source_label",
-					parentDiv : id + "_header",
+				ui.create("div", {
+					id : id + "_source_label",
+					parent : id + "_header",
 					html : i18n["data_source"] + ": ",
 					css : "layer_legend_source_label"
 				});
-				bus.send("ui-button:create", {
-					div : id + "_source_link",
-					parentDiv : id + "_header",
+				ui.create("button", {
+					id : id + "_source_link",
+					parent : id + "_header",
 					text : legendInfo.sourceLabel,
 					css : "layer_legend_source_link",
 					sendEventName : "ui-open-url",
@@ -71,9 +67,9 @@ define([ "jquery", "i18n", "customization", "message-bus", "layout", "ui/ui" ], 
 					}
 				});
 			}
-			bus.send("ui-html:create", {
-				div : id + "_img",
-				parentDiv : id + "_container",
+			ui.create("div", {
+				id : id + "_img",
+				parent : id + "_container",
 				css : "legend_image",
 			});
 
@@ -81,9 +77,9 @@ define([ "jquery", "i18n", "customization", "message-bus", "layout", "ui/ui" ], 
 			if (legendInfo.timeDependent && legendInfo.timestamp) {
 				url = url + "&STYLE=" + legendInfo.timestyle + "&TIME=" + legendInfo.timestamp.toISO8601String();
 			}
-			bus.send("ui-html:create", {
-				div : id + "_img",
-				parentDiv : id + "_container",
+			ui.create("div", {
+				id : id + "_img",
+				parent : id + "_container",
 				css : "legend_image",
 				html : "<img src='" + url + "'>"
 			});

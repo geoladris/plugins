@@ -1,4 +1,4 @@
-define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "jquery-ui", "fancy-box" ], function($, bus, layerListSelector, i18n, moment) {
+define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/ui", "jquery-ui", "fancy-box" ], function($, bus, layerListSelector, i18n, moment, ui) {
 
 	var layerActions = [];
 	var groupActions = [];
@@ -7,9 +7,9 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "jque
 	var numTopLevelGroups = 0;
 	var layerGroups = {};
 
-	bus.send("ui-accordion:create", {
-		div : "all_layers",
-		parentDiv : "layers_container",
+	var allLayers = ui.create("div", {
+		id : "all_layers",
+		parent : "layers_container",
 		css : "layers-accordion"
 	});
 
@@ -21,11 +21,7 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "jque
 		temporalLayers = [];
 		groupIdAccordionIndex = {};
 		numTopLevelGroups = 0;
-
-		bus.send("ui-set-content", {
-			div : "all_layers",
-			html : ""
-		});
+		allLayers.innerHTML = "";
 	});
 
 	bus.listen("register-layer-action", function(event, action) {
@@ -46,26 +42,11 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "jque
 			numTopLevelGroups++;
 		}
 
-		bus.send("ui-accordion:add-group", {
-			accordion : accordion,
+		ui.create("accordion-group", {
 			id : "all_layers_group_" + groupInfo.id,
+			parent : accordion,
+			css : "layer-list-accordion-content",
 			title : groupInfo.label
-		});
-
-		bus.send("ui-add-class", {
-			div : "all_layers_group_" + groupInfo.id,
-			cssClass : "layer-list-accordion-content"
-		});
-
-		bus.send("ui-selectable-list:create", {
-			div : "all_layers_group_" + groupInfo.id
-		});
-
-		bus.listen("ui-selectable-list:all_layers_group_" + groupInfo.id + ":item-selected", function(e, id) {
-			bus.send("layer-visibility", [ id, true ]);
-		});
-		bus.listen("ui-selectable-list:all_layers_group_" + groupInfo.id + ":item-unselected", function(e, id) {
-			bus.send("layer-visibility", [ id, false ]);
 		});
 
 		for (var i = 0; i < groupActions.length; i++) {
@@ -76,12 +57,12 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "jque
 	bus.listen("add-layer", function(event, portalLayer) {
 		layerGroups[portalLayer.id] = portalLayer.groupId;
 
-		var container = "all_layers_group_" + portalLayer.groupId;
+		var parent = "all_layers_group_" + portalLayer.groupId;
 
 		if (portalLayer.inlineLegendUrl != null) {
-			bus.send("ui-html:create", {
-				div : "layer_list_legend_" + portalLayer.id,
-				parentDiv : container,
+			ui.create("div", {
+				id : "layer_list_legend_" + portalLayer.id,
+				parent : parent,
 				css : "inline-legend"
 			});
 		} else {
@@ -89,42 +70,28 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "jque
 				return layer.hasOwnProperty("legend");
 			});
 			var wmsLayerWithLegend = wmsLayersWithLegend[0];
-
 			if (wmsLayerWithLegend) {
-				bus.send("ui-button:create", {
-					div : "inline-legend-button-" + portalLayer.id,
-					parentDiv : container,
-					css : "inline-legend-button",
+				ui.create("button", {
+					id : "inline-legend-button-" + portalLayer.id,
+					parent : parent,
+					css : portalLayer.active ? "inline-legend-button visible" : "inline-legend-button",
 					sendEventName : "open-legend",
 					sendEventMessage : wmsLayerWithLegend.id
 				});
 
-				if (portalLayer.active) {
-					bus.send("ui-add-class", {
-						div : "inline-legend-button-" + portalLayer.id,
-						cssClass : "visible"
-					});
-				}
-
-				bus.listen("layer-visibility", function(event, layerId, visibility) {
-					if (layerId != portalLayer.id) {
-						return;
-					}
-
-					bus.send("ui-button:inline-legend-button-" + portalLayer.id + ":enable", visibility);
-				});
 			}
 		}
 
-		bus.send("ui-selectable-list:" + container + ":add-item", {
+		var checkbox = ui.create("checkbox", {
 			id : portalLayer.id,
+			parent : parent,
 			text : portalLayer.label
 		});
-		bus.send("ui-add-class", {
-			div : portalLayer.id + "-container",
-			cssClass : "layer-list-layer-container"
+		checkbox.addEventListener("input", function() {
+			bus.send("layer-visibility", [ this.id, this.checked]);
 		});
-		bus.send("ui-accordion:" + container + ":visibility", {
+
+		bus.send("ui-accordion-group:" + parent + ":visibility", {
 			header : true
 		});
 
@@ -138,10 +105,8 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "jque
 	});
 
 	bus.listen("layer-visibility", function(event, layerId, visible) {
-		bus.send("ui-selectable-list:all_layers_group_" + layerGroups[layerId] + ":set-item", {
-			id : layerId,
-			selected : visible
-		});
+		bus.send("ui-button:inline-legend-button-" + layerId + ":enable", visibility);
+		document.getElementById(layerId).checked = visible;
 	});
 
 	var updateLabel = function(layerId, layerFormat, date) {
@@ -221,7 +186,7 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "jque
 	});
 
 	bus.listen("show-layer-group", function(event, groupId) {
-		bus.send("ui-accordion:all_layers_group_" + groupId + ":visibility", {
+		bus.send("ui-accordion-group:all_layers_group_" + groupId + ":visibility", {
 			header : true,
 			content : true
 		});

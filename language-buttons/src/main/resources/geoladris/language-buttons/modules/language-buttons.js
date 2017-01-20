@@ -1,9 +1,9 @@
-define([ "message-bus", "toolbar", "customization", "ui/ui" ], function(bus, toolbar, customization) {
+define([ "message-bus", "toolbar", "customization", "ui/ui" ], function(bus, toolbar, customization, ui) {
 	var langs = customization.languages;
 	for (var i = 0; i < langs.length; i++) {
-		bus.send("ui-button:create", {
-			div : "lang-button-" + langs[i].code,
-			parentDiv : toolbar.attr("id"),
+		ui.create("button", {
+			id : "lang-button-" + langs[i].code,
+			parent : toolbar.attr("id"),
 			text : langs[i].name,
 			css : "blue_button toolbar_button lang_button",
 			sendEventName : "ui-open-url",

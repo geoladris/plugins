@@ -1,5 +1,5 @@
-define([ "message-bus", "customization", "map", "toolbar", "i18n", "jquery", "jquery-ui", "openlayers", "./edit-controls", "ui/ui" ],//
-function(bus, customization, map, toolbar, i18n, $) {
+define([ "message-bus", "customization", "map", "toolbar", "i18n", "jquery", "ui/ui", "jquery-ui", "openlayers", "./edit-controls" ],//
+function(bus, customization, map, toolbar, i18n, $, ui) {
 
 	var feedbackLayers = {};
 
@@ -12,58 +12,58 @@ function(bus, customization, map, toolbar, i18n, $) {
 
 	var feedbackLayer = new OpenLayers.Layer.Vector("Feedback");
 
-	bus.send("ui-button:create", {
-		div : "feedback-button",
-		parentDiv : toolbar.attr("id"),
+	ui.create("button", {
+		id : "feedback-button",
+		parent : toolbar.attr("id"),
 		css : "blue_button toolbar_button",
 		text : "Feedback",
 		sendEventName : "activate-feedback"
 	});
 
-	bus.send("ui-dialog:create", {
-		div : dialogId,
-		parentDiv : "map",
+	ui.create("dialog", {
+		id : dialogId,
+		parent : "map",
 		title : i18n["feedback_title"],
 		closeButton : true
 	});
 	dlg = $("#" + dialogId);
 
-	bus.send("ui-choice-field:create", {
-		div : "feedback-input-layer",
-		parentDiv : dialogId,
+	var layerInput = ui.create("choice", {
+		id : "feedback-input-layer",
+		parent : dialogId,
 		label : "Capa: " // i18n["Feedback.layer"]
 	});
-	cmbLayer = $("#feedback-input-layer").find("select");
+	cmbLayer = $(layerInput);
 
 	cmbLayer.change(refreshYear);
 	lblTimestamp = $("<span/>").appendTo(dlg);
 	$("<label/>").addClass("feedback-form-left").html("Drawing tools:").appendTo(dlg);
 	$("<div/>").attr("id", "fb_toolbar").addClass("olControlPortalToolbar").appendTo(dlg);
 
-	bus.send("ui-input-field:create", {
-		div : "feedback-input-email",
-		parentDiv : dialogId,
+	var emailInput = ui.create("input", {
+		id : "feedback-input-email",
+		parent : dialogId,
 		label : "Email: " // i18n["Feedback.email"]
 	});
 
-	bus.send("ui-text-area-field:create", {
-		div : "feedback-input-comment",
-		parentDiv : dialogId,
+	var commentInput = ui.create("text-area", {
+		id : "feedback-input-comment",
+		parent : dialogId,
 		label : "Comentario: ", // i18n["Feedback.comment"]
 		cols : 40,
 		rows : 6
 	});
 
-	bus.send("ui-button:create", {
-		div : "feedback-send",
-		parentDiv : dialogId,
+	ui.create("button", {
+		id : "feedback-send",
+		parent : dialogId,
 		css : "dialog-ok-button",
 		text : "Send"
 	});
 
-	bus.send("ui-button:create", {
-		div : "feedback-cancel",
-		parentDiv : dialogId,
+	ui.create("button", {
+		id : "feedback-cancel",
+		parent : dialogId,
 		css : "dialog-ok-button",
 		text : "Cancel",
 		sendEventName : "ui-hide",
@@ -130,8 +130,8 @@ function(bus, customization, map, toolbar, i18n, $) {
 		} else {
 			map.addLayer(feedbackLayer);
 			bus.send("ui-button:feedback-button:activate", true);
-			bus.send("ui-text-area-field:feedback-input-comment:set-value", "");
-			bus.send("ui-text-area-field:feedback-input-email:set-value", "");
+			commentInput.value = "";
+			emailInput.value = "";
 			bus.send("activate-exclusive-control", editToolbar);
 			bus.send("ui-show", "feedback_popup");
 		}

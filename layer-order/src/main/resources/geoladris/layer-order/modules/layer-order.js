@@ -4,42 +4,43 @@
 
 'use strict';
 
-define([ "layout", "module", "toolbar", "i18n", "jquery", "message-bus", "map", "jquery-ui", "ui/ui" ], function(layout, module, toolbar, i18n, $, bus, map) {
+define([ "layout", "module", "toolbar", "i18n", "jquery", "message-bus", "map", "ui/ui", "jquery-ui" ], function(layout, module, toolbar, i18n, $, bus, map, ui) {
 	var dialogId = "layer-order-pane";
 
 	// Create ui components
-	bus.send("ui-button:create", {
-		div : "order-button",
-		parentDiv : toolbar.attr("id"),
+	ui.create("button", {
+		id : "order-button",
+		parent : toolbar.attr("id"),
 		css : "blue_button toolbar_button",
 		text : i18n["layer_order"],
 		sendEventName : "ui-toggle",
 		sendEventMessage : dialogId
 	});
 
-	bus.send("ui-dialog:create", {
-		div : dialogId,
-		parentDiv : layout.map.attr("id"),
+	ui.create("dialog", {
+		id : dialogId,
+		parent : layout.map.attr("id"),
 		title : i18n["layer_order"],
 		closeButton : true
 	});
-	bus.send("ui-html:create", {
-		div : dialogId + "-content",
-		parentDiv : dialogId
+	var content = ui.create("div", {
+		id : dialogId + "-content",
+		parent : dialogId
 	});
 
-	var content = $("#" + dialogId + "-content");
-	content.sortable({
+	var jcontent = $(content);
+	jcontent.sortable({
 		cursor : "move"
 	});
-	content.on("sortstop", function(evt, ui) {
-		var newLayersOrder = content.sortable('toArray');
+	jcontent.on("sortstop", function(evt, ui) {
+		var newLayersOrder = jcontent.sortable('toArray');
 		for (var i = 0; i < newLayersOrder.length; i++) {
 			var id = newLayersOrder[i];
 			var layer = map.getLayer(id);
 			if (layer) {
 				map.setLayerIndex(layer, i);
-				// TODO: propagate change to other modules (and persist it in layers.json).
+				// TODO: propagate change to other modules (and persist it in
+				// layers.json).
 			}
 		}
 	});
@@ -63,18 +64,15 @@ define([ "layout", "module", "toolbar", "i18n", "jquery", "message-bus", "map", 
 
 	// Update content according to layers
 	bus.listen("reset-layers", function() {
-		bus.send("ui-set-content", {
-			div : dialogId + "-content",
-			content : ""
-		});
+		content.innerHTML = "";
 	});
 
 	bus.listen("layers-loaded", function() {
 		for ( var n in map.layers) {
 			var layer = map.layers[n];
-			bus.send("ui-html:create", {
-				div : layer.id,
-				parentDiv : dialogId + "-content",
+			ui.create("div", {
+				id : layer.id,
+				parent : dialogId + "-content",
 				css : "layer-order-item",
 				html : layer.name
 			});
