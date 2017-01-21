@@ -4,10 +4,9 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 	var feedbackLayers = {};
 
 	// Dialog controls
-	var dlg;
 	var dialogId = "feedback_popup";
-	var cmbLayer;
 	var lblTimestamp;
+	var layerInput, emailInput, commentInput;
 	var editToolbar;
 
 	var feedbackLayer = new OpenLayers.Layer.Vector("Feedback");
@@ -26,27 +25,38 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 		title : i18n["feedback_title"],
 		closeButton : true
 	});
-	dlg = $("#" + dialogId);
 
-	var layerInput = ui.create("choice", {
+	layerInput = ui.create("choice", {
 		id : "feedback-input-layer",
 		parent : dialogId,
 		label : "Capa: " // i18n["Feedback.layer"]
 	});
-	cmbLayer = $(layerInput);
+	layerInput.addEventListener("input", refreshYear);
 
-	cmbLayer.change(refreshYear);
-	lblTimestamp = $("<span/>").appendTo(dlg);
-	$("<label/>").addClass("feedback-form-left").html("Drawing tools:").appendTo(dlg);
-	$("<div/>").attr("id", "fb_toolbar").addClass("olControlPortalToolbar").appendTo(dlg);
+	lblTimestamp = ui.create("span", {
+		id : "feedback-input-layer-date",
+		parent : dialogId
+	});
 
-	var emailInput = ui.create("input", {
+	ui.create("label", {
+		id : "feedback-input-tools-label",
+		parent : dialogId,
+		css : "feedback-form-left",
+		html : "Drawing tools: "
+	});
+	ui.create("div", {
+		id : "fb_toolbar",
+		parent : dialogId,
+		css : "olControlPortalToolbar"
+	});
+
+	emailInput = ui.create("input", {
 		id : "feedback-input-email",
 		parent : dialogId,
 		label : "Email: " // i18n["Feedback.email"]
 	});
 
-	var commentInput = ui.create("text-area", {
+	commentInput = ui.create("text-area", {
 		id : "feedback-input-comment",
 		parent : dialogId,
 		label : "Comentario: ", // i18n["Feedback.comment"]
@@ -125,7 +135,7 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 	});
 
 	var activateFeedback = function() {
-		if (cmbLayer.find("option").length == 0) {
+		if (layerInput.getElementsByTagName("option").length == 0) {
 			bus.send("error", i18n["Feedback.no_layer_visible"]);
 		} else {
 			map.addLayer(feedbackLayer);
@@ -150,14 +160,14 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 
 	var refreshYear = function() {
 		var text = "";
-		var selectedLayer = feedbackLayers[cmbLayer.val()];
+		var selectedLayer = feedbackLayers[layerInput.value];
 		if (selectedLayer != null) {
 			timestamp = selectedLayer["timestamp"];
 			if (timestamp != null) {
 				text = timestamp.getUTCFullYear();
 			}
 		}
-		lblTimestamp.html(text);
+		lblTimestamp.innerHTML = text;
 	}
 
 	bus.listen("activate-feedback", activateFeedback);
@@ -166,7 +176,7 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 	bus.listen("layer-visibility", function(event, layerId, visibility) {
 		if (layerId in feedbackLayers) {
 			feedbackLayers[layerId].visibility = visibility;
-			var currentValue = cmbLayer.val();
+			var currentValue = layerInput.value;
 			var values = [];
 			for (layerId in feedbackLayers) {
 				var layerInfo = feedbackLayers[layerId];
@@ -179,11 +189,13 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 			}
 
 			bus.send("ui-choice-field:feedback-input-layer:set-values", [ values ]);
-			if (currentValue != null && cmbLayer.find("option[value='" + currentValue + "']").length > 0) {
-				cmbLayer.val(currentValue);
+			if (currentValue != null && layerInput.querySelector("option[value='" + currentValue + "']")) {
+				layerInput.value = currentValue;
 			} else {
-				var firstOption = cmbLayer.find("option:first").val();
-				cmbLayer.val(firstOption);
+				var firstOption = layerInput.getElementsByTagName("option");
+				if (firstOption && firstOption[0]) {
+					layerInput.value = firstOption[0].value;
+				}
 			}
 		}
 	});
