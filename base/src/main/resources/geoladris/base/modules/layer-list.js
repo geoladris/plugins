@@ -105,7 +105,7 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 	});
 
 	bus.listen("layer-visibility", function(event, layerId, visible) {
-		bus.send("ui-button:inline-legend-button-" + layerId + ":enable", visibility);
+		bus.send("ui-button:inline-legend-button-" + layerId + ":enable", visible);
 		document.getElementById(layerId).checked = visible;
 	});
 
