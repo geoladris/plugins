@@ -1,4 +1,4 @@
-define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout, $) {
+define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 
 	/*
 	 * keep the information about wms layers that will be necessary for
@@ -32,7 +32,7 @@ define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout
 
 	OpenLayers.ProxyHost = "proxy?url=";
 
-	map = new OpenLayers.Map(layout.map.attr("id"), {
+	map = new OpenLayers.Map(module.config().htmlId, {
 		fallThrough : true,
 		theme : null,
 		projection : new OpenLayers.Projection("EPSG:900913"),
@@ -46,7 +46,8 @@ define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout
 
 	bus.listen("add-layer", function(event, layerInfo) {
 		var mapLayerArray = [];
-		$.each(layerInfo.mapLayers, function(index, mapLayer) {
+		for (var index = 0; index < layerInfo.mapLayers.length; index++) {
+			var mapLayer = layerInfo.mapLayers[index];
 			var layer;
 			if (mapLayer.type == "osm") {
 				layer = new OpenLayers.Layer.OSM(mapLayer.id, mapLayer.osmUrls);
@@ -86,7 +87,7 @@ define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout
 				zIndexes[mapLayer.id] = mapLayer.zIndex;
 			}
 			mapLayerArray.push(mapLayer.id);
-		});
+		};
 		if (mapLayerArray.length > 0) {
 			mapLayersByLayerId[layerInfo.id] = mapLayerArray;
 		}
@@ -151,17 +152,22 @@ define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout
 	bus.listen("layer-visibility", function(event, layerId, visibility) {
 		var mapLayers = mapLayersByLayerId[layerId];
 		if (mapLayers) {
-			$.each(mapLayers, function(index, mapLayerId) {
+			for (var index = 0; index < mapLayers.length; index++) {
+				var mapLayerId= mapLayers[index];
 				var layer = map.getLayer(mapLayerId);
 				layer.setVisibility(visibility);
-			});
+			};
 		}
 	});
 
+	function isArray(variable) {
+		return Object.prototype.toString.call(variable) === '[object Array]';
+	}
+	
 	bus.listen("activate-exclusive-control", function(event, control) {
 		if (!control) {
 			control = [];
-		} else if (!$.isArray(control)) {
+		} else if (!isArray(control)) {
 			control = [ control ];
 		}
 		activateExclusiveControl(control);
@@ -174,7 +180,7 @@ define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout
 	bus.listen("set-default-exclusive-control", function(event, control) {
 		if (!control) {
 			control = [];
-		} else if (!$.isArray(control)) {
+		} else if (!isArray(control)) {
 			control = [ control ];
 		}
 		defaultExclusiveControl = control;
@@ -183,7 +189,8 @@ define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout
 	bus.listen("layer-timestamp-selected", function(event, layerId, timestamp, style) {
 		var mapLayers = mapLayersByLayerId[layerId];
 		if (mapLayers) {
-			$.each(mapLayers, function(index, mapLayerId) {
+			for (var index = 0; index < mapLayers.length; index++) {
+				var mapLayerId = mapLayers[index];
 				var layer = map.getLayer(mapLayerId);
 				/*
 				 * On application startup some events can be produced before the
@@ -199,7 +206,7 @@ define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout
 					}
 					layer.mergeNewParams(newParams);
 				}
-			});
+			};
 		}
 	});
 
@@ -234,10 +241,11 @@ define([ "message-bus", "layout", "jquery", "openlayers" ], function(bus, layout
 	bus.listen("transparency-slider-changed", function(event, layerId, opacity) {
 		var mapLayers = mapLayersByLayerId[layerId];
 		if (mapLayers) {
-			$.each(mapLayers, function(index, mapLayerId) {
+			for (var index = 0; index < mapLayers.length; index++) {
+				var mapLayerId = mapLayers[index];
 				var layer = map.getLayer(mapLayerId);
 				layer.setOpacity(opacity);
-			});
+			};
 		}
 	});
 

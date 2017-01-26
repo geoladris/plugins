@@ -1,4 +1,4 @@
-define([ "map", "message-bus", "customization", "openlayers", "jquery" ], function(map, bus, customization) {
+define([ "./map", "message-bus", "customization", "openlayers", "jquery" ], function(map, bus, customization) {
 
 	// Associates wmsLayers with controls
 	var layerIdControl = {};

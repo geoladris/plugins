@@ -1,4 +1,4 @@
-define([ "map", "message-bus", "customization", "url-parameters" ], function(map, bus, customization, urlParams) {
+define([ "./map", "message-bus", "customization", "url-parameters" ], function(map, bus, customization, urlParams) {
 
 	var initialZoom = function() {
 		var epsg4326 = new OpenLayers.Projection("EPSG:4326");

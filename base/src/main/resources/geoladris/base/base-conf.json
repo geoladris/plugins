@@ -20,7 +20,6 @@
 			"fancy-box" : "../jslib/jquery.fancybox.pack",
 			"highcharts" : "../jslib/highcharts-4.1.5",
 			"highcharts-theme-sand" : "../jslib/sand-signika",
-			"openlayers" : "../jslib/OpenLayers/OpenLayers.debug",
 			"mustache" : "../jslib/jquery.mustache",
 			"moment" : "../jslib/moment",
 			"text" : "../jslib/text"
