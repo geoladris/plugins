@@ -40,6 +40,17 @@ define([ "./map", "message-bus", "customization", "openlayers", "jquery" ], func
 		controls = [];
 	});
 
+	function sendInfoFeatures(layerId, features, x, y) {
+		var mapPoint = map.getLonLatFromPixel({
+			"x" : x,
+			"y" : y
+		});
+		bus.send("info-features", [ layerId, features, x, y, {
+			"x" : mapPoint.lon,
+			"y" : mapPoint.lat
+		} ]); 
+	}
+	
 	bus.listen("add-layer", function(e, layerInfo) {
 		var mapLayers = layerInfo.mapLayers;
 		for (var i = 0; i < mapLayers.length; i++) {
@@ -155,7 +166,7 @@ define([ "./map", "message-bus", "customization", "openlayers", "jquery" ], func
 										addBoundsAndHighlightGeom(feature);
 									});
 
-									bus.send("info-features", [ mapLayer.id, features, e.xy.x, e.xy.y ]);
+									sendInfoFeatures(mapLayer.id, features, e.xy.x, e.xy.y);
 								}
 							},
 							controlCallBack : function(control) {
@@ -222,7 +233,7 @@ define([ "./map", "message-bus", "customization", "openlayers", "jquery" ], func
 									addBoundsAndHighlightGeom(feature);
 								});
 
-								bus.send("info-features", [ mapLayer.id, evt.features, evt.xy.x, evt.xy.y ]);
+								sendInfoFeatures(mapLayer.id, evt.features, evt.xy.x, evt.xy.y);
 							}
 						},
 						beforegetfeatureinfo : function(event) {

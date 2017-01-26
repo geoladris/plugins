@@ -260,5 +260,24 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		});
 	});
 
+	bus.listen("map:removeLayer", function(e, message) {
+		var layer = map.getLayer(message.layerId);
+		layer.removeAllFeatures();
+		map.removeLayer(layer);
+	});
+	
+
+	bus.listen("map:addLayer", function(e, message) {
+		var id = message.id;
+		if (message.vector) {
+			var vectorLayer = message.vector;
+			var styles = new OpenLayers.StyleMap(vectorLayer.style);
+
+			var layer = new OpenLayers.Layer.Vector(message.id, {
+				styleMap : styles
+			});
+			map.addLayer(layer);
+		}
+	});
 	return map;
 });
