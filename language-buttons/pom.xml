@@ -10,12 +10,4 @@
 	</parent>
 	<artifactId>language-buttons</artifactId>
 	<name>language-buttons</name>
-
-	<dependencies>
-		<dependency>
-			<groupId>de.csgis.geoladris</groupId>
-			<artifactId>ui</artifactId>
-			<version>${csgis.geoladris.version}</version>
-		</dependency>
-	</dependencies>
 </project>

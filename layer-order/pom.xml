@@ -10,12 +10,4 @@
 	</parent>
 	<artifactId>layer-order</artifactId>
 	<name>layer-order</name>
-
-	<dependencies>
-		<dependency>
-			<groupId>de.csgis.geoladris</groupId>
-			<artifactId>ui</artifactId>
-			<version>${csgis.geoladris.version}</version>
-		</dependency>
-	</dependencies>
 </project>

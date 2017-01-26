@@ -50,12 +50,5 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
-
-		<!-- Plugin dependencies -->
-		<dependency>
-			<groupId>de.csgis.geoladris</groupId>
-			<artifactId>ui</artifactId>
-			<version>${csgis.geoladris.version}</version>
-		</dependency>
 	</dependencies>
 </project>
