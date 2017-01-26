@@ -45,7 +45,7 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 		ui.create("accordion-group", {
 			id : "all_layers_group_" + groupInfo.id,
 			parent : accordion,
-			css : "layer-list-accordion-content",
+			css : "layer-list-accordion",
 			title : groupInfo.label
 		});
 

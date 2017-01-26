@@ -2,7 +2,7 @@ html,body {
 	margin: 0px;
 	height: 100%;
 	cursor: default;
-	font: 100% "Trebuchet MS", sans-serif;
+	font: 90% "Trebuchet MS", sans-serif;
 }
 
 body {
@@ -15,7 +15,7 @@ body {
 }
 
 #header {
-	position: absolute;
+	position: absolute !important;
 	top: 0;
 	left: 0;
 	width: 100%;

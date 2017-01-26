@@ -101,7 +101,7 @@ td.layer_visibility {
 	display: block;
 	cursor: default;
 	float: left;
-	margin: 5px;
+	margin: 8px 5px;
 }
 
 .inline-legend-button.visible {

@@ -2,8 +2,10 @@
 	left: 10px;
 	position: absolute;
 	top: 215px;
-	min-width: 250px;
 	z-index: 1100;
+	width: 25em;
+	height: calc(100% - 215px);
+	overflow-y: auto;
 }
 
 .layer_container_panel {
@@ -16,8 +18,8 @@
 }
 
 #layer_list_selector_pane {
-    top: 186px;
-    left: 10px;
-    position: absolute;
-    z-index: 1100;
+	top: 186px;
+	left: 10px;
+	position: absolute;
+	z-index: 1100;
 }
