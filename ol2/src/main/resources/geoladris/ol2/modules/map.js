@@ -282,16 +282,36 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 	
 
 	bus.listen("map:addLayer", function(e, message) {
-		var id = message.id;
 		if (message.vector) {
 			var vectorLayer = message.vector;
 			var styles = new OpenLayers.StyleMap(vectorLayer.style);
 
-			var layer = new OpenLayers.Layer.Vector(message.id, {
+			var layer = new OpenLayers.Layer.Vector(message.layerId, {
 				styleMap : styles
 			});
 			map.addLayer(layer);
+			layer.id=message.layerId;
 		}
 	});
+	
+	bus.listen("map:addFeature", function(e, message) {
+		var layerId = message["layerId"];
+		var layer = map.getLayer(layerId);
+		var feature = new OpenLayers.Format.GeoJSON().read(message.feature, "Feature");
+		layer.addFeatures(feature);
+	});
+	
+	bus.listen("map:setLayerParameters", function(e, message) {
+		var layerId = message["layerId"];
+		var mapLayers = mapLayersByLayerId[layerId];
+		if (mapLayers) {
+			for (var index = 0; index < mapLayers.length; index++) {
+				var mapLayerId = mapLayers[index];
+				var layer = map.getLayer(mapLayerId);
+				layer.mergeNewParams(message.parameters);
+			};
+		}
+	});
+	
 	return map;
 });

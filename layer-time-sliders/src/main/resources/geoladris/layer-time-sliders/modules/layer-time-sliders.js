@@ -1,4 +1,4 @@
-define([ "jquery", "message-bus", "layout", "map", "layer-list-selector", "moment", "jquery-ui" ], function($, bus, layout, map, layerListSelector, moment) {
+define([ "jquery", "message-bus", "layout", "layer-list-selector", "moment", "jquery-ui" ], function($, bus, layout, layerListSelector, moment) {
 	var aTimestampsLayers = {};
 	var divTimeSliders = $("<div/>").attr("id", "layerTimeSliders").addClass("layer_container_panel");
 	layerListSelector.registerLayerPanel("layer_slider_selector", 30, "Temporal", divTimeSliders);
@@ -45,13 +45,13 @@ define([ "jquery", "message-bus", "layout", "map", "layer-list-selector", "momen
 				change : function(event, ui) {
 					if (event.originalEvent) {
 						var date = timestamps[ui.value];
-						$.each(layerInfo.mapLayers, function(index, mapLayer) {
-							var layer = map.getLayer(mapLayer.id);
-							layer.mergeNewParams({
+						bus.send("map:mergeLayerParameters", {
+							"layerId":layerInfo.id,
+							"parameters":{
 								'time' : date.toISO8601String()
-							});
-							bus.send("layer-time-slider.selection", [ layerInfo.id, date ]);
+							}
 						});
+						bus.send("layer-time-slider.selection", [ layerInfo.id, date ]);
 					} else { // Programatic change
 						// alert('programatic');
 					}

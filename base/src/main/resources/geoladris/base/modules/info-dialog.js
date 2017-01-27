@@ -33,7 +33,7 @@ define([ "module", "jquery", "message-bus", "i18n", "customization", "ol2/geojso
 		}
 	});
 
-	bus.listen("info-features", function(event, wmsLayerId, features, mapPoint) {
+	bus.listen("info-features", function(event, wmsLayerId, features, x, y, mapPoint) {
 		if (pointHighlightLayerName == null) {
 			pointHighlightLayerName = "info-point-highlight-layer";
 			bus.send("map:addLayer", {
