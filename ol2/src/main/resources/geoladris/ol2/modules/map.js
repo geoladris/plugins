@@ -121,6 +121,20 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		}
 	}
 
+	bus.listen("highlight-feature", function(event, geometry) {
+		var highlightLayer = map.getLayer("Highlighted Features");
+		highlightLayer.removeAllFeatures();
+		var feature = new OpenLayers.Feature.Vector();
+		feature.geometry = geometry;
+		highlightLayer.addFeatures(feature);
+		highlightLayer.redraw();
+	});
+
+	bus.listen("clear-highlighted-features", function() {
+		var highlightLayer = map.getLayer("Highlighted Features");
+		highlightLayer.removeAllFeatures();
+		highlightLayer.redraw();
+	});
 	var addVectorLayer = function() {
 		var id = "Highlighted Features";
 
