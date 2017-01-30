@@ -297,7 +297,7 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 	bus.listen("map:addFeature", function(e, message) {
 		var layerId = message["layerId"];
 		var layer = map.getLayer(layerId);
-		var feature = new OpenLayers.Format.GeoJSON().read(message.feature, "Feature");
+		var feature = new OpenLayers.Format.GeoJSON().parseFeature(message.feature);
 		layer.addFeatures(feature);
 	});
 	

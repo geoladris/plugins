@@ -52,7 +52,7 @@ define([ "module", "jquery", "message-bus", "i18n", "customization", "ol2/geojso
 				},
 			});
 			feature = geojson.createFeature(geojson.createPoint(
-					mapPoint.lon, mapPoint.lat), {});
+					mapPoint.x, mapPoint.y), {});
 			bus.send("map:addFeature", {
 				"layerId" : pointHighlightLayerName,
 				"feature" : feature
