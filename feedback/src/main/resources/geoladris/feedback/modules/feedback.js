@@ -1,5 +1,4 @@
-define([ "message-bus", "customization", "map", "toolbar", "i18n", "jquery", "jquery-ui", "openlayers", "./edit-controls" ],//
-function(bus, customization, map, toolbar, i18n, $) {
+define([ "message-bus", "customization", "toolbar", "i18n", "jquery", "jquery-ui" ], function(bus, customization, toolbar, i18n, $) {
 
 	var feedbackLayers = new Array();
 
@@ -9,9 +8,8 @@ function(bus, customization, map, toolbar, i18n, $) {
 	var lblTimestamp;
 	var txtEmail;
 	var txtComment;
-	var editToolbar;
-
-	var feedbackLayer = new OpenLayers.Layer.Vector("Feedback");
+	var feedbackLayerId = "feedbackLayer";
+	var features = [];
 
 	var btn = $("<a/>").attr("id", "feedback-button").addClass("blue_button toolbar_button").html("Feedback");
 
@@ -24,7 +22,16 @@ function(bus, customization, map, toolbar, i18n, $) {
 
 		dlg.append("<br/>");
 		$("<label/>").addClass("feedback-form-left").html("Drawing tools:").appendTo(dlg);
-		$("<div/>").attr("id", "fb_toolbar").addClass("olControlPortalToolbar").appendTo(dlg);
+		$("<span/>").attr("id", "feedbackAddFeature").html(
+				i18n["feedback_addfeature_tooltip"]).addClass(
+				"feedbackButton").appendTo(dlg).on("click", function(){
+					bus.send("activate-exclusive-control", "DrawPolygon");
+				});
+		$("<span/>").attr("id", "feedbackEditFeature").html(
+				i18n["feedback_editfeature_tooltip"]).addClass(
+				"feedbackButton").appendTo(dlg).on("click", function(){
+					bus.send("activate-exclusive-control", "ModifyFeature");
+				});
 
 		dlg.append("<br/>");
 		$("<label/>").addClass("feedback-form-left").html("Email:").appendTo(dlg);
@@ -58,13 +65,6 @@ function(bus, customization, map, toolbar, i18n, $) {
 			title : i18n["feedback_title"],
 			close : deactivateFeedback
 		});
-
-		// Need to create after the dialog is in the DOM otherwise the call to
-		// getElementById returns null
-		editToolbar = new OpenLayers.Control.PortalToolbar(feedbackLayer, {
-			div : document.getElementById("fb_toolbar")
-		});
-
 	}
 
 	var submit = function() {
@@ -73,15 +73,20 @@ function(bus, customization, map, toolbar, i18n, $) {
 			bus.send("error", i18n["Feedback.no-layer-selected"]);
 		} else if (!mailRegex.test(txtEmail.val())) {
 			bus.send("error", i18n["Feedback.invalid-email-address"]);
-		} else if (!editToolbar.hasFeatures()) {
+		} else if (features.length == 0) {
 			bus.send("error", i18n["Feedback.no-geometries"]);
 		} else {
 			// Do submit
+			var polygons = [];
+			for (var i = 0; i < features.length; i++) {
+				polygons.push(features[i].geometry);
+			}
+			var multipolygon = geojson.createMultipolygon(polygons);
 
 			var data = {
 				"lang" : customization.languageCode,
 				"comment" : txtComment.val(),
-				"geometry" : editToolbar.getFeaturesAsWKT(),
+				"geometry" : geojson.toWKT(multipolygon),
 				"layerName" : cmbLayer.val(),
 				"email" : txtEmail.val()
 			};
@@ -117,18 +122,23 @@ function(bus, customization, map, toolbar, i18n, $) {
 				$("#button_feedback").addClass('selected');
 				txtEmail.val("");
 				txtComment.val("");
-				bus.send("activate-exclusive-control", editToolbar);
-				map.addLayer(feedbackLayer);
+				bus.send("activate-exclusive-control", "DrawPolygon");
+				bus.send("map:addLayer", {
+					"layerId" : feedbackLayerId,
+					"vector" : {}
+				});
+				features = [];
 				dlg.dialog("open");
 			}
 		}
 	}
 
 	var deactivateFeedback = function() {
-		feedbackLayer.removeAllFeatures();
 		bus.send("activate-default-exclusive-control");
-		editToolbar.deactivate();
-		map.removeLayer(feedbackLayer);
+		bus.send("map:removeLayer", {
+			"layerId" : feedbackLayerId
+		});
+		features = [];
 		$("#button_feedback").removeClass('selected');
 		dlg.dialog("close");
 	}
@@ -154,6 +164,12 @@ function(bus, customization, map, toolbar, i18n, $) {
 		return false;
 	});
 
+	bus.listen("map:featureAdded", function(e, message) {
+		if (message.layerId == "feedbackLayerId"){
+			features.push(message.feature);
+		}
+	});
+	
 	bus.listen("activate-feedback", activateFeedback);
 	bus.listen("deactivate-feedback", function() {
 		// Enough, the close listener will clean up, as when manually closed

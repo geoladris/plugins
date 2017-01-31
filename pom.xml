@@ -21,6 +21,7 @@
 		<module>layers-editor</module>
 		<module>auth</module>
 		<module>ol2</module>
+    <module>geojson</module>
   </modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -1,4 +1,4 @@
-define([ "module", "jquery", "message-bus", "i18n", "customization", "ol2/geojson",
+define([ "module", "jquery", "message-bus", "i18n", "customization", "geojson/geojson",
 		"highcharts", "highcharts-theme-sand" ], function(module, $, bus, i18n,
 		customization, geojson) {
 
