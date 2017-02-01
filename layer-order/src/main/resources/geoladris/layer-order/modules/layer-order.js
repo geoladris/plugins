@@ -28,11 +28,8 @@ define([ "layout", "module", "toolbar", "i18n", "jquery", "message-bus", "map", 
 		parent : dialogId
 	});
 
-	var jcontent = $(content);
-	jcontent.sortable({
-		cursor : "move"
-	});
-	jcontent.on("sortstop", function(evt, ui) {
+	ui.sortable(content);
+	content.addEventListener("change", function() {
 		var newLayersOrder = jcontent.sortable('toArray');
 		for (var i = 0; i < newLayersOrder.length; i++) {
 			var id = newLayersOrder[i];
