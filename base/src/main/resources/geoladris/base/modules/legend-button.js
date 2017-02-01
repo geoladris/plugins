@@ -4,6 +4,6 @@ define([ "jquery", "i18n", "message-bus", "layout", "ui/ui" ], function($, i18n,
 		parent : layout.map.attr("id"),
 		css : "blue_button",
 		text : i18n["legend_button"],
-		sendEventName : "toggle-legend"
+		clickEventName : "toggle-legend"
 	});
 });

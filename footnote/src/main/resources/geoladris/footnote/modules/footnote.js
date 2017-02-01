@@ -20,8 +20,8 @@ define([ "message-bus", "module", "layout", "i18n", "jquery", "ui/ui" ], functio
       parent : "footnote-container",
       text : text,
       css : "footnote-link",
-      sendEventName : "ui-open-url",
-      sendEventMessage : {
+      clickEventName : "ui-open-url",
+      clickEventMessage : {
         url : link,
         target : "_blank"
       }

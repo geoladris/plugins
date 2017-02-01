@@ -40,7 +40,7 @@ define([ "geoladris-tests" ], function(tests) {
 					parent : "toolbar",
 					css : "blue_button toolbar_button",
 					html : i18n["layers-editor.save_layers"],
-					sendEventName : "ajax"
+					clickEventName : "ajax"
 				}));
 				done();
 			});

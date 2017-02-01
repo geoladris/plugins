@@ -16,7 +16,7 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 		parent : toolbar.attr("id"),
 		css : "blue_button toolbar_button",
 		text : "Feedback",
-		sendEventName : "activate-feedback"
+		clickEventName : "activate-feedback"
 	});
 
 	ui.create("dialog", {
@@ -76,13 +76,13 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 		parent : dialogId,
 		css : "dialog-ok-button",
 		text : "Cancel",
-		sendEventName : "ui-hide",
-		sendEventMessage : dialogId
+		clickEventName : "ui-hide",
+		clickEventMessage : dialogId
 	});
 
 	bus.send("ui-form-collector:extend", {
 		button : "feedback-send",
-		sendEventName : "feedback-send",
+		clickEventName : "feedback-send",
 		divs : [ "feedback-input-layer", "feedback-input-email", "feedback-input-comment" ],
 		names : [ "layer", "email", "comment" ]
 	});

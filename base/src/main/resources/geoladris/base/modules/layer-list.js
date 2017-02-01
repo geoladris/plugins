@@ -75,8 +75,8 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 					id : "inline-legend-button-" + portalLayer.id,
 					parent : parent,
 					css : portalLayer.active ? "inline-legend-button visible" : "inline-legend-button",
-					sendEventName : "open-legend",
-					sendEventMessage : wmsLayerWithLegend.id
+					clickEventName : "open-legend",
+					clickEventMessage : wmsLayerWithLegend.id
 				});
 
 			}

@@ -13,8 +13,8 @@ define([ "layout", "module", "toolbar", "i18n", "jquery", "message-bus", "map", 
 		parent : toolbar.attr("id"),
 		css : "blue_button toolbar_button",
 		text : i18n["layer_order"],
-		sendEventName : "ui-toggle",
-		sendEventMessage : dialogId
+		clickEventName : "ui-toggle",
+		clickEventMessage : dialogId
 	});
 
 	ui.create("dialog", {

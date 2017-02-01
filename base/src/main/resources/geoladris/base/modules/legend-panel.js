@@ -60,8 +60,8 @@ define([ "jquery", "i18n", "customization", "message-bus", "layout", "ui/ui" ], 
 					parent : id + "_header",
 					text : legendInfo.sourceLabel,
 					css : "layer_legend_source_link",
-					sendEventName : "ui-open-url",
-					sendEventMessage : {
+					clickEventName : "ui-open-url",
+					clickEventMessage : {
 						url : legendInfo.sourceLink,
 						target : "_blank"
 					}

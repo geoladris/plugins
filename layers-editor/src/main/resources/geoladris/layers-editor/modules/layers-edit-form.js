@@ -95,7 +95,7 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 			id : "layers-editor-cancel",
 			parent : DIALOG_ID,
 			html : i18n["layers-editor.cancel"],
-			sendEventName : "ui-hide",
+			clickEventName : "ui-hide",
 			sendEventMessage : DIALOG_ID
 		});
 
