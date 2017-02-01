@@ -1,4 +1,4 @@
-define([ "./map", "message-bus", "customization", "openlayers", "jquery" ], function(map, bus, customization) {
+define([ "ol2/map", "message-bus", "customization", "openlayers", "jquery" ], function(map, bus, customization) {
 
 	// Associates wmsLayers with controls
 	var layerIdControl = {};
@@ -50,7 +50,16 @@ define([ "./map", "message-bus", "customization", "openlayers", "jquery" ], func
 			"y" : mapPoint.lat
 		} ]); 
 	}
-	
+
+	controlMap.registerControl("info", function(message) {
+		var queryUrl = message.queryUrl;
+		if (message.controlId == "wfsinfo") {
+			
+		} else if (message.controlId == "wmsinfo") {
+
+		}
+	});
+
 	bus.listen("add-layer", function(e, layerInfo) {
 		var mapLayers = layerInfo.mapLayers;
 		for (var i = 0; i < mapLayers.length; i++) {
@@ -295,4 +304,5 @@ define([ "./map", "message-bus", "customization", "openlayers", "jquery" ], func
 			control.layers.push(layer);
 		}
 	});
+
 });

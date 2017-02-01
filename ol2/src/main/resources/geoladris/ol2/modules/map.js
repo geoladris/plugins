@@ -1,34 +1,9 @@
 define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 
-	/*
-	 * keep the information about wms layers that will be necessary for
-	 * visibility, opacity, etc.
-	 */
-	var mapLayersByLayerId = {};
-
-	/*
-	 * Stores the indices during the layer load in order to set the right order
-	 * when all layers are in the map
-	 */
-	var zIndexes = {};
+	var controlMap = {};
 
 	var map = null;
 	var currentControlList = [];
-	var defaultExclusiveControl = null;
-
-	var activateExclusiveControl = function(controlList) {
-		for (var i = 0; i < currentControlList.length; i++) {
-			currentControlList[i].deactivate();
-			map.removeControl(currentControlList[i]);
-		}
-
-		for (var i = 0; i < controlList.length; i++) {
-			map.addControl(controlList[i]);
-			controlList[i].activate();
-		}
-
-		currentControlList = controlList;
-	};
 
 	OpenLayers.ProxyHost = "proxy?url=";
 
@@ -41,86 +16,16 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		allOverlays : true,
 		controls : []
 	});
-	map.addControl(new OpenLayers.Control.Navigation());
-	map.addControl(new OpenLayers.Control.Scale());
-
-	bus.listen("add-layer", function(event, layerInfo) {
-		var mapLayerArray = [];
-		for (var index = 0; index < layerInfo.mapLayers.length; index++) {
-			var mapLayer = layerInfo.mapLayers[index];
-			var layer;
-			if (mapLayer.type == "osm") {
-				layer = new OpenLayers.Layer.OSM(mapLayer.id, mapLayer.osmUrls);
-			} else if (mapLayer.type == "gmaps") {
-				layer = new OpenLayers.Layer.Google(mapLayer.id, {
-					type : google.maps.MapTypeId[mapLayer["gmaps-type"]]
-				});
-			} else if (mapLayer.type == "wfs") {
-				layer = new OpenLayers.Layer.Vector("WFS", {
-					strategies : [ new OpenLayers.Strategy.Fixed() ],
-					protocol : new OpenLayers.Protocol.WFS({
-						version : "1.0.0",
-						url : mapLayer.baseUrl,
-						featureType : mapLayer.wmsName
-					}),
-					projection : new OpenLayers.Projection("EPSG:4326")
-				});
-			} else {
-				layer = new OpenLayers.Layer.WMS(mapLayer.id, mapLayer.baseUrl, {
-					layers : mapLayer.wmsName,
-					buffer : 0,
-					transitionEffect : "resize",
-					removeBackBufferDelay : 0,
-					isBaseLayer : false,
-					transparent : true,
-					format : mapLayer.imageFormat || 'image/png'
-				}, {
-					noMagic : true,
-					visibility : false
-				// Don't show until a "layer-visibility" event indicates so
-				});
-			}
-			layer.id = mapLayer.id;
-			if (map !== null) {
-				map.addLayer(layer);
-				map.setLayerIndex(layer, mapLayer.zIndex);
-				zIndexes[mapLayer.id] = mapLayer.zIndex;
-			}
-			mapLayerArray.push(mapLayer.id);
-		};
-		if (mapLayerArray.length > 0) {
-			mapLayersByLayerId[layerInfo.id] = mapLayerArray;
+		
+	bus.listen("map:activateControls", function(e, message) {
+		var controlIds = message.controlIds;
+		for (var i = 0; i < controlIds.length; i++) {
+			bus.send("map:activateControl", {
+				"controlId" : controlIds[i]
+			});
 		}
 	});
-
-	bus.listen("reset-layers", function() {
-		zIndexes = {};
-		mapLayersByLayerId = {};
-		if (map !== null) {
-			while (map.layers.length > 0) {
-				map.removeLayer(map.layers[map.layers.length - 1]);
-			}
-		}
-	});
-
-	var sortLayers = function() {
-		/*
-		 * Sort all layers by zIndexes
-		 */
-		var sorted = Object.keys(zIndexes).sort(function(a, b) {
-			return zIndexes[a] - zIndexes[b]
-		});
-
-		for (var i = 0; i < sorted.length; i++) {
-			var id = sorted[i];
-			var z = zIndexes[id];
-			var layer = map.getLayer(id);
-			if (layer) {
-				map.setLayerIndex(layer, z);
-			}
-		}
-	}
-
+	
 	bus.listen("highlight-feature", function(event, geometry) {
 		var highlightLayer = map.getLayer("Highlighted Features");
 		highlightLayer.removeAllFeatures();
@@ -159,47 +64,18 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 	}
 
 	bus.listen("layers-loaded", function() {
-		sortLayers();
 		addVectorLayer();
 	});
 
-	bus.listen("layer-visibility", function(event, layerId, visibility) {
-		var mapLayers = mapLayersByLayerId[layerId];
-		if (mapLayers) {
-			for (var index = 0; index < mapLayers.length; index++) {
-				var mapLayerId= mapLayers[index];
-				var layer = map.getLayer(mapLayerId);
-				layer.setVisibility(visibility);
-			};
-		}
+	bus.listen("map:layerVisibility", function(event, message) {
+		var layer = map.getLayer(message.layerId);
+		layer.setVisibility(message.visibility);
 	});
 
 	function isArray(variable) {
 		return Object.prototype.toString.call(variable) === '[object Array]';
 	}
 	
-	bus.listen("activate-exclusive-control", function(event, control) {
-		if (!control) {
-			control = [];
-		} else if (!isArray(control)) {
-			control = [ control ];
-		}
-		activateExclusiveControl(control);
-	});
-
-	bus.listen("activate-default-exclusive-control", function(event) {
-		activateExclusiveControl(defaultExclusiveControl);
-	});
-
-	bus.listen("set-default-exclusive-control", function(event, control) {
-		if (!control) {
-			control = [];
-		} else if (!isArray(control)) {
-			control = [ control ];
-		}
-		defaultExclusiveControl = control;
-	});
-
 	bus.listen("layer-timestamp-selected", function(event, layerId, timestamp, style) {
 		var mapLayers = mapLayersByLayerId[layerId];
 		if (mapLayers) {
@@ -280,8 +156,16 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		map.removeLayer(layer);
 	});
 	
+	bus.listen("map:removeAllLayers", function(e) {
+		if (map !== null) {
+			while (map.layers.length > 0) {
+				map.removeLayer(map.layers[map.layers.length - 1]);
+			}
+		}
+	});	
 
 	bus.listen("map:addLayer", function(e, message) {
+		var layer = null;
 		if (message.vector) {
 			var vectorLayer = message.vector;
 			var styles = new OpenLayers.StyleMap(vectorLayer.style);
@@ -289,8 +173,41 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 			var layer = new OpenLayers.Layer.Vector(message.layerId, {
 				styleMap : styles
 			});
+		} else if (message.osm) {
+			layer = new OpenLayers.Layer.OSM(message.layerId, message.osm.osmUrls);
+		} else if (message.gmaps) {
+			layer = new OpenLayers.Layer.Google(message.layerId, {
+				type : google.maps.MapTypeId[message.gmaps["gmaps-type"]]
+			});
+		} else if (message.wfs) {
+			layer = new OpenLayers.Layer.Vector("WFS", {
+				strategies : [ new OpenLayers.Strategy.Fixed() ],
+				protocol : new OpenLayers.Protocol.WFS({
+					version : "1.0.0",
+					url : message.wfs.baseUrl,
+					featureType : message.wfs.wmsName
+				}),
+				projection : new OpenLayers.Projection("EPSG:4326")
+			});
+		} else if (message.wms) {
+			layer = new OpenLayers.Layer.WMS(message.layerId, message.wms.baseUrl, {
+				layers : message.wms.wmsName,
+				buffer : 0,
+				transitionEffect : "resize",
+				removeBackBufferDelay : 0,
+				isBaseLayer : false,
+				transparent : true,
+				format : message.wms.imageFormat || 'image/png'
+			}, {
+				noMagic : true,
+				visibility : false
+			// Don't show until a "layer-visibility" event indicates so
+			});
+		}
+		if (layer != null) {
+			layer.id = message.layerId;
 			map.addLayer(layer);
-			layer.id=message.layerId;
+			bus.send("map:layerAdded", [ message ]);
 		}
 	});
 	
