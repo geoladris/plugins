@@ -3,7 +3,6 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 	var controlMap = {};
 
 	var map = null;
-	var currentControlList = [];
 
 	OpenLayers.ProxyHost = "proxy?url=";
 
@@ -17,15 +16,6 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		controls : []
 	});
 		
-	bus.listen("map:activateControls", function(e, message) {
-		var controlIds = message.controlIds;
-		for (var i = 0; i < controlIds.length; i++) {
-			bus.send("map:activateControl", {
-				"controlId" : controlIds[i]
-			});
-		}
-	});
-	
 	bus.listen("highlight-feature", function(event, geometry) {
 		var highlightLayer = map.getLayer("Highlighted Features");
 		highlightLayer.removeAllFeatures();

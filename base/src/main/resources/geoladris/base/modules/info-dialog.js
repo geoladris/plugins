@@ -15,9 +15,24 @@ define([ "module", "jquery", "message-bus", "i18n", "customization", "geojson/ge
 	bus.listen("add-layer", function(event, layerInfo) {
 		var portalLayerName = layerInfo.label;
 		$.each(layerInfo.mapLayers, function(i, mapLayer) {
+			var aliases = null;
+			if (mapLayer.queryFieldNames) {
+				aliases = [];
+				var fieldNames = mapLayer.queryFieldNames;
+				var fieldAliases = mapLayer.queryFieldAliases;
+				for (var j = 0; j < fieldNames.length; j++) {
+					var alias = {
+						"name" : fieldNames[j],
+						"alias" : fieldAliases[j]
+					};
+					aliases.push(alias);
+				}
+			}
+
 			wmsLayerInfo[mapLayer.id] = {
 				"portalLayerName" : portalLayerName,
-				"wmsName" : mapLayer.wmsName
+				"wmsName" : mapLayer.wmsName,
+				"aliases" : aliases
 			}
 		});
 	});
@@ -95,7 +110,7 @@ define([ "module", "jquery", "message-bus", "i18n", "customization", "geojson/ge
 
 		$("<th/>").addClass("command").html("").appendTo(tr);
 		$("<th/>").addClass("command").html("").appendTo(tr);
-		var aliases = features[0]["aliases"];
+		var aliases = wmsLayerInfo[wmsLayerId]["aliases"];
 		for (var i = 0; i < aliases.length; i++) {
 			$("<th/>").addClass("data").html(aliases[i].alias)
 					.appendTo(tr);
@@ -143,10 +158,9 @@ define([ "module", "jquery", "message-bus", "i18n", "customization", "geojson/ge
 				}
 			});
 
-			var aliases = feature["aliases"];
 			for (var i = 0; i < aliases.length; i++) {
 				$("<td/>").addClass("data").html(
-						feature.attributes[aliases[i].name]).appendTo(
+						feature.properties[aliases[i].name]).appendTo(
 						tr);
 			}
 
@@ -240,9 +254,9 @@ define([ "module", "jquery", "message-bus", "i18n", "customization", "geojson/ge
 		var indicator = feature["indicators"][indicatorIndex];
 
 		bus.send("ajax", {
-			url : "indicator?objectId=" + feature.attributes[indicator.idField]
+			url : "indicator?objectId=" + feature.properties[indicator.idField]
 					+ //
-					"&objectName=" + feature.attributes[indicator.nameField] + //
+					"&objectName=" + feature.properties[indicator.nameField] + //
 					"&layerId=" + wmsName + //
 					"&indicatorId=" + indicator.id,
 			success : function(chartData, textStatus, jqXHR) {

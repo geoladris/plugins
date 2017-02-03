@@ -1,5 +1,5 @@
-define(["./controlMap"], function(controlMap){
-	controlMap.registerControl("navigation", function(message){
+define(["./controlRegistry"], function(controlRegistry){
+	controlRegistry.registerControl("navigation", function(message){
 		return new OpenLayers.Control.Navigation();
 	});
 })
