@@ -34,13 +34,11 @@
 	background-color: #38c;
 }
 
-.ui-input-field-container, .ui-choice-field-container,
-	.ui-text-area-field-container {
+.ui-input-container,.ui-text-area-field-container {
 	margin: 10px;
 }
 
-.ui-input-field-label, .ui-choice-field-label, .ui-text-area-field-label
-	{
+.ui-label, .ui-text-area-field-label {
 	text-align: left;
 	min-width: 8em;
 }
@@ -57,13 +55,11 @@
 	padding: 5px;
 }
 
-.layer-list-accordion>.checkbox-container {
-	padding: 5px;
-}
-.layer-list-accordion .ui-checkbox-text {
-  width: 100%;
+.layer-list-accordion .ui-label {
+	width: 100%;
 }
 
-.layer-list-accordion>.ui-checkbox-container {
-  padding: 5px;
+.layer-list-accordion>.ui-input-container {
+	height: 34px;
+	margin: 0;
 }

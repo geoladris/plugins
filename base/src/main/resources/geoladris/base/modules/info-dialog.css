@@ -7,14 +7,14 @@
 	height: 100%;
 }
 
-#info_popup .layer_title {
-	margin-bottom: 0.5em;
-	text-align: center;
-}
-
 #info_popup .layer_results {
 	margin-bottom: 1em;
 	color: #fff;
+}
+
+.info-magnifier {
+	width: 20px;
+	height: 20px;
 }
 
 #info_popup .layer_results table {
@@ -23,7 +23,7 @@
 }
 
 #info_popup .layer_results table .data {
-	border: 1px solid white;
+	border: 1px solid black;
 	padding-left: 0.5em;
 	padding-right: 0.5em;
 }
