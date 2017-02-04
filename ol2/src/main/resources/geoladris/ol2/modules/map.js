@@ -1,7 +1,5 @@
 define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 
-	var controlMap = {};
-
 	var map = null;
 
 	OpenLayers.ProxyHost = "proxy?url=";

@@ -4,7 +4,7 @@ define([ "geoladris-tests" ], function(tests) {
 		var injector;
 
 		beforeEach(function() {
-			var initialization = tests.init("base", {}, {
+			var initialization = tests.init("ol2", {}, {
 				// paths are relative to 'modules'
 				"openlayers" : "../jslib/OpenLayers/OpenLayers.debug"
 			});

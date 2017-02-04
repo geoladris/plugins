@@ -1,5 +1,5 @@
-define(["./controlMap"], function(controlMap){
-	controlMap.registerControl("scale", function(message){
+define(["./controlRegistry"], function(controlRegistry){
+	controlRegistry.registerControl("scale", function(message){
 		return new OpenLayers.Control.Scale();
 	});
 })

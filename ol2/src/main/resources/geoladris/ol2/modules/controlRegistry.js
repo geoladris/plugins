@@ -1,4 +1,4 @@
-define([ "message-bus", "map" ], function(bus, map) {
+define([ "message-bus", "./map" ], function(bus, map) {
 
 	var controlTypeCreatorFunction = {};
 	var idControlInstance = {};
@@ -56,7 +56,7 @@ define([ "message-bus", "map" ], function(bus, map) {
 
 	return {
 		"registerControl" : function(controlTypeName, controlCreatorFunction) {
-			controlMap[controlTypeName] = controlCreatorFunction;
+			controlTypeCreatorFunction[controlTypeName] = controlCreatorFunction;
 		}
 	}
 
