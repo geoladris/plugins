@@ -127,7 +127,8 @@ define([ "message-bus" ], function(bus) {
 				queriableLayers[mapLayer.id] = true;
 			}
 
-			zIndexes[mapLayer.zIndex] = mapAddLayerEvent;
+			zIndexes[mapLayer.zIndex] = mapLayer.id;
+			bus.send("map:addLayer", mapAddLayerEvent);
 			mapLayerArray.push(mapLayer.id);
 		}
 		if (mapLayerArray.length > 0) {
@@ -161,8 +162,11 @@ define([ "message-bus" ], function(bus) {
 
 		for (var i = 0; i < sortedZIndices.length; i++) {
 			var zIndex = sortedZIndices[i];
-			var mapAddLayerEvent = zIndexes[zIndex];
-			bus.send("map:addLayer", mapAddLayerEvent);
+			var mapLayerId = zIndexes[zIndex];
+			bus.send("map:setLayerIndex", {
+				"layerId" : mapLayerId,
+				"index" : i
+			});
 		}
 	});
 

@@ -36,7 +36,7 @@ define([ "geoladris-tests" ], function(tests) {
 
 		});
 
-		it("add-layer z-order sets map:addLayer order", function(done) {
+		it("add-layer z-order defines map:setLayerIndex calls", function(done) {
 			var fcn = function(portalMapConnector) {
 				bus.send("add-layer", {
 					"id" : "layer1",
@@ -61,10 +61,12 @@ define([ "geoladris-tests" ], function(tests) {
 				calls.reset();
 				bus.send("layers-loaded");
 				expect(calls.count()).toBe(3);
-				expect(calls.argsFor(1)[0]).toEqual("map:addLayer");
+				expect(calls.argsFor(1)[0]).toEqual("map:setLayerIndex");
 				expect(calls.argsFor(1)[1].layerId).toEqual("maplayer2");
-				expect(calls.argsFor(2)[0]).toEqual("map:addLayer");
+				expect(calls.argsFor(1)[1].index).toEqual(0);
+				expect(calls.argsFor(2)[0]).toEqual("map:setLayerIndex");
 				expect(calls.argsFor(2)[1].layerId).toEqual("maplayer1");
+				expect(calls.argsFor(2)[1].index).toEqual(1);
 				done();
 			}
 			injector.require([ "portalMapConnector" ], fcn);

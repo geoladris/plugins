@@ -199,6 +199,10 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		}
 	});
 	
+	bus.listen("map:setLayerIndex", function(e, message) {
+		map.getLayer(message.layerId).setLayerIndex(message.index);
+	});
+	
 	bus.listen("map:addFeature", function(e, message) {
 		var layerId = message["layerId"];
 		var layer = map.getLayer(layerId);
