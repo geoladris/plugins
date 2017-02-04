@@ -6,6 +6,7 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 	var groupIdAccordionIndex = {};
 	var numTopLevelGroups = 0;
 	var layerGroups = {};
+	var layerLabels = {};
 
 	var allLayers = ui.create("div", {
 		id : "all_layers",
@@ -13,7 +14,7 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 		css : "layers-accordion"
 	});
 
-	layerListSelector.registerLayerPanel("all_layers_selector", 10, i18n.layers, $("#all_layers"));
+	layerListSelector.registerLayerPanel("all_layers_selector", 10, i18n.layers, $(all_layers));
 
 	bus.listen("reset-layers", function() {
 		layerActions = [];
@@ -42,7 +43,7 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 			numTopLevelGroups++;
 		}
 
-		ui.create("accordion-group", {
+		var accordionGroup = ui.create("accordion-group", {
 			id : "all_layers_group_" + groupInfo.id,
 			parent : accordion,
 			css : "layer-list-accordion",
@@ -50,13 +51,13 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 		});
 
 		for (var i = 0; i < groupActions.length; i++) {
-			$("#all_layers_group_" + groupInfo.id + "-header").append(groupActions[i](groupInfo));
+			accordionGroup.header.appendChild(groupActions[i](groupInfo)[0]);
 		}
 	});
 
 	bus.listen("add-layer", function(event, portalLayer) {
 		layerGroups[portalLayer.id] = portalLayer.groupId;
-
+		layerLabels[portalLayer.id] = portalLayer.label;
 		var parent = "all_layers_group_" + portalLayer.groupId;
 
 		if (portalLayer.inlineLegendUrl != null) {
@@ -88,7 +89,7 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 			label : portalLayer.label
 		});
 		checkbox.addEventListener("input", function() {
-			bus.send("layer-visibility", [ this.id, this.checked]);
+			bus.send("layer-visibility", [ this.id, this.checked ]);
 		});
 
 		bus.send("ui-accordion-group:" + parent + ":visibility", {
@@ -96,7 +97,8 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 		});
 
 		for (var i = 0; i < layerActions.length; i++) {
-			$("#" + portalLayer.id + "-container").append(layerActions[i](portalLayer));
+			// Append actions after checkbox
+			checkbox.parentNode.appendChild(layerActions[i](portalLayer)[0]);
 		}
 
 		if (portalLayer.timestamps && portalLayer.timestamps.length > 0) {
@@ -110,16 +112,9 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 	});
 
 	var updateLabel = function(layerId, layerFormat, date) {
-		var tdLayerName = $("#" + layerId + "-container").children(".selectable-list-text");
-		tdLayerName.find("span").remove();
-		var format;
-		if (layerFormat) {
-			format = layerFormat;
-		} else {
-			format = "YYYY";
-		}
-		var dateStr = moment(date).format(format);
-		$("<span/>").html(" (" + dateStr + ")").appendTo(tdLayerName);
+		var dateStr = moment(date).format(layerFormat || "YYYY");
+		var label = layerLabels[layerId] + " (" + dateStr + ")"
+		bus.send("ui-input:" + layerId + ":set-label", label);
 	};
 
 	function findClosestPrevious(layer, date) {

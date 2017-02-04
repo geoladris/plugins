@@ -1,9 +1,12 @@
-define([ "layout", "message-bus", "module", "jquery" ], function(layout, bus, module) {
+define([ "layout", "message-bus", "module", "jquery", "ui/ui" ], function(layout, bus, module, $, ui) {
 
 	var priorities = module.config();
 
-	var divToolbar = $("<div/>").attr("id", "toolbar");
-	layout.header.append(divToolbar);
+	var divToolbar = ui.create("div", {
+		id : "toolbar",
+		parent : layout.header[0]
+	});
+	divToolbar = $(divToolbar);
 
 	bus.listen("modules-loaded", function() {
 		var sortedChildren = divToolbar.children().sort(function(child1, child2) {
