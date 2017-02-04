@@ -198,6 +198,44 @@ define([ "geoladris-tests" ], function(tests) {
 			injector.require([ "portalMapConnector" ], fcn);
 		});
 
-	});
+		it("Reset layers destroys all info-control instances", function(done) {
+			var fcn = function(portalMapConnector) {
+				bus.send("add-layer", {
+					"id" : "mylayer1",
+					"active" : true,
+					"mapLayers" : [ {
+						"id" : "mymaplayer1",
+						"baseUrl" : "http://base.url",
+						"wmsName" : "ws:layer"
+					} ]
+				});
+				bus.send("map:layerAdded", {
+					"layerId" : "mymaplayer1"
+				});
+				bus.send("add-layer", {
+					"id" : "layer2",
+					"mapLayers" : [ {
+						"id" : "mymaplayer2",
+						"baseUrl" : "http://base.url",
+						"wmsName" : "ws:layer",
+						"queryType" : "wms"
+					} ]
+				});
+				bus.send("map:layerAdded", {
+					"layerId" : "mymaplayer2"
+				});
+
+				bus.send("reset-layers");
+				expect(bus.send).not.toHaveBeenCalledWith("map:destroyControl", jasmine.objectContaining({
+					"controlId" : "mymaplayer1"
+				}));
+				expect(bus.send).toHaveBeenCalledWith("map:destroyControl", jasmine.objectContaining({
+					"controlId" : "mymaplayer2"
+				}));
+
+				done();
+			}
+			injector.require([ "portalMapConnector" ], fcn);
+		});
 
 });

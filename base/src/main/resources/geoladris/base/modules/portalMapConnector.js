@@ -164,6 +164,18 @@ define([ "message-bus" ], function(bus) {
 	});
 
 	bus.listen("reset-layers", function() {
+		for ( var layerId in mapLayersByLayerId) {
+			var mapLayerIds = mapLayersByLayerId[layerId];
+			for (var i = 0; i < mapLayerIds.length; i++) {
+				mapLayerId = mapLayerIds[i];
+				if (queriableLayers.hasOwnProperty(mapLayerId)){
+					bus.send("map:destroyControl", {
+						"controlId" : mapLayerId
+					});
+				}
+			}
+		}
+
 		mapLayersByLayerId = {};
 		zIndexes = {};
 		bus.send("map:removeAllLayers");
