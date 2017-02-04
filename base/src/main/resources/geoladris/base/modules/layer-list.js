@@ -85,7 +85,7 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 		var checkbox = ui.create("checkbox", {
 			id : portalLayer.id,
 			parent : parent,
-			text : portalLayer.label
+			label : portalLayer.label
 		});
 		checkbox.addEventListener("input", function() {
 			bus.send("layer-visibility", [ this.id, this.checked]);
