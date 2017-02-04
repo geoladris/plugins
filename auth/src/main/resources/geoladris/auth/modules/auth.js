@@ -80,7 +80,7 @@ define([ "message-bus", "i18n", "./auth-user", "module", "ui/ui" ], function(bus
 
 		ui.create("dialog", {
 			id : DIALOG_ID,
-			parent : "center",
+			parent : document.body,
 			css : "auth-dialog",
 			title : i18n["auth.title"],
 			closeButton : true

@@ -16,7 +16,10 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "ui/ui", "layer
 	layerListSelector.registerLayerPanel("layers_transparency_selector", 20, i18n.selected_layers, $(container));
 
 	function delLayer(layerId) {
-		container.removeChild(document.getElementById(layerId + "_active_container"));
+		var e = document.getElementById(layerId + "_active_container");
+		if (e) {
+			container.removeChild();
+		}
 	}
 
 	bus.listen("reset-layers", function() {

@@ -1,10 +1,10 @@
-define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "highcharts", "highcharts-theme-sand" ], function(module, $, bus, map, i18n, customization) {
-
+define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/ui", "highcharts", "highcharts-theme-sand" ], function(module, $, bus, map, i18n, customization, ui) {
 	var wmsLayerInfo = {};
-
 	var infoFeatures = {};
 
 	var pointHighlightLayer = null;
+
+	var dialog;
 
 	bus.listen("reset-layers", function() {
 		wmsLayerInfo = {};
@@ -21,7 +21,10 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "hig
 	});
 
 	bus.listen("clear-info-features", function(event, features, x, y) {
-		$("#info_popup").empty();
+		if (dialog) {
+			dialog.innerHTML = "";
+		}
+
 		infoFeatures = {};
 		if (pointHighlightLayer != null) {
 			pointHighlightLayer.removeAllFeatures();
@@ -68,60 +71,93 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "hig
 
 		infoFeatures[wmsLayerId] = features;
 
-		var infoPopup = $("#info_popup");
-		if (infoPopup.length === 0) {
-			infoPopup = $("<div/>").attr("id", "info_popup");
-		}
-		infoPopup.dialog({
+		dialog = ui.create("dialog", {
+			id : "info_popup",
+			parent : document.body,
 			title : i18n["info_dialog_title"],
-			closeOnEscape : false,
-			width : 700,
-			height : 200,
-			resizable : true,
-			close : function(event, ui) {
+			closeButton : true,
+		});
+
+		bus.listen("ui-hide", function(event, id) {
+			if (id == "info_popup") {
 				bus.send("clear-info-features");
 				bus.send("clear-highlighted-features");
 				map.getLayer("Highlighted Features").destroyFeatures();
-			},
-			autoOpen : false
+			}
 		});
 
 		// TODO check if there is a custom pop up instead of showing the
 		// standard one
+		var divResults = ui.create("div", {
+			id : "result_area_" + wmsLayerId,
+			parent : dialog
+		});
 
-		var divResults = $("<div/>").attr("id", "result_area_" + wmsLayerId).appendTo(infoPopup);
+		ui.create("div", {
+			parent : divResults,
+			css : "layer_title_info_center"
+		});
+
+		var tableContainer = ui.create("div", {
+			parent : divResults,
+			css : "layer_title_info_center"
+		});
+
+		var table = ui.create("table", {
+			parent : tableContainer
+		});
+
+		var tr = ui.create("tr", {
+			parent : table,
+			html : "<th class='command'><th class='command'>"
+		});
+
 		var layerNameFeatures = null;
 		var layerName = wmsLayerInfo[wmsLayerId]["portalLayerName"];
-		$("<div/>").addClass("layer_title info_center").html(layerName).appendTo(divResults);
-		var divTable = $("<div/>").addClass("layer_results info_center").appendTo(divResults);
-		var tblData = $("<table/>").appendTo(divTable);
-		var tr = $("<tr/>").appendTo(tblData);
 
-		$("<th/>").addClass("command").html("").appendTo(tr);
-		$("<th/>").addClass("command").html("").appendTo(tr);
 		var aliases = features[0]["aliases"];
 		for (var i = 0; i < aliases.length; i++) {
-			$("<th/>").addClass("data").html(aliases[i].alias).appendTo(tr);
+			ui.create("th", {
+				parent : tr,
+				css : "data",
+				html : aliases[i].alias
+			})
 		}
-		$.each(features, function(index, feature) {
 
-			var tr = $("<tr/>").appendTo(tblData);
+		$.each(features, function(index, feature) {
+			var tr = ui.create("tr", {
+				parent : table
+			});
 
 			// Zoom to object button
-			var imgZoomToArea = $("<img/>").attr("id", "info-magnifier-" + wmsLayerId + "-" + index).attr("src", "modules/images/zoom-to-object.png");
-			imgZoomToArea.css("cursor", "pointer");
-			var tdMagnifier = $("<td/>").addClass("command").appendTo(tr);
+			var tdMagnifier = ui.create("td", {
+				parent : tr,
+				css : "command"
+			});
 
 			if (feature["bounds"] != null) {
-				tdMagnifier.append(imgZoomToArea);
-				tdMagnifier.click(function() {
-					bus.send("zoom-to", [ feature["bounds"].scale(1.2).toArray() ]);
+				ui.create("button", {
+					id : "info-magnifier-" + wmsLayerId + "-" + index,
+					css : "info-magnifier",
+					parent : tdMagnifier,
+					image : "modules/images/zoom-to-object.png",
+					clickEventName : "zoom-to",
+					clickEventMessage : new OpenLayers.Bounds([ feature["bounds"].scale(1.2).toArray() ])
 				});
 			}
 
 			// Indicators button
-			var imgWait = $("<img/>").attr("src", "styles/images/ajax-loader.gif").attr("alt", "wait");
-			var tdIndicators = $("<td/>").attr("id", "info-indicator-" + wmsLayerId + "-" + index).addClass("command").append(imgWait).appendTo(tr);
+			var tdIndicator = ui.create("td", {
+				id : "info-indicator-" + wmsLayerId + "-" + index,
+				parent : tr,
+				css : "command"
+			});
+			var imgWait = ui.create("img", {
+				parent : tdIndicator
+			});
+			imgWait.src = "styles/images/ajax-loader.gif";
+			imgWait.alt = "wait";
+
 			var wmsName = wmsLayerInfo[wmsLayerId]["wmsName"];
 			bus.send("ajax", {
 				url : 'indicators?layerId=' + wmsName,
@@ -132,20 +168,24 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "hig
 				},
 				errorMsg : "Could not obtain the indicator",
 				complete : function() {
-					imgWait.remove();
+					$(imgWait).remove();
 				}
 			});
 
 			var aliases = feature["aliases"];
 			for (var i = 0; i < aliases.length; i++) {
-				$("<td/>").addClass("data").html(feature.attributes[aliases[i].name]).appendTo(tr);
+				ui.create("td", {
+					parent : tr,
+					css : "data",
+					html : feature.attributes[aliases[i].name]
+				})
 			}
 
 			if (feature["highlightGeom"] != null) {
-				tr.mouseenter(function() {
+				$(tr).mouseenter(function() {
 					bus.send("highlight-feature", feature["highlightGeom"]);
 				});
-				tr.mouseleave(function() {
+				$(tr).mouseleave(function() {
 					bus.send("clear-highlighted-features");
 				});
 			}
@@ -154,41 +194,13 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "hig
 
 		// If no features selected then close the dialog
 		if (features.length === 0) {
-			infoPopup.dialog('close');
+			bus.send("ui-hide", "info_popup");
 		} else {
-			var openInCenter = module.config()["open-in-center"];
-			// Don't reposition the dialog if already open
-			if (!infoPopup.dialog('isOpen')) {
-				var position;
-				if (openInCenter) {
-					position = {
-						my : "center",
-						at : "center",
-						of : window
-					};
-				} else {
-					var dialogX = x;
-					var dialogY = y;
-					position = {
-						my : "left top",
-						at : "left+" + dialogX + " top+" + dialogY,
-						of : window,
-						collision : "fit"
-					};
-				}
-
-				infoPopup.dialog('option', 'position', position);
-
-				// Finally open the dialog
-				infoPopup.dialog('open');
-				infoPopup.dialog('moveToTop');
-			}
+			bus.send("ui-show", "info_popup");
 		}
 
 		bus.listen("hide-info-features", function() {
-			if (infoPopup) {
-				infoPopup.dialog('close');
-			}
+			bus.send("ui-hide", "info_popup");
 		});
 	});
 
@@ -199,14 +211,15 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "hig
 		$(indicators).each(function(indicatorIndex, indicator) {
 			// Muestra un icono para cada grafico con el
 			// texto alternativo con el titulo del grafico.
-			var aIndicators = $("<a/>").attr("id", "info-indicator-" + wmsLayerId + "-" + infoFeatureIndex + "-" + indicatorIndex).addClass("fancybox.iframe").appendTo($("#info-indicator-" + wmsLayerId + "-" + infoFeatureIndex));
-			aIndicators.css("padding", "1px");
-			$("<img/>").attr("src", "modules/images/object-indicators.png").appendTo(aIndicators);
-			aIndicators.attr("alt", indicator.title);
-			aIndicators.attr("title", indicator.title);
-			aIndicators.click(function() {
-				bus.send("show-feature-indicator", [ wmsName, wmsLayerId, infoFeatureIndex, indicatorIndex ]);
+			var button = ui.create("button", {
+				id : "info-indicator-" + wmsLayerId + "-" + infoFeatureIndex + "-" + indicatorIndex,
+				parent : "info-indicator-" + wmsLayerId + "-" + infoFeatureIndex,
+				image : "modules/images/object-indicators.png",
+				clickEventName : "show-feature-indicator",
+				clickEventMessage : [ wmsName, wmsLayerId, infoFeatureIndex, indicatorIndex ]
 			});
+			button.alt = indicator.title;
+			button.title = indicator.title;
 			// TODO Agregar separador entre iconos.
 		});// END each
 	})
@@ -223,7 +236,7 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "hig
 			success : function(chartData, textStatus, jqXHR) {
 				var chart = $("<div/>");
 				chart.highcharts(chartData);
-				bus.send("show-info", [ indicator.title, chart ]);
+				bus.send("show-info", [ indicator.title, chart[0] ]);
 			},
 			errorMsg : "Could not obtain the indicator"
 		});

@@ -51,7 +51,10 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 		});
 
 		for (var i = 0; i < groupActions.length; i++) {
-			accordionGroup.header.appendChild(groupActions[i](groupInfo)[0]);
+			var elem = groupActions[i](groupInfo);
+			if (elem) {
+				accordionGroup.header.appendChild(elem[0]);
+			}
 		}
 	});
 
@@ -98,7 +101,10 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 
 		for (var i = 0; i < layerActions.length; i++) {
 			// Append actions after checkbox
-			checkbox.parentNode.appendChild(layerActions[i](portalLayer)[0]);
+			var elem = layerActions[i](portalLayer);
+			if (elem) {
+				checkbox.parentNode.appendChild(elem[0]);
+			}
 		}
 
 		if (portalLayer.timestamps && portalLayer.timestamps.length > 0) {
