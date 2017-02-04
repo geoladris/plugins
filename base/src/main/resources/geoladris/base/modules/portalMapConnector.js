@@ -143,6 +143,9 @@ define([ "message-bus" ], function(bus) {
 		var queryInfo = tempMapLayerQueryInfo[message.layerId];
 		if (queryInfo) {
 			bus.send("map:createControl", queryInfo);
+			// We do not activate the control since we'll do it in response to a
+			// layer-visibility event
+			
 			defaultExclusiveControl.push(queryInfo.controlId);
 		}
 		// We just need the information between add-layer and map:layerAdded
@@ -168,7 +171,7 @@ define([ "message-bus" ], function(bus) {
 			var mapLayerIds = mapLayersByLayerId[layerId];
 			for (var i = 0; i < mapLayerIds.length; i++) {
 				mapLayerId = mapLayerIds[i];
-				if (queriableLayers.hasOwnProperty(mapLayerId)){
+				if (queriableLayers.hasOwnProperty(mapLayerId)) {
 					bus.send("map:destroyControl", {
 						"controlId" : mapLayerId
 					});
@@ -177,7 +180,7 @@ define([ "message-bus" ], function(bus) {
 		}
 		defaultExclusiveControl = [];
 		currentControlIds = [];
-		
+
 		mapLayersByLayerId = {};
 		zIndexes = {};
 		bus.send("map:removeAllLayers");

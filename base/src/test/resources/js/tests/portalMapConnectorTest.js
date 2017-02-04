@@ -111,7 +111,7 @@ define([ "geoladris-tests" ], function(tests) {
 				bus.send("map:layerAdded", {
 					"layerId" : "mymaplayer"
 				});
-				expect(bus.send).not.toHaveBeenCalledWith("map:createControl", jasmine.any(Object));
+				expect(bus.send).not.toHaveBeenCalledWith("map:createControl");
 				done();
 			}
 			injector.require([ "portalMapConnector" ], fcn);
@@ -247,7 +247,7 @@ define([ "geoladris-tests" ], function(tests) {
 						"id" : "mymaplayer1",
 						"baseUrl" : "http://base.url",
 						"wmsName" : "ws:layer",
-						"queryType"  : "wms"
+						"queryType" : "wms"
 					} ]
 				});
 				bus.send("map:layerAdded", {
