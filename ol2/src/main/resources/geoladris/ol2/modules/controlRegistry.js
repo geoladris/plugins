@@ -7,7 +7,6 @@ define([ "message-bus", "./map" ], function(bus, map) {
 		if (controlTypeCreatorFunction.hasOwnProperty(message.controlType)) {
 			var control = controlTypeCreatorFunction[message.controlType](message);
 			map.addControl(control);
-			control.activate();
 			idControlInstance[message.controlId] = {
 				"control" : control,
 				"configuration" : JSON.parse(JSON.stringify(message))
@@ -15,14 +14,14 @@ define([ "message-bus", "./map" ], function(bus, map) {
 		}
 	});
 
-	function checkControlId() {
-		if (!idControlInstance.hasOwnProperty(message.controlId)) {
-			throw "control id not found: " + message.controlId;
+	function checkControlId(controlId) {
+		if (!idControlInstance.hasOwnProperty(controlId)) {
+			throw "control id not found: " + controlId;
 		}
 	}
 
 	bus.listen("map:activateControl", function(e, message) {
-		checkControlId();
+		checkControlId(message.controlId);
 		var control = idControlInstance[message.controlId].control;
 		if (!control.active) {
 			control.activate();
@@ -30,7 +29,7 @@ define([ "message-bus", "./map" ], function(bus, map) {
 	});
 
 	bus.listen("map:deactivateControl", function(e, message) {
-		checkControlId();
+		checkControlId(message.controlId);
 		var control = idControlInstance[message.controlId].control;
 		if (control.active) {
 			control.deactivate();
@@ -38,7 +37,7 @@ define([ "message-bus", "./map" ], function(bus, map) {
 	});
 
 	bus.listen("map:updateControl", function(e, message) {
-		checkControlId();
+		checkControlId(message.controlId);
 		var controlConfiguration = idControlInstance[message.controlId].configuration;
 		for ( var attrname in message) {
 			configuration[attrname] = message[attrname];
@@ -46,7 +45,7 @@ define([ "message-bus", "./map" ], function(bus, map) {
 	});
 
 	bus.listen("map:destroyControl", function(e, message) {
-		checkControlId();
+		checkControlId(message.controlId);
 		var control = idControlInstance[message.controlId].control;
 		if (control.active) {
 			control.deactivate();

@@ -8,6 +8,11 @@ define([ "geoladris-tests" ], function(tests) {
 			"activate" : function() {
 			}
 		};
+
+		function controlCreator() {
+			return control;
+		}
+
 		var map = {
 			"addControl" : function() {
 			}
@@ -27,21 +32,34 @@ define([ "geoladris-tests" ], function(tests) {
 			spyOn(map, "addControl");
 		});
 
-		it("Create control", function(done) {
+		it("Create control does not activate", function(done) {
 			var fcn = function(controlRegistry) {
-				controlRegistry.registerControl("mytype", function() {
-					return control;
-				});
+				controlRegistry.registerControl("mytype", controlCreator);
 				bus.send("map:createControl", {
 					"controlId" : "mycontrol",
 					"controlType" : "mytype"
 				});
-				expect(control.activate).toHaveBeenCalled();
 				expect(map.addControl).toHaveBeenCalled();
+				expect(control.activate).not.toHaveBeenCalled();
 				done();
 			}
 			injector.require([ "controlRegistry" ], fcn);
+		});
 
+		it("Activate control", function(done) {
+			var fcn = function(controlRegistry) {
+				controlRegistry.registerControl("mytype", controlCreator);
+				bus.send("map:createControl", {
+					"controlId" : "mycontrol",
+					"controlType" : "mytype"
+				});
+				bus.send("map:activateControl", {
+					"controlId" : "mycontrol"
+				});
+				expect(control.activate).toHaveBeenCalled();
+				done();
+			}
+			injector.require([ "controlRegistry" ], fcn);
 		});
 
 	});
