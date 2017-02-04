@@ -196,21 +196,11 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "open
 			}
 		});
 		
+		var layer = map.getLayersByName(queryInfo.layerId);
+		control.layers = new Array();
+		control.layers.push(layer);
+		
 		return control;
-	});
-
-	bus.listen("layers-loaded", function() {
-		bus.send("set-default-exclusive-control", [ controls ]);
-		bus.send("activate-default-exclusive-control");
-
-		// Set the OL layers for each control (only effective with the WMS
-		// control)
-		for ( var wmsLayerId in layerIdControl) {
-			var control = layerIdControl[wmsLayerId];
-			var layer = map.getLayersByName(wmsLayerId)[0];
-			control.layers = new Array();
-			control.layers.push(layer);
-		}
 	});
 
 });
