@@ -40,7 +40,7 @@ define([ "message-bus" ], function(bus) {
 	bus.listen("activate-exclusive-control", function(event, control) {
 		if (!control) {
 			control = [];
-		} else if (!isArray(control)) {
+		} else if (Object.prototype.toString.call(control) !== '[object Array]') {
 			control = [ control ];
 		}
 		var controlIds = [];
@@ -145,7 +145,7 @@ define([ "message-bus" ], function(bus) {
 			bus.send("map:createControl", queryInfo);
 			// We do not activate the control since we'll do it in response to a
 			// layer-visibility event
-			
+
 			defaultExclusiveControl.push(queryInfo.controlId);
 		}
 		// We just need the information between add-layer and map:layerAdded

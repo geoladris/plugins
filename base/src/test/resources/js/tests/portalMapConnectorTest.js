@@ -264,6 +264,24 @@ define([ "geoladris-tests" ], function(tests) {
 			injector.require([ "portalMapConnector" ], fcn);
 		});
 
+		it("activate-exclusive-control creates and activates the specified controls", function(done) {
+			var fcn = function(portalMapConnector) {
+				var controlInfo = {
+					"controlId" : "a",
+					"controlType" : "type",
+					"conf" : "conf"
+				};
+				bus.send("activate-exclusive-control", controlInfo);
+				expect(bus.send).toHaveBeenCalledWith("map:createControl", controlInfo);
+				expect(bus.send).toHaveBeenCalledWith("map:activateControl", {
+					"controlId" : "a"
+				});
+
+				done();
+			}
+			injector.require([ "portalMapConnector" ], fcn);
+		});
+
 	});
 
 });
