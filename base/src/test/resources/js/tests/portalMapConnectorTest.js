@@ -238,4 +238,32 @@ define([ "geoladris-tests" ], function(tests) {
 			injector.require([ "portalMapConnector" ], fcn);
 		});
 
+		it("Reset layers clears default exclusive control", function(done) {
+			var fcn = function(portalMapConnector) {
+				bus.send("add-layer", {
+					"id" : "mylayer1",
+					"active" : true,
+					"mapLayers" : [ {
+						"id" : "mymaplayer1",
+						"baseUrl" : "http://base.url",
+						"wmsName" : "ws:layer",
+						"queryType"  : "wms"
+					} ]
+				});
+				bus.send("map:layerAdded", {
+					"layerId" : "mymaplayer1"
+				});
+
+				bus.send("reset-layers");
+				bus.send("activate-default-exclusive-control");
+				expect(bus.send).not.toHaveBeenCalledWith("map:deactivateControl");
+				expect(bus.send).not.toHaveBeenCalledWith("map:activateControl");
+
+				done();
+			}
+			injector.require([ "portalMapConnector" ], fcn);
+		});
+
+	});
+
 });

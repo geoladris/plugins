@@ -30,7 +30,7 @@ define([ "message-bus" ], function(bus) {
 			});
 		}
 
-		currentControlIds = controlList;
+		currentControlIds = controlIds;
 	};
 
 	bus.listen("activate-default-exclusive-control", function(event) {
@@ -175,7 +175,9 @@ define([ "message-bus" ], function(bus) {
 				}
 			}
 		}
-
+		defaultExclusiveControl = [];
+		currentControlIds = [];
+		
 		mapLayersByLayerId = {};
 		zIndexes = {};
 		bus.send("map:removeAllLayers");
