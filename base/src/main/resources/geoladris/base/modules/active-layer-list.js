@@ -13,12 +13,12 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "ui/ui", "layer
 		css : "layer_container_panel",
 	});
 
-	layerListSelector.registerLayerPanel("layers_transparency_selector", 20, i18n.selected_layers, $(container));
+	layerListSelector.registerLayerPanel("layers_transparency_selector", 20, i18n.selected_layers, container);
 
 	function delLayer(layerId) {
 		var e = document.getElementById(layerId + "_active_container");
 		if (e) {
-			container.removeChild();
+			container.removeChild(e);
 		}
 	}
 
@@ -73,7 +73,8 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "ui/ui", "layer
 				parent : container,
 				label : layerInfo.label,
 				values : [ 0, 100 ],
-				value : 100 * layerInfo.opacity || 100
+				value : 100 * layerInfo.opacity || 100,
+				snap : false
 			});
 			slider.addEventListener("slide", function(event) {
 				bus.send("transparency-slider-changed", [ layerId, event.detail.value / 100 ]);

@@ -1,53 +1,53 @@
-define([ "jquery", "message-bus", "layout", "customization", "i18n", "jquery-ui" ], function($, bus, layout, customization, i18n, ui) {
-
+define([ "message-bus", "layout", "customization", "i18n", "ui/ui" ], function(bus, layout, customization, i18n, ui) {
 	var divsById = {};
 	var buttonPriorities = [];
-	
-	var divContainer = $("<div/>").attr("id", "layers_container").appendTo("body");
-	var divLayerListSelector = $("<div/>").attr("id", "layer_list_selector_pane").appendTo("body").hide();
+
+	var contents = ui.create("div", {
+		id : "layers_container",
+		parent : document.body
+	});
+	var buttons = ui.create("div", {
+		id : "layer_list_selector_pane",
+		parent : document.body
+	});
+	buttons.style.display = "none";
 
 	bus.listen("show-layer-panel", function(event, id) {
-		for (divId in divsById) {
-			if (divId == id) {
-				divsById[divId].show();
-			} else {
-				divsById[divId].hide();
-			}
+		for ( var divId in divsById) {
+			var active = (divId == id);
+			divsById[divId].style.display = active ? "" : "none";
+			bus.send("ui-button:" + divId + ":activate", active);
 		}
 	});
 
-	bus.listen("show-layer-panel", function(event, paneId) {
-		var btn = $("#" + paneId);
-		btn.prop("checked", true);
-		btn.button("refresh");
-		btn.change();
-	});
-
-	var registerLayerPanel = function(id, priority, text, div) {
-		var btn = $("<input type='radio'/>").attr("id", id).attr("name", "layerListSelector").appendTo(divLayerListSelector);
-		var lbl = $("<label/>").addClass("noselect").attr("for", id).html(text).appendTo(divLayerListSelector);
-				
-		buttonPriorities.push({
-			"id": id,
-			"btn" : btn,
-			"lbl" : lbl,
-			"priority" : priority,
-			"div" : div
+	var registerLayerPanel = function(id, priority, text, content) {
+		var button = ui.create("button", {
+			id : id,
+			parent : buttons,
+			text : text,
+			clickEventName : "show-layer-panel",
+			clickEventMessage : id
 		});
 
-		div.appendTo(divContainer);
+		buttonPriorities.push({
+			"id" : id,
+			"button" : button,
+			"priority" : priority,
+			"content" : content
+		});
 
-		divsById[id] = div;
+		contents.appendChild(content);
+
+		divsById[id] = content;
 		renderButtons();
 	};
 
 	var removeLayerPanel = function(id) {
-		$("#" + id).remove();
-		$("label[for=" + id + "]").remove();
-		for(var i in buttonPriorities) {
-			if(buttonPriorities[i].id == id) {
+		buttons.removeChild(document.getElementById(id));
+		for ( var i in buttonPriorities) {
+			if (buttonPriorities[i].id == id) {
 				// Remove div
-				buttonPriorities[i].div.remove();
+				contents.removeChild(buttonPriorities[i].contentdiv);
 				// Remove from buttonPriorities array
 				buttonPriorities.splice(i, 1);
 				break;
@@ -59,34 +59,18 @@ define([ "jquery", "message-bus", "layout", "customization", "i18n", "jquery-ui"
 	};
 
 	var renderButtons = function() {
-		divLayerListSelector.empty();
-		var byPriority = function(a, b) {
+		buttons.innerHTML = "";
+		buttonPriorities.sort(function(a, b) {
 			return a.priority - b.priority;
-		}
-		buttonPriorities.sort(byPriority);
+		});
+
 		for (var i = 0; i < buttonPriorities.length; i++) {
 			var bp = buttonPriorities[i];
-			if (i == 0) {
-				bp.btn.attr("checked", "true");
-			} else {
-				bp.btn.attr("checked", null);
-				bp.div.hide();
-			}
-			divLayerListSelector.append(bp.btn);
-			divLayerListSelector.append(bp.lbl);
-
-			bp.lbl.on("click", bp, function(event) {
-				var bp = event.data;
-				bp.btn.checked = !bp.btn.checked;
-				bp.btn.button("refresh");
-				bp.btn.change();
-				bus.send("show-layer-panel", [bp.id]);
-				console.log(bp.id);
-				return false;
-			});
+			buttons.appendChild(bp.button);
 		}
-		divLayerListSelector.buttonset();
-		divLayerListSelector.show();
+
+		bus.send("show-layer-panel", buttonPriorities[0].id);
+		buttons.style.display = "";
 	}
 
 	bus.listen("modules-loaded", function() {

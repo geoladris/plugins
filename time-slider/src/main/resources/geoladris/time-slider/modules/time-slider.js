@@ -32,7 +32,8 @@ define([ "message-bus", "toolbar", "ui/ui" ], function(bus, toolbar, ui) {
 				id : "time-slider",
 				parent : container,
 				values : values,
-				value : values[values.length - 1]
+				value : values[values.length - 1],
+				snap : true
 			});
 
 			var lastValue;

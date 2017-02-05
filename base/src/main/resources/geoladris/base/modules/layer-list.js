@@ -14,7 +14,7 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 		css : "layers-accordion"
 	});
 
-	layerListSelector.registerLayerPanel("all_layers_selector", 10, i18n.layers, $(all_layers));
+	layerListSelector.registerLayerPanel("all_layers_selector", 10, i18n.layers, all_layers);
 
 	bus.listen("reset-layers", function() {
 		layerActions = [];

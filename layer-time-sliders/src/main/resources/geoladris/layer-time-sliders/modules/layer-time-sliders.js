@@ -7,7 +7,7 @@ define([ "jquery", "message-bus", "layout", "map", "layer-list-selector", "momen
 		id : "layerTimeSliders",
 		css : "layer_container_panel"
 	})
-	layerListSelector.registerLayerPanel("layer_slider_selector", 30, "Temporal", $(container));
+	layerListSelector.registerLayerPanel("layer_slider_selector", 30, "Temporal", container);
 
 	function setLabel(id, date, dateFormat) {
 		var label = labels[id] + " (" + moment(date).format(dateFormat || "YYYY") + ")";
@@ -40,7 +40,8 @@ define([ "jquery", "message-bus", "layout", "map", "layer-list-selector", "momen
 			parent : container,
 			css : "layer-time.slider",
 			values : timestamps,
-			value : lastTimestamp
+			value : lastTimestamp,
+			snap : true
 		});
 		sliders[layerInfo.id] = slider;
 		labels[layerInfo.id] = layerInfo.label;
