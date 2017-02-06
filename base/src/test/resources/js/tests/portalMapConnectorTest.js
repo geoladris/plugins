@@ -8,6 +8,13 @@ define([ "geoladris-tests" ], function(tests) {
 			var initialization = tests.init("base", {}, {});
 			injector = initialization.injector;
 			bus = initialization.bus;
+
+			injector.mock("iso8601", {
+				"parse" : function() {
+				},
+				"toString" : function() {
+				}
+			});
 		});
 
 		it("add-layer + layers-loaded triggers map:addLayer", function(done) {

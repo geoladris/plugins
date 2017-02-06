@@ -1,4 +1,4 @@
-define([ "message-bus" ], function(bus) {
+define([ "message-bus", "iso8601" ], function(bus, iso8601) {
 
 	var currentControlIds = [];
 	var defaultExclusiveControl = [];
@@ -58,14 +58,14 @@ define([ "message-bus" ], function(bus) {
 			"controlType" : "navigation"
 		});
 		bus.send("map:activateControl", {
-			"controlId": "navigation"
+			"controlId" : "navigation"
 		});
 		bus.send("map:createControl", {
 			"controlId" : "scale",
 			"controlType" : "scale"
 		});
 		bus.send("map:activateControl", {
-			"controlId": "scale"
+			"controlId" : "scale"
 		});
 	});
 
@@ -114,7 +114,7 @@ define([ "message-bus" ], function(bus) {
 				queryInfo = {
 					"controlId" : mapLayer.id,
 					"controlType" : "wfsinfo",
-					"layerId": mapLayer.id,
+					"layerId" : mapLayer.id,
 					"url" : mapLayer.queryUrl,
 					"wfsName" : mapLayer.wmsName,
 					"fieldNames" : mapLayer.queryFieldNames,
@@ -125,7 +125,7 @@ define([ "message-bus" ], function(bus) {
 				queryInfo = {
 					"controlId" : mapLayer.id,
 					"controlType" : "wmsinfo",
-					"layerId": mapLayer.id,
+					"layerId" : mapLayer.id,
 					"queryUrl" : mapLayer.queryUrl,
 					"layerUrl" : mapLayer.baseUrl,
 					"highlightBounds" : mapLayer.queryHighlightBounds
@@ -234,11 +234,12 @@ define([ "message-bus" ], function(bus) {
 				}
 
 				var configuration = {
-					"time" : timestamp.toISO8601String()
+					"time" : iso8601.toString(timestamp)
 				};
 				if (style != null) {
 					configuration["styles"] = style;
 				}
+
 				bus.send("map:mergeLayerParameters", {
 					"layerId" : mapLayerId,
 					"parameters" : configuration
