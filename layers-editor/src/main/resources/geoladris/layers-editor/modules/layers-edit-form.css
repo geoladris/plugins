@@ -1,56 +1,21 @@
-.layers-editor-form div {
-	float: left;
-	clear: left;
-	width: 100%;
-	padding-bottom: 0.5em;
+#layers-editor-dialog-form {
+	max-height: 400px;
+	overflow-y: auto;
 }
 
-.layers-editor-form label {
-	float: left;
-	width: 150px;
-	margin-right: 10px;
-	text-align: right;
-}
-
-.layers-editor-form fieldset {
-	width: 420px;
+.layers-editor-dialog-form fieldset {
 	margin-bottom: 5px;
 }
 
-.layers-editor-form input[type="text"] {
-	width: 250px;
+.layers-editor-dialog-form ul {
+	margin: 0px;
+	padding: 10px;
+	text-align: left;
 }
 
-.layers-editor-form textarea {
-	width: 150px;
-	resize: vertical;
-}
-
-.layers-editor-form select {
-	width: 125px;
-}
-
-.layers-editor-form input {
-	width: auto;
-}
-
-.layers-editor-form ul {
-	margin: 0;
-	margin-left: 120px;
+.layers-editor-dialog-form li {
 	list-style-type: none;
-}
-
-.layers-editor-form ul div {
-	display: inline;
-	float: none;
-}
-
-.layers-editor-form ul input[type="text"] {
-	width: 160px;
-}
-
-.layers-editor-form ul select {
-	width: 75px;
+	display: flex;
 }
 
 .layers-editor-type-not-implemented {
@@ -59,11 +24,11 @@
 	font-style: italic;
 }
 
-.layers-editor-form select[name=wmsName] {
+.layers-editor-dialog-form select[name=wmsName] {
 	float: left;
 }
 
-div.layers-editor-wms-error,div.layers-editor-wms-loading {
+div.layers-editor-wms-error, div.layers-editor-wms-loading {
 	width: 0px;
 	height: 0px;
 	background-size: cover;

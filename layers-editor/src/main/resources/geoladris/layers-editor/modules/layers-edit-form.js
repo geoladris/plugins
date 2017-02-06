@@ -1,4 +1,4 @@
-define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jquery-ui" ], function(i18n, schema, layerRoot, bus, $) {
+define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "ui/ui" ], function(i18n, schema, layerRoot, bus, $, ui) {
 
 	var DIALOG_ID = "layers-editor-dialog";
 	var FORM_ID = "layers-editor-dialog-form";
@@ -35,8 +35,10 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 		var portalValues = layerRoot.getPortalLayer(id);
 		addPortalLayerFields(portalValues);
 
-		var wmsValues = layerRoot.getMapLayer(portalValues.layers[0]);
-		addWmsLayerFields(wmsValues);
+		if (portalValues.layers && portalValues.layers[0]) {
+			var wmsValues = layerRoot.getMapLayer(portalValues.layers[0]);
+			addWmsLayerFields(wmsValues);
+		}
 
 		definitions["toc"]["id"].disabled = undefined;
 		definitions["wmsLayer-base"]["id"].disabled = undefined;
@@ -77,11 +79,18 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 	}
 
 	function createDialog(title, applyCallback) {
+		if (document.getElementById(DIALOG_ID)) {
+			bus.send("ui-show", DIALOG_ID);
+			form.empty();
+			return;
+		}
+
 		ui.create("dialog", {
 			id : DIALOG_ID,
 			parent : "map",
 			title : title,
-			closeButton : true
+			closeButton : true,
+			visible : true
 		});
 
 		form = ui.create("form", {
@@ -94,24 +103,24 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 		ui.create("button", {
 			id : "layers-editor-cancel",
 			parent : DIALOG_ID,
-			html : i18n["layers-editor.cancel"],
+			css : "dialog-ok-button",
+			text : i18n["layers-editor.cancel"] || "Cancel",
 			clickEventName : "ui-hide",
-			sendEventMessage : DIALOG_ID
+			clickEventMessage : DIALOG_ID
 		});
 
 		var apply = ui.create("button", {
 			id : "layers-editor-apply",
 			parent : DIALOG_ID,
-			html : i18n["layers-editor.apply"]
+			css : "dialog-ok-button",
+			text : i18n["layers-editor.apply"] || "Apply"
 		});
 		apply.addEventListener("click", function(event) {
 			if (event.button == 0) {
 				applyCallback();
 				bus.send("ui-hide", DIALOG_ID);
 			}
-		})
-
-		return form;
+		});
 	}
 
 	function addTocFields(values) {
@@ -125,12 +134,8 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 
 	function addWmsLayerFields(values) {
 		var fieldset = addFields(i18n["layers-editor.panel_layer_datasource"], "wmsLayer-base", values);
-
-		$(fieldset).find("select[name=type]").change({
-			form : form,
-			values : values
-		}, function(e) {
-			setLayerType(this.value, e.data.form, e.data.values);
+		document.getElementById(fieldset.id + "-type").addEventListener("change", function() {
+			setLayerType(this.value, values);
 		});
 
 		setLayerType(values.type || "wms", values);
@@ -154,29 +159,30 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 		for ( var t in types) {
 			removePanel(types[t].definition);
 		}
-		addFields(types[type].label, types[type].definition, values);
+		fieldset = addFields(types[type].label, types[type].definition, values);
 
 		if (type == "wms") {
-			var input = $("fieldset[class='" + types.wms.definition + "']").find("input[name='baseUrl']")
-			var wmsName = $("fieldset[class='" + types.wms.definition + "']").find("select[name='wmsName']");
+			var input = document.getElementById(fieldset.id + "-baseUrl");
+			var wmsName = document.getElementById(fieldset.id + "-wmsName");
+
 			var loading = ui.create("div", {
 				id : "layers-editor-wms-loading",
-				parent : wmsName.parent().attr("id"),
+				parent : wmsName.parentNode,
 				css : "layers-editor-wms-loading"
 			});
 			var error = ui.create("div", {
 				id : "layers-editor-wms-error",
-				parent : wmsName.parent().attr("id"),
+				parent : wmsName.parentNode,
 				css : "layers-editor-wms-error"
 			});
 
 			var change = function() {
-				var url = input.val() + "?SERVICE=wms&VERSION=1.1.1&REQUEST=GetCapabilities";
+				var url = input.value + "?SERVICE=wms&VERSION=1.1.1&REQUEST=GetCapabilities";
 				if (!url.startsWith("http")) {
 					url = layerRoot.getDefaultServer() + url;
 				}
 
-				wmsName.empty();
+				wmsName.innerHTML = "";
 				bus.send("ui-show", "layers-editor-wms-loading");
 				bus.send("ui-hide", "layers-editor-wms-error");
 
@@ -188,11 +194,13 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 					var iterator = response.evaluate("//Capability/Layer/Layer", response, null, 0, null);
 					var layer = iterator.iterateNext();
 
+					var values = [];
 					while (layer) {
-						var name = layer.getElementsByTagName("Name")[0].textContent;
-						var option = $("<option>").attr("value", name).text(name).appendTo(wmsName);
+						values.push(layer.getElementsByTagName("Name")[0].textContent);
 						layer = iterator.iterateNext();
 					}
+
+					bus.send("ui-choice:" + fieldset.id + "-wmsName:set-values", [ values ]);
 				}).error(function(e) {
 					bus.send("ui-show", "layers-editor-wms-error");
 					console.log(e);
@@ -201,8 +209,8 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 				});
 			}
 
-			input.blur(change);
-			input.keypress(function(e) {
+			$(input).blur(change);
+			$(input).keypress(function(e) {
 				if (e.which == 13)
 					change();
 			});
@@ -217,14 +225,14 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 
 	function addFields(title, panel, values) {
 		var fieldset = ui.create("fieldset", {
-			id : FORM_ID + "-fieldset",
+			id : FORM_ID + "-fieldset-" + panel,
 			parent : FORM_ID,
 			css : panel
 		});
 
 		ui.create("legend", {
-			id : FORM_ID + "-legend",
-			parent : FORM_ID + "-fieldset",
+			id : fieldset.id + "-title-legend",
+			parent : fieldset,
 			html : title
 		});
 
@@ -238,32 +246,38 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 		return fieldset;
 	}
 
+	var anyOfInputs = {};
+	var fieldIndex = 0;
 	function addField(fieldset, definition, value) {
 		var input;
-
+		var id = fieldset.id + "-" + (definition.id || fieldIndex++);
 		if (definition.enum) {
 			var values = [];
 			for ( var e in definition.enum) {
 				values.push(definition.enum[e]);
 			}
 			input = ui.create("choice", {
-				id : FORM_ID + "-" + definition.id,
+				id : id,
 				parent : fieldset.id,
 				label : definition.title,
 				values : values
 			});
-			input.querySelector("option[value='" + value + "']").selected = true;
-			input.name = definition.id;
+			var option = input.querySelector("option[value='" + value + "']");
+			if (option) {
+				option.selected = true;
+			}
 		} else if (definition.type == "string") {
 			input = ui.create("input", {
-				id : FORM_ID + "-" + definition.id,
+				id : id,
 				parent : fieldset.id,
 				label : definition.title
 			});
-			input.value = value;
+			if (value) {
+				input.value = value;
+			}
 		} else if (definition.type == "array") {
 			input = ui.create("text-area", {
-				id : FORM_ID + "-" + definition.id,
+				id : id,
 				parent : fieldset.id,
 				label : definition.title,
 				rows : value ? value.length + 1 : 3
@@ -271,7 +285,7 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 			input.value = value ? value.join("\r\n") : "";
 		} else if (definition.type == "boolean") {
 			input = ui.create("checkbox", {
-				id : FORM_ID + "-" + definition.id,
+				id : id,
 				parent : fieldset.id,
 				label : definition.title
 			});
@@ -282,24 +296,26 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 			// WARNING: Shitty code ahead. It works for "legend" and
 			// "inlineLengendUrl",
 			// but will probably misbehave in other "anyOf" definition.
-			ui.create("ul", {
-				id : FORM_ID + "-" + definition.id,
+			var ul = ui.create("ul", {
+				id : id,
 				parent : fieldset.id,
-				css : definition.id
+				css : definition.id,
+				html : definition.title
 			});
 			var alreadyChecked = false;
+			anyOfInputs[definition.id] = {};
 			for ( var i in definition.anyOf) {
-				var id = FORM_ID + "-" + definition.id + "-" + i;
-				ui.create("li", {
-					id : id,
-					parent : fieldset.id,
+				liId = id + "-" + i;
+				var li = ui.create("li", {
+					id : liId,
+					parent : ul,
 					css : definition.id
 				});
 
 				var choiceDef = definition.anyOf[i];
 				var choice = ui.create("input", {
-					id : id + "-input",
-					parent : id,
+					id : liId + "-input",
+					parent : liId,
 					type : "radio"
 				});
 				choice.name = definition.id;
@@ -308,34 +324,43 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 				if ((choiceDef.hasOwnProperty("enum") && choiceDef.enum.indexOf(value) != -1)) {
 					choice.checked = true;
 					alreadyChecked = true;
-					addField(el, choiceDef, value);
+					anyOfInputs[definition.id][i] = addField(li, choiceDef, value);
 				} else if (alreadyChecked) {
-					addField(el, choiceDef, "");
+					anyOfInputs[definition.id][i] = addField(li, choiceDef, "");
 				} else {
 					choice.checked = true;
-					addField(el, choiceDef, value);
+					anyOfInputs[definition.id][i] = addField(li, choiceDef, value);
 				}
 			}
 		} else {
 			ui.create("span", {
-				id : FORM_ID + "-" + definition.id,
+				id : id,
 				parent : fieldset.id,
 				css : "layers-editor-type-not-implemented",
 				html : i18n["layers-editor.unsupported_field"]
 			});
 		}
 
-		if (input && definition.disabled) {
-			input.disabled = true;
+		if (input) {
+			if (definition.id) {
+				input.name = definition.id;
+			}
+			if (definition.disabled) {
+				input.disabled = true;
+			}
+			return input;
 		}
+
 	}
 
 	function getFormValues() {
 		var data = {};
 		var fieldsets = form.find("fieldset");
+		form.find(':input:disabled').removeAttr('disabled');
 
 		// Process each of the fieldsets
 		fieldsets.each(function(f, fieldset) {
+
 			var panel = fieldset.className;
 			var values = {};
 
@@ -369,7 +394,7 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "jq
 						values[name] = [];
 					}
 				} else if (definition.hasOwnProperty("anyOf")) {
-					value = $(fieldset).find('input[name=' + name + '][value=' + value + ']').next().find(':input').val();
+					value = anyOfInputs[name][value].value;
 					if (value.length > 0) {
 						values[name] = value;
 					}

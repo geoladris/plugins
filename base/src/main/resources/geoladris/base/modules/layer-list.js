@@ -63,29 +63,6 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 		layerLabels[portalLayer.id] = portalLayer.label;
 		var parent = "all_layers_group_" + portalLayer.groupId;
 
-		if (portalLayer.inlineLegendUrl != null) {
-			ui.create("div", {
-				id : "layer_list_legend_" + portalLayer.id,
-				parent : parent,
-				css : "inline-legend"
-			});
-		} else {
-			var wmsLayersWithLegend = portalLayer.mapLayers.filter(function(layer) {
-				return layer.hasOwnProperty("legend");
-			});
-			var wmsLayerWithLegend = wmsLayersWithLegend[0];
-			if (wmsLayerWithLegend) {
-				ui.create("button", {
-					id : "inline-legend-button-" + portalLayer.id,
-					parent : parent,
-					css : portalLayer.active ? "inline-legend-button visible" : "inline-legend-button",
-					clickEventName : "open-legend",
-					clickEventMessage : wmsLayerWithLegend.id
-				});
-
-			}
-		}
-
 		var checkbox = ui.create("checkbox", {
 			id : portalLayer.id,
 			parent : parent,
@@ -94,6 +71,31 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 		checkbox.addEventListener("input", function() {
 			bus.send("layer-visibility", [ this.id, this.checked ]);
 		});
+
+		var legend;
+		if (portalLayer.inlineLegendUrl != null) {
+			legend = ui.create("div", {
+				id : "layer_list_legend_" + portalLayer.id,
+				css : "inline-legend"
+			});
+		} else {
+			var wmsLayersWithLegend = portalLayer.mapLayers.filter(function(layer) {
+				return layer.hasOwnProperty("legend");
+			});
+			var wmsLayerWithLegend = wmsLayersWithLegend[0];
+			if (wmsLayerWithLegend) {
+				legend = ui.create("button", {
+					id : "inline-legend-button-" + portalLayer.id,
+					css : portalLayer.active ? "inline-legend-button visible" : "inline-legend-button",
+					clickEventName : "open-legend",
+					clickEventMessage : wmsLayerWithLegend.id
+				});
+			}
+		}
+
+		if (legend) {
+			checkbox.parentNode.insertBefore(legend, checkbox);
+		}
 
 		bus.send("ui-accordion-group:" + parent + ":visibility", {
 			header : true

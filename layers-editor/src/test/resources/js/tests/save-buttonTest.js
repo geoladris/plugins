@@ -39,8 +39,7 @@ define([ "geoladris-tests" ], function(tests) {
 					id : "save-layers-button",
 					parent : "toolbar",
 					css : "blue_button toolbar_button",
-					html : i18n["layers-editor.save_layers"],
-					clickEventName : "ajax"
+					html : i18n["layers-editor.save_layers"]
 				}));
 				done();
 			});
