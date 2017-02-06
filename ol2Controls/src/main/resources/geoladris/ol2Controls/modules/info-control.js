@@ -16,7 +16,7 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "geoj
 
 		if (feature.hasOwnProperty("geometry") && feature.geometry!=null){
 			var olGeometry = new OpenLayers.Format.GeoJSON().read(feature.geometry, "Geometry");
-			bbox = olGeometry.getBounds().toArray;
+			bbox = olGeometry.getBounds().toArray();
 			highlightGeom = feature.geometry;
 		} else if (feature.properties.hasOwnProperty("bbox")) {
 			bbox = feature.properties.bbox;
