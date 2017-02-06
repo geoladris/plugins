@@ -15,24 +15,26 @@ define([ "module", "jquery", "message-bus", "i18n", "customization", "geojson/ge
 	bus.listen("add-layer", function(event, layerInfo) {
 		var portalLayerName = layerInfo.label;
 		$.each(layerInfo.mapLayers, function(i, mapLayer) {
-			var aliases = null;
-			if (mapLayer.queryFieldNames) {
-				aliases = [];
-				var fieldNames = mapLayer.queryFieldNames;
-				var fieldAliases = mapLayer.queryFieldAliases;
-				for (var j = 0; j < fieldNames.length; j++) {
-					var alias = {
-						"name" : fieldNames[j],
-						"alias" : fieldAliases[j]
-					};
-					aliases.push(alias);
+			if (mapLayer.queryType) {
+				var aliases = null;
+				if (mapLayer.queryFieldNames) {
+					aliases = [];
+					var fieldNames = mapLayer.queryFieldNames;
+					var fieldAliases = mapLayer.queryFieldAliases;
+					for (var j = 0; j < fieldNames.length; j++) {
+						var alias = {
+							"name" : fieldNames[j],
+							"alias" : fieldAliases[j]
+						};
+						aliases.push(alias);
+					}
 				}
-			}
 
-			wmsLayerInfo[mapLayer.id] = {
-				"portalLayerName" : portalLayerName,
-				"wmsName" : mapLayer.wmsName,
-				"aliases" : aliases
+				wmsLayerInfo[mapLayer.id] = {
+					"portalLayerName" : portalLayerName,
+					"wmsName" : mapLayer.wmsName,
+					"aliases" : aliases
+				}
 			}
 		});
 	});
@@ -111,6 +113,16 @@ define([ "module", "jquery", "message-bus", "i18n", "customization", "geojson/ge
 		$("<th/>").addClass("command").html("").appendTo(tr);
 		$("<th/>").addClass("command").html("").appendTo(tr);
 		var aliases = wmsLayerInfo[wmsLayerId]["aliases"];
+		if (aliases == null && features.length >0) {
+			var properties= features[0].properties;
+			aliases = [];
+			for (propertyName in properties) {
+				aliases.push({					
+					"name" : propertyName,
+					"alias" : propertyName
+				});
+			}
+		}
 		for (var i = 0; i < aliases.length; i++) {
 			$("<th/>").addClass("data").html(aliases[i].alias)
 					.appendTo(tr);
