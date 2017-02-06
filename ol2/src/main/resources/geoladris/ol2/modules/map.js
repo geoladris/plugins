@@ -178,9 +178,9 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		}
 	});
 
-	bus.listen("map:updateLayer", function(e, message) {
+	bus.listen("map:mergeLayerParameters", function(e, message) {
 		var layer = map.getLayer(message.layerId);
-		layer.mergeNewParams(message.configuration);
+		layer.mergeNewParams(message.parameters);
 	});
 
 	bus.listen("map:setLayerIndex", function(e, message) {
@@ -193,18 +193,6 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		var layer = map.getLayer(layerId);
 		var feature = new OpenLayers.Format.GeoJSON().parseFeature(message.feature);
 		layer.addFeatures(feature);
-	});
-
-	bus.listen("map:setLayerParameters", function(e, message) {
-		var layerId = message["layerId"];
-		var mapLayers = mapLayersByLayerId[layerId];
-		if (mapLayers) {
-			for (var index = 0; index < mapLayers.length; index++) {
-				var mapLayerId = mapLayers[index];
-				var layer = map.getLayer(mapLayerId);
-				layer.mergeNewParams(message.parameters);
-			}
-		}
 	});
 
 	return map;

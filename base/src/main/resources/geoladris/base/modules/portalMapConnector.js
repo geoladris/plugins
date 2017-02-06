@@ -239,9 +239,9 @@ define([ "message-bus" ], function(bus) {
 				if (style != null) {
 					configuration["styles"] = style;
 				}
-				bus.send("map:updateLayer", {
+				bus.send("map:mergeLayerParameters", {
 					"layerId" : mapLayerId,
-					"configuration" : configuration
+					"parameters" : configuration
 				});
 			}
 		}
