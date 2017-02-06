@@ -1,5 +1,5 @@
-define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "openlayers", "jquery" ], function(map, bus, customization,
-		controlRegistry) {
+define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "geojson/geojson", "openlayers", "jquery" ], function(map, bus, customization,
+		controlRegistry, geojson) {
 
 	// Associates wmsLayers with controls
 	var layerIdControl = {};
@@ -10,25 +10,23 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "open
 	// List of controls
 	var controls = [];
 
-	var addBoundsAndHighlightGeom = function(feature) {
-		var bounds = null;
+	var addBBoxAndHighlightGeom = function(feature) {
+		var bbox = null;
 		var highlightGeom = null;
 
-		if (feature.geometry) {
-			bounds = feature["geometry"].getBounds();
-			highlightGeom = feature["geometry"];
-		} else if (feature.attributes["bbox"]) {
-			var bbox = feature.attributes["bbox"];
-			bounds = new OpenLayers.Bounds();
-			bounds.extend(new OpenLayers.LonLat(bbox[0], bbox[1]));
-			bounds.extend(new OpenLayers.LonLat(bbox[2], bbox[3]));
-			highlightGeom = bounds.toGeometry();
+		if (feature.hasOwnProperty("geometry") && feature.geometry!=null){
+			var olGeometry = new OpenLayers.Format.GeoJSON().read(feature.geometry, "Geometry");
+			bbox = olGeometry.getBounds().toArray;
+			highlightGeom = feature.geometry;
+		} else if (feature.properties.hasOwnProperty("bbox")) {
+			bbox = feature.properties.bbox;
+			highlightGeom = geojson.createPolygonFromBBox(bbox);
 		}
-
-		feature["bounds"] = bounds;
+		
+		feature["bbox"] = bbox;
 		feature["highlightGeom"] = highlightGeom;
 	};
-
+	
 	bus.listen("reset-layers", function() {
 		layerIdControl = {};
 		layerIdInfo = {};
@@ -115,20 +113,13 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "open
 					data : $.param({
 						url : url
 					}),
-					success : function(data, textStatus, jqXHR) {
-						var features = new OpenLayers.Format.GeoJSON().read(data);
-						var geojsonFeatures = [];
-						if (features.length > 0) {
-							$.each(features, function(index, feature) {
-								addBoundsAndHighlightGeom(feature);
-								var geojsonFeature = JSON.parse(new OpenLayers.Format.GeoJSON().write(feature));
-								geojsonFeature["bounds"] = feature["bounds"];
-								geojsonFeature["highlightGeom"] = feature["highlightGeom"];
-								geojsonFeatures.push(geojsonFeature);
-							});
-
-							sendInfoFeatures(queryInfo.eventData, geojsonFeatures, e.xy.x, e.xy.y);
+					success : function(geojsonFeatureCollection, textStatus, jqXHR) {
+						var features = geojsonFeatureCollection.features;
+						for (var index = 0; index < features.length; index++) {
+							var feature = features[index];
+							addBBoxAndHighlightGeom(feature);
 						}
+						sendInfoFeatures(queryInfo.eventData, features, e.xy.x, e.xy.y);
 					},
 					controlCallBack : function(control) {
 						wfsCallControl = control;
@@ -175,15 +166,13 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "open
 						var geojsonFeatures = [];
 						$.each(evt.features, function(index, feature) {
 							if (feature.geometry) {
-								if (mapLayer.queryHighlightBounds) {
+								if (queryInfo.queryHighlightBounds) {
 									feature.geometry = feature.geometry.getBounds().toGeometry();
 								}
 								feature.geometry.transform(epsg4326, epsg900913);
 							}
-							addBoundsAndHighlightGeom(feature);
 							var geojsonFeature = JSON.parse(new OpenLayers.Format.GeoJSON().write(feature));
-							geojsonFeature["bounds"] = feature["bounds"];
-							geojsonFeature["highlightGeom"] = feature["highlightGeom"];
+							addBBoxAndHighlightGeom(geojsonFeature);
 							geojsonFeatures.push(geojsonFeature);
 						});
 

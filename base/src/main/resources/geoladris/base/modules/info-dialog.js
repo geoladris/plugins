@@ -127,11 +127,10 @@ define([ "module", "jquery", "message-bus", "i18n", "customization", "geojson/ge
 			var tdMagnifier = $("<td/>").addClass("command").appendTo(
 					tr);
 
-			if (feature["bounds"] != null) {
+			if (feature["bbox"] != null) {
 				tdMagnifier.append(imgZoomToArea);
 				tdMagnifier.click(function() {
-					bus.send("zoom-to", [ feature["bounds"].scale(1.2)
-							.toArray() ]);
+					bus.send("zoom-to", [ feature["bbox"] ]);
 				});
 			}
 

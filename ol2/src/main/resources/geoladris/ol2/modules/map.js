@@ -18,7 +18,7 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		var highlightLayer = map.getLayer("Highlighted Features");
 		highlightLayer.removeAllFeatures();
 		var feature = new OpenLayers.Feature.Vector();
-		feature.geometry = geometry;
+		feature.geometry = new OpenLayers.Format.GeoJSON().parseGeometry(geometry);
 		highlightLayer.addFeatures(feature);
 		highlightLayer.redraw();
 	});
@@ -79,6 +79,8 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 
 	bus.listen("zoom-to", function(event, msg) {
 		if (msg instanceof OpenLayers.Bounds) {
+			map.zoomToExtent(msg);
+		} else if (msg instanceof Array) {
 			map.zoomToExtent(msg);
 		} else if (msg instanceof Object) {
 			var center = new OpenLayers.LonLat(msg.x, msg.y);

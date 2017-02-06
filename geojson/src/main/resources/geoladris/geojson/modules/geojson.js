@@ -1,5 +1,19 @@
 define([ "wellknown" ], function(wellknown) {
 
+	function createPolygon(externalRing, internalRings) {
+		if (!internalRings) {
+			internalRings = [];
+		}
+		var allRings = [ externalRing ].concat(internalRings);
+		for (var i = 0; i < allRings.length; i++) {
+			allRings[i] = toCoordinateList(allRings[i]);
+		}
+		return {
+			"type" : "Polygon",
+			"coordinates" : allRings
+		}
+	}
+	
 	function toCoordinateList(ordinateList) {
 		var coordinates = [];
 		for (var i = 0; i < ordinateList.length; i += 2) {
@@ -7,7 +21,7 @@ define([ "wellknown" ], function(wellknown) {
 		}
 		return coordinates;
 	}
-	
+
 	return {
 		"createFeature" : function(geometry, properties) {
 			return {
@@ -28,19 +42,7 @@ define([ "wellknown" ], function(wellknown) {
 				"coordinates" : toCoordinateList(arguments)
 			}
 		},
-		"createPolygon" : function(externalRing, internalRings) {
-			if (!internalRings) {
-				internalRings = [];
-			}
-			var allRings = [ externalRing ].concat(internalRings);
-			for (var i = 0; i < allRings.length; i++) {
-				allRings[i] = toCoordinateList(allRings[i]);
-			}
-			return {
-				"type" : "Polygon",
-				"coordinates" : allRings
-			}
-		},
+		"createPolygon" : createPolygon,
 		"createMultiPolygon" : function(polygons) {
 			polygonCoordinates = polygons.map(function(polygon) {
 				return polygon.coordinates;
@@ -49,6 +51,13 @@ define([ "wellknown" ], function(wellknown) {
 				"type" : "MultiPolygon",
 				"coordinates" : polygonCoordinates
 			}
+		},
+		"createPolygonFromBBox" : function(bbox) {
+			var x1 = bbox[0];
+			var y1 = bbox[1];
+			var x2 = bbox[2];
+			var y2 = bbox[3];
+			return createPolygon([x1, y1, x2, y1, x2, y2, x1, y2, x1, y1]);
 		},
 		"toWKT" : function(geojson) {
 			return wellknown.stringify(geojson);
