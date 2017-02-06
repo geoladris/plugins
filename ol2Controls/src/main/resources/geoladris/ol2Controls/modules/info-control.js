@@ -1,4 +1,5 @@
-define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "openlayers", "jquery" ], function(map, bus, customization, controlRegistry) {
+define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "openlayers", "jquery" ], function(map, bus, customization,
+		controlRegistry) {
 
 	// Associates wmsLayers with controls
 	var layerIdControl = {};
@@ -41,17 +42,16 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "open
 	});
 
 	function sendInfoFeatures(layerId, features, x, y) {
-		var geojsonFeatures = new OpenLayers.Format.GeoJSON().write(features);
 		var mapPoint = map.getLonLatFromPixel({
 			"x" : x,
 			"y" : y
 		});
-		bus.send("info-features", [ layerId, geojsonFeatures, x, y, {
+		bus.send("info-features", [ layerId, features, x, y, {
 			"x" : mapPoint.lon,
 			"y" : mapPoint.lat
-		} ]); 
+		} ]);
 	}
-	
+
 	controlRegistry.registerControl("wfsinfo", function(queryInfo) {
 		var queryUrl = queryInfo.url;
 		queryUrl = queryUrl.trim();
@@ -79,11 +79,12 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "open
 				"  <ogc:Intersects>" + //
 				"    <ogc:PropertyName>" + queryInfo.geomFieldName + "</ogc:PropertyName>" + //
 				"    <gml:Box xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"EPSG:900913\">" + //
-				"      <gml:coordinates decimal=\".\" cs=\",\" ts=\" \">" + (point1.lon) + "," + (point1.lat) + " " + (point2.lon) + "," + (point2.lat) + "</gml:coordinates>" + //
-				"    </gml:Box>" + //
-				"  </ogc:Intersects>" //
+				"      <gml:coordinates decimal=\".\" cs=\",\" ts=\" \">" + (point1.lon) + "," + (point1.lat) + " " + (point2.lon) + ","
+						+ (point2.lat) + "</gml:coordinates>" + //
+						"    </gml:Box>" + //
+						"  </ogc:Intersects>" //
 
-				// time parameter
+						// time parameter
 				var getFeatureMessage = "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\">";
 				if (queryInfo.hasOwnProperty("timestamp")) {
 					getFeatureMessage += //
@@ -116,23 +117,29 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "open
 					}),
 					success : function(data, textStatus, jqXHR) {
 						var features = new OpenLayers.Format.GeoJSON().read(data);
+						var geojsonFeatures = [];
 						if (features.length > 0) {
 							$.each(features, function(index, feature) {
 								addBoundsAndHighlightGeom(feature);
+								var geojsonFeature = JSON.parse(new OpenLayers.Format.GeoJSON().write(feature));
+								geojsonFeature["bounds"] = feature["bounds"];
+								geojsonFeature["highlightGeom"] = feature["highlightGeom"];
+								geojsonFeatures.push(geojsonFeature);
 							});
 
-							sendInfoFeatures(mapLayer.id, features, e.xy.x, e.xy.y);
+							sendInfoFeatures(queryInfo.eventData, geojsonFeatures, e.xy.x, e.xy.y);
 						}
 					},
 					controlCallBack : function(control) {
 						wfsCallControl = control;
 					},
-					errorMsg : "Cannot get info for layer " + layerInfo.label
+					errorMsg : "Cannot get info for layer " + queryInfo.label
 				});
 
 			}
 		});
-		
+
+		return control;
 	});
 
 	controlRegistry.registerControl("wmsinfo", function(queryInfo) {
@@ -165,6 +172,7 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "open
 						// re-project to Google projection
 						epsg4326 = new OpenLayers.Projection("EPSG:4326");
 						epsg900913 = new OpenLayers.Projection("EPSG:900913");
+						var geojsonFeatures = [];
 						$.each(evt.features, function(index, feature) {
 							if (feature.geometry) {
 								if (mapLayer.queryHighlightBounds) {
@@ -173,9 +181,13 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "open
 								feature.geometry.transform(epsg4326, epsg900913);
 							}
 							addBoundsAndHighlightGeom(feature);
+							var geojsonFeature = JSON.parse(new OpenLayers.Format.GeoJSON().write(feature));
+							geojsonFeature["bounds"] = feature["bounds"];
+							geojsonFeature["highlightGeom"] = feature["highlightGeom"];
+							geojsonFeatures.push(geojsonFeature);
 						});
 
-						sendInfoFeatures(mapLayer.id, evt.features, evt.xy.x, evt.xy.y);
+						sendInfoFeatures(queryInfo.eventData, geojsonFeatures, evt.xy.x, evt.xy.y);
 					}
 				},
 				beforegetfeatureinfo : function(event) {
@@ -195,11 +207,11 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "open
 				featureNS : 'http://www.openplans.org/unredd'
 			}
 		});
-		
-		var layer = map.getLayersByName(queryInfo.layerId);
+
+		var layer = map.getLayer(queryInfo.layerId);
 		control.layers = new Array();
 		control.layers.push(layer);
-		
+
 		return control;
 	});
 

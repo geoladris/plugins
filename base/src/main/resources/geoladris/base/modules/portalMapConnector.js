@@ -53,11 +53,19 @@ define([ "message-bus" ], function(bus) {
 	});
 
 	bus.listen("modules-loaded", function(e, message) {
-		bus.send("map:activateControl", {
+		bus.send("map:createControl", {
+			"controlId" : "navigation",
 			"controlType" : "navigation"
 		});
 		bus.send("map:activateControl", {
+			"controlId": "navigation"
+		});
+		bus.send("map:createControl", {
+			"controlId" : "scale",
 			"controlType" : "scale"
+		});
+		bus.send("map:activateControl", {
+			"controlId": "scale"
 		});
 	});
 
@@ -106,6 +114,7 @@ define([ "message-bus" ], function(bus) {
 				queryInfo = {
 					"controlId" : mapLayer.id,
 					"controlType" : "wfsinfo",
+					"eventData": mapLayer.id,
 					"url" : mapLayer.queryUrl,
 					"wfsName" : mapLayer.wmsName,
 					"fieldNames" : mapLayer.queryFieldNames,
@@ -116,6 +125,7 @@ define([ "message-bus" ], function(bus) {
 				queryInfo = {
 					"controlId" : mapLayer.id,
 					"controlType" : "wmsinfo",
+					"eventData": mapLayer.id,
 					"queryUrl" : mapLayer.queryUrl,
 					"layerUrl" : mapLayer.baseUrl,
 					"highlightBounds" : mapLayer.queryHighlightBounds
@@ -211,13 +221,27 @@ define([ "message-bus" ], function(bus) {
 		}
 	});
 
-	bus.listen("layer-timestamp-selected", function(e, layerId, timestamp) {
+	bus.listen("layer-timestamp-selected", function(e, layerId, timestamp, style) {
 		var mapLayers = mapLayersByLayerId[layerId];
 		if (mapLayers) {
 			for (var index = 0; index < mapLayers.length; index++) {
-				bus.send("map:updateControl", {
-					"controlId" : mapLayers[index],
-					"timestamp" : timestamp
+				var mapLayerId = mapLayers[index];
+				if (queriableLayers.hasOwnProperty(mapLayerId)) {
+					bus.send("map:updateControl", {
+						"controlId" : mapLayerId,
+						"timestamp" : timestamp
+					});
+				}
+
+				var configuration = {
+					"time" : timestamp.toISO8601String()
+				};
+				if (style != null) {
+					configuration["styles"] = style;
+				}
+				bus.send("map:updateLayer", {
+					"layerId" : mapLayerId,
+					"configuration" : configuration
 				});
 			}
 		}

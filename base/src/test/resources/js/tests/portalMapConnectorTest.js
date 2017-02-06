@@ -176,7 +176,7 @@ define([ "geoladris-tests" ], function(tests) {
 			injector.require([ "portalMapConnector" ], fcn);
 		});
 
-		it("layer-visibility activates/deactivates only queriable layers", function(done) {
+		it("layer-visibility activates/deactivates only queriable layer controls", function(done) {
 			var fcn = function(portalMapConnector) {
 				bus.send("add-layer", {
 					"id" : "mylayer1",
@@ -194,6 +194,43 @@ define([ "geoladris-tests" ], function(tests) {
 				expect(bus.send).not.toHaveBeenCalledWith("map:activateControl", jasmine.any(Object));
 				bus.send("layer-visibility", [ "mylayer1", true ]);
 				expect(bus.send).not.toHaveBeenCalledWith("map:activateControl", jasmine.any(Object));
+
+				done();
+			}
+			injector.require([ "portalMapConnector" ], fcn);
+		});
+
+		it("layer-timestamp-selected updates only queriable layer controls", function(done) {
+			var fcn = function(portalMapConnector) {
+				bus.send("add-layer", {
+					"id" : "mylayer1",
+					"active" : true,
+					"mapLayers" : [ {
+						"id" : "mymaplayer1",
+						"baseUrl" : "http://base.url",
+						"wmsName" : "ws:layer"
+					}, {
+						"id" : "mymaplayer2",
+						"baseUrl" : "http://base.url",
+						"wmsName" : "ws:layer2",
+						"queryType" : "wms"
+					} ]
+				});
+				bus.send("map:layerAdded", {
+					"layerId" : "mymaplayer1"
+				});
+				bus.send("map:layerAdded", {
+					"layerId" : "mymaplayer2"
+				});
+
+				expect(bus.send).not.toHaveBeenCalledWith("map:updateControl", jasmine.any(Object));
+				bus.send("layer-timestamp-selected", [ "mylayer1", new Date() ]);
+				expect(bus.send).not.toHaveBeenCalledWith("map:updateControl", jasmine.objectContaining({
+					"controlId" : "mymaplayer1"
+				}));
+				expect(bus.send).toHaveBeenCalledWith("map:updateControl", jasmine.objectContaining({
+					"controlId" : "mymaplayer2"
+				}));
 
 				done();
 			}

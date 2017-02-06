@@ -13,7 +13,7 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		allOverlays : true,
 		controls : []
 	});
-		
+
 	bus.listen("highlight-feature", function(event, geometry) {
 		var highlightLayer = map.getLayer("Highlighted Features");
 		highlightLayer.removeAllFeatures();
@@ -63,30 +63,6 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 	function isArray(variable) {
 		return Object.prototype.toString.call(variable) === '[object Array]';
 	}
-	
-	bus.listen("layer-timestamp-selected", function(event, layerId, timestamp, style) {
-		var mapLayers = mapLayersByLayerId[layerId];
-		if (mapLayers) {
-			for (var index = 0; index < mapLayers.length; index++) {
-				var mapLayerId = mapLayers[index];
-				var layer = map.getLayer(mapLayerId);
-				/*
-				 * On application startup some events can be produced before the
-				 * map has the reference to the layers so we have to check if
-				 * layer is null
-				 */
-				if (layer !== null && timestamp !== null) {
-					var newParams = {
-						'time' : timestamp.toISO8601String()
-					};
-					if (style != null) {
-						newParams["styles"] = style;
-					}
-					layer.mergeNewParams(newParams);
-				}
-			};
-		}
-	});
 
 	bus.listen("zoom-in", function(event) {
 		map.zoomIn();
@@ -123,7 +99,8 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 				var mapLayerId = mapLayers[index];
 				var layer = map.getLayer(mapLayerId);
 				layer.setOpacity(opacity);
-			};
+			}
+			;
 		}
 	});
 
@@ -143,14 +120,14 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		layer.removeAllFeatures();
 		map.removeLayer(layer);
 	});
-	
+
 	bus.listen("map:removeAllLayers", function(e) {
 		if (map !== null) {
 			while (map.layers.length > 0) {
 				map.removeLayer(map.layers[map.layers.length - 1]);
 			}
 		}
-	});	
+	});
 
 	bus.listen("map:addLayer", function(e, message) {
 		var layer = null;
@@ -198,18 +175,24 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 			bus.send("map:layerAdded", [ message ]);
 		}
 	});
-	
-	bus.listen("map:setLayerIndex", function(e, message) {
-		map.getLayer(message.layerId).setLayerIndex(message.index);
+
+	bus.listen("map:updateLayer", function(e, message) {
+		var layer = map.getLayer(message.layerId);
+		layer.mergeNewParams(message.configuration);
 	});
-	
+
+	bus.listen("map:setLayerIndex", function(e, message) {
+		var layer = map.getLayer(message.layerId);
+		map.setLayerIndex(layer, message.index);
+	});
+
 	bus.listen("map:addFeature", function(e, message) {
 		var layerId = message["layerId"];
 		var layer = map.getLayer(layerId);
 		var feature = new OpenLayers.Format.GeoJSON().parseFeature(message.feature);
 		layer.addFeatures(feature);
 	});
-	
+
 	bus.listen("map:setLayerParameters", function(e, message) {
 		var layerId = message["layerId"];
 		var mapLayers = mapLayersByLayerId[layerId];
@@ -218,9 +201,9 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 				var mapLayerId = mapLayers[index];
 				var layer = map.getLayer(mapLayerId);
 				layer.mergeNewParams(message.parameters);
-			};
+			}
 		}
 	});
-	
+
 	return map;
 });
