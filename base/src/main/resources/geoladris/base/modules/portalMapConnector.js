@@ -69,6 +69,10 @@ define([ "message-bus", "iso8601" ], function(bus, iso8601) {
 		});
 	});
 
+	function deriveControlId(layerId) {
+		return "infocontrol-" + layerId;
+	}
+	
 	var tempMapLayerQueryInfo = {}
 
 	bus.listen("add-layer", function(e, layerInfo) {
@@ -112,7 +116,7 @@ define([ "message-bus", "iso8601" ], function(bus, iso8601) {
 			var queryInfo = null;
 			if (mapLayer.queryType == "wfs") {
 				queryInfo = {
-					"controlId" : mapLayer.id,
+					"controlId" : deriveControlId(mapLayer.id),
 					"controlType" : "wfsinfo",
 					"layerId" : mapLayer.id,
 					"url" : mapLayer.queryUrl,
@@ -123,7 +127,7 @@ define([ "message-bus", "iso8601" ], function(bus, iso8601) {
 				}
 			} else if (mapLayer.queryType == "wms") {
 				queryInfo = {
-					"controlId" : mapLayer.id,
+					"controlId" : deriveControlId(mapLayer.id),
 					"controlType" : "wmsinfo",
 					"layerId" : mapLayer.id,
 					"queryUrl" : mapLayer.queryUrl,
@@ -187,7 +191,7 @@ define([ "message-bus", "iso8601" ], function(bus, iso8601) {
 				mapLayerId = mapLayerIds[i];
 				if (queriableLayers.hasOwnProperty(mapLayerId)) {
 					bus.send("map:destroyControl", {
-						"controlId" : mapLayerId
+						"controlId" : deriveControlId(mapLayerId)
 					});
 				}
 			}
@@ -214,7 +218,7 @@ define([ "message-bus", "iso8601" ], function(bus, iso8601) {
 				if (queriableLayers.hasOwnProperty(mapLayerId)) {
 					// Enable/Disable info control
 					bus.send(visibility ? "map:activateControl" : "map:deactivateControl", {
-						"controlId" : mapLayerId
+						"controlId" : deriveControlId(mapLayerId)
 					});
 				}
 			}
@@ -228,7 +232,7 @@ define([ "message-bus", "iso8601" ], function(bus, iso8601) {
 				var mapLayerId = mapLayers[index];
 				if (queriableLayers.hasOwnProperty(mapLayerId)) {
 					bus.send("map:updateControl", {
-						"controlId" : mapLayerId,
+						"controlId" : deriveControlId(mapLayerId),
 						"timestamp" : timestamp
 					});
 				}

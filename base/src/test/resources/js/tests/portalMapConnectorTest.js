@@ -96,7 +96,7 @@ define([ "geoladris-tests" ], function(tests) {
 					"layerId" : "mymaplayer"
 				});
 				expect(bus.send).toHaveBeenCalledWith("map:createControl", jasmine.objectContaining({
-					"controlId" : "mymaplayer",
+					"controlId" : "infocontrol-mymaplayer",
 					"controlType" : "wmsinfo",
 					"queryUrl" : "http://query.url",
 					"layerUrl" : "http://base.url"
@@ -159,23 +159,23 @@ define([ "geoladris-tests" ], function(tests) {
 				expect(bus.send).not.toHaveBeenCalledWith("map:deactivateControl", jasmine.any(Object));
 				bus.send("layer-visibility", [ "mylayer1", true ]);
 				expect(bus.send).toHaveBeenCalledWith("map:activateControl", jasmine.objectContaining({
-					"controlId" : "mymaplayer1"
+					"controlId" : "infocontrol-mymaplayer1"
 				}));
 				expect(bus.send).toHaveBeenCalledWith("map:activateControl", jasmine.objectContaining({
-					"controlId" : "mymaplayer2"
+					"controlId" : "infocontrol-mymaplayer2"
 				}));
 				expect(bus.send).not.toHaveBeenCalledWith("map:deactivateControl", jasmine.objectContaining({
-					"controlId" : "mymaplayer1"
+					"controlId" : "infocontrol-mymaplayer1"
 				}));
 				expect(bus.send).not.toHaveBeenCalledWith("map:deactivateControl", jasmine.objectContaining({
-					"controlId" : "mymaplayer2"
+					"controlId" : "infocontrol-mymaplayer2"
 				}));
 				bus.send("layer-visibility", [ "mylayer1", false ]);
 				expect(bus.send).toHaveBeenCalledWith("map:deactivateControl", jasmine.objectContaining({
-					"controlId" : "mymaplayer1"
+					"controlId" : "infocontrol-mymaplayer1"
 				}));
 				expect(bus.send).toHaveBeenCalledWith("map:deactivateControl", jasmine.objectContaining({
-					"controlId" : "mymaplayer2"
+					"controlId" : "infocontrol-mymaplayer2"
 				}));
 
 				done();
@@ -233,10 +233,10 @@ define([ "geoladris-tests" ], function(tests) {
 				expect(bus.send).not.toHaveBeenCalledWith("map:updateControl", jasmine.any(Object));
 				bus.send("layer-timestamp-selected", [ "mylayer1", new Date() ]);
 				expect(bus.send).not.toHaveBeenCalledWith("map:updateControl", jasmine.objectContaining({
-					"controlId" : "mymaplayer1"
+					"controlId" : "infocontrol-mymaplayer1"
 				}));
 				expect(bus.send).toHaveBeenCalledWith("map:updateControl", jasmine.objectContaining({
-					"controlId" : "mymaplayer2"
+					"controlId" : "infocontrol-mymaplayer2"
 				}));
 
 				done();
@@ -273,10 +273,10 @@ define([ "geoladris-tests" ], function(tests) {
 
 				bus.send("reset-layers");
 				expect(bus.send).not.toHaveBeenCalledWith("map:destroyControl", jasmine.objectContaining({
-					"controlId" : "mymaplayer1"
+					"controlId" : "infocontrol-mymaplayer1"
 				}));
 				expect(bus.send).toHaveBeenCalledWith("map:destroyControl", jasmine.objectContaining({
-					"controlId" : "mymaplayer2"
+					"controlId" : "infocontrol-mymaplayer2"
 				}));
 
 				done();
