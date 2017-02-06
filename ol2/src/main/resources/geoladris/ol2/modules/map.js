@@ -166,9 +166,7 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 				transparent : true,
 				format : message.wms.imageFormat || 'image/png'
 			}, {
-				noMagic : true,
-				visibility : false
-			// Don't show until a "layer-visibility" event indicates so
+				noMagic : true
 			});
 		}
 		if (layer != null) {

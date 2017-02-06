@@ -80,9 +80,7 @@ define([ "message-bus", "iso8601" ], function(bus, iso8601) {
 		for (var index = 0; index < layerInfo.mapLayers.length; index++) {
 			var mapLayer = layerInfo.mapLayers[index];
 			var mapAddLayerEvent = {
-				"layerId" : mapLayer.id,
-				"enabled" : false
-			// enabled later by visibility events
+				"layerId" : mapLayer.id
 			};
 			if (mapLayer.type == "osm") {
 				mapAddLayerEvent["osm"] = {
