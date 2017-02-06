@@ -119,7 +119,7 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "geoj
 							var feature = features[index];
 							addBBoxAndHighlightGeom(feature);
 						}
-						sendInfoFeatures(queryInfo.eventData, features, e.xy.x, e.xy.y);
+						sendInfoFeatures(queryInfo.layerId, features, e.xy.x, e.xy.y);
 					},
 					controlCallBack : function(control) {
 						wfsCallControl = control;
@@ -176,12 +176,12 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "geoj
 							geojsonFeatures.push(geojsonFeature);
 						});
 
-						sendInfoFeatures(queryInfo.eventData, geojsonFeatures, evt.xy.x, evt.xy.y);
+						sendInfoFeatures(queryInfo.layerId, geojsonFeatures, evt.xy.x, evt.xy.y);
 					}
 				},
 				beforegetfeatureinfo : function(event) {
 					lastXY = event.xy;
-					var id = mapLayer.id;
+					var id = queryInfo.layerId;
 					if (queryInfo.hasOwnProperty("timestamp")) {
 						control.vendorParams = {
 							"time" : queryInfo["timestamp"].toISO8601String()

@@ -114,7 +114,7 @@ define([ "message-bus" ], function(bus) {
 				queryInfo = {
 					"controlId" : mapLayer.id,
 					"controlType" : "wfsinfo",
-					"eventData": mapLayer.id,
+					"layerId": mapLayer.id,
 					"url" : mapLayer.queryUrl,
 					"wfsName" : mapLayer.wmsName,
 					"fieldNames" : mapLayer.queryFieldNames,
@@ -125,7 +125,7 @@ define([ "message-bus" ], function(bus) {
 				queryInfo = {
 					"controlId" : mapLayer.id,
 					"controlType" : "wmsinfo",
-					"eventData": mapLayer.id,
+					"layerId": mapLayer.id,
 					"queryUrl" : mapLayer.queryUrl,
 					"layerUrl" : mapLayer.baseUrl,
 					"highlightBounds" : mapLayer.queryHighlightBounds
