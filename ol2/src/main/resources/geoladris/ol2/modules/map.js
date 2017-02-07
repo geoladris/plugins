@@ -21,10 +21,6 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		layer.setVisibility(message.visibility);
 	});
 
-	function isArray(variable) {
-		return Object.prototype.toString.call(variable) === '[object Array]';
-	}
-
 	bus.listen("zoom-in", function(event) {
 		map.zoomIn();
 	});

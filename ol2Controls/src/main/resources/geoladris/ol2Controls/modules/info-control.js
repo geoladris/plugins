@@ -1,15 +1,6 @@
 define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "geojson/geojson", "openlayers", "jquery" ], function(map, bus, customization,
 		controlRegistry, geojson) {
 
-	// Associates wmsLayers with controls
-	var layerIdControl = {};
-
-	// Associates portalLayers with the selected timestamps
-	var layerIdInfo = {};
-
-	// List of controls
-	var controls = [];
-
 	var addBBoxAndHighlightGeom = function(feature) {
 		var bbox = null;
 		var highlightGeom = null;
@@ -27,18 +18,6 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "geoj
 		feature["highlightGeom"] = highlightGeom;
 	};
 	
-	bus.listen("reset-layers", function() {
-		layerIdControl = {};
-		layerIdInfo = {};
-		bus.send("set-default-exclusive-control", []);
-		bus.send("activate-default-exclusive-control");
-		for ( var c in controls) {
-			var control = controls[c];
-			control.destroy();
-		}
-		controls = [];
-	});
-
 	function sendInfoFeatures(layerId, features, x, y) {
 		var mapPoint = map.getLonLatFromPixel({
 			"x" : x,

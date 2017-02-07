@@ -109,7 +109,6 @@ define([ "geoladris-tests" ], function(tests) {
 					return args[0] == "map:featureAdded";
 				})[0];
 				var featureAddedMessage=featureAddedArgs[1];
-				console.log(featureAddedMessage);
 				expect(featureAddedMessage.feature.geometry).toBe(null);
 				expect(featureAddedMessage.feature.properties).toEqual({
 					"id" : 1
