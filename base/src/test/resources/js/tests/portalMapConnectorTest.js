@@ -17,7 +17,7 @@ define([ "geoladris-tests" ], function(tests) {
 			});
 		});
 
-		it("add-layer + layers-loaded triggers map:addLayer", function(done) {
+		it("add-layer triggers map:addLayer immediately", function(done) {
 			var fcn = function(portalMapConnector) {
 				bus.send("add-layer", {
 					"id" : "mylayer",
@@ -28,10 +28,8 @@ define([ "geoladris-tests" ], function(tests) {
 						"queryUrl" : "http://query.url"
 					} ]
 				});
-				bus.send("layers-loaded");
 				expect(bus.send).toHaveBeenCalledWith("map:addLayer", {
 					"layerId" : "mymaplayer",
-					"enabled" : false,
 					"wms" : {
 						"baseUrl" : "http://base.url",
 						"wmsName" : "ws:layer"
