@@ -332,6 +332,16 @@ define([ "geoladris-tests" ], function(tests) {
 			injector.require([ "portalMapConnector" ], fcn);
 		});
 
+		it("highlight layer is created on layers-loaded", function(done) {
+			var fcn = function(portalMapConnector) {
+				bus.send("layers-loaded");
+				expect(bus.send).toHaveBeenCalledWith("map:addLayer", jasmine.objectContaining({
+					"layerId" : "Highlighted Features"
+				}));
+				done();
+			}
+			injector.require([ "portalMapConnector" ], fcn);
+		});
 	});
 
 });

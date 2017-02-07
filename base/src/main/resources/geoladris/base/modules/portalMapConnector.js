@@ -2,7 +2,6 @@ define([ "message-bus", "iso8601", "geojson/geojson" ], function(bus, iso8601, g
 
 	/* highlight layer */
 	var highlightLayerId = "Highlighted Features";
-	var highlightLayerAdded = false;
 
 	/* Exclusive control management */
 	var currentControlIds = [];
@@ -169,10 +168,6 @@ define([ "message-bus", "iso8601", "geojson/geojson" ], function(bus, iso8601, g
 			// events
 			delete tempMapLayerQueryInfo[message.layerId];
 		}
-
-		if (message.layerId == highlightLayerId) {
-			layerAdded = true;
-		}
 	});
 
 	bus.listen("layers-loaded", function(e) {
@@ -189,6 +184,20 @@ define([ "message-bus", "iso8601", "geojson/geojson" ], function(bus, iso8601, g
 				"index" : i
 			});
 		}
+		
+		// Create highlight layer
+		bus.send("map:addLayer", {
+			"layerId" : highlightLayerId,
+			"vector" : {
+				"style" : {
+					'strokeWidth' : 5,
+					fillOpacity : 0,
+					strokeColor : '#ee4400',
+					strokeOpacity : 0.5,
+					strokeLinecap : 'round'
+				}
+			}
+		});
 	});
 
 	bus.listen("reset-layers", function() {
@@ -287,29 +296,6 @@ define([ "message-bus", "iso8601", "geojson/geojson" ], function(bus, iso8601, g
 	bus.listen("clear-highlighted-features", function() {
 		bus.send("map:removeAllFeatures", {
 			layerId : highlightLayerId
-		});
-	});
-
-	bus.listen("layers-loaded", function() {
-		if (highlightLayerAdded) {
-			bus.send("map:removeLayer", {
-				"layerId" : highlightLayerId
-			});
-			layerAdded = false;
-		}
-
-		// Create new vector layer
-		bus.send("map:addLayer", {
-			"layerId" : highlightLayerId,
-			"vector" : {
-				"style" : {
-					'strokeWidth' : 5,
-					fillOpacity : 0,
-					strokeColor : '#ee4400',
-					strokeOpacity : 0.5,
-					strokeLinecap : 'round'
-				}
-			}
 		});
 	});
 
