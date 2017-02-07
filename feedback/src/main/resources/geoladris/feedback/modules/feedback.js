@@ -13,6 +13,23 @@ define([ "message-bus", "customization", "toolbar", "i18n", "jquery", "jquery-ui
 
 	var btn = $("<a/>").attr("id", "feedback-button").addClass("blue_button toolbar_button").html("Feedback");
 
+	function activateDrawControl() {
+		bus.send("activate-exclusive-control", {
+			"controlId" : "feedback-drawFeature",
+			"controlType" : "drawFeature",
+			"editingLayerId" : feedbackLayerId,
+			"handlerType" : "polygon"
+		});
+	}
+
+	function activateModifyControl() {
+		bus.send("activate-exclusive-control", {
+			"controlId" : "feedback-modifyFeature",
+			"controlType" : "modifyFeature",
+			"editingLayerId" : feedbackLayerId
+		});
+	}
+	
 	var initializeDialog = function() {
 		dlg = $("<div/>").attr("id", "feedback_popup");
 		$("<label/>").addClass("feedback-form-left").html("Capa:").appendTo(dlg);
@@ -23,15 +40,15 @@ define([ "message-bus", "customization", "toolbar", "i18n", "jquery", "jquery-ui
 		dlg.append("<br/>");
 		$("<label/>").addClass("feedback-form-left").html("Drawing tools:").appendTo(dlg);
 		$("<span/>").attr("id", "feedbackAddFeature").html(
-				i18n["feedback_addfeature_tooltip"]).addClass(
-				"feedbackButton").appendTo(dlg).on("click", function(){
-					bus.send("activate-exclusive-control", "DrawPolygon");
-				});
+			i18n["feedback_addfeature_tooltip"]).addClass(
+			"feedbackButton").appendTo(dlg).on("click", function(){
+				activateDrawControl();
+			});
 		$("<span/>").attr("id", "feedbackEditFeature").html(
-				i18n["feedback_editfeature_tooltip"]).addClass(
-				"feedbackButton").appendTo(dlg).on("click", function(){
-					bus.send("activate-exclusive-control", "ModifyFeature");
-				});
+			i18n["feedback_editfeature_tooltip"]).addClass(
+			"feedbackButton").appendTo(dlg).on("click", function(){
+				activateModifyControl();
+			});
 
 		dlg.append("<br/>");
 		$("<label/>").addClass("feedback-form-left").html("Email:").appendTo(dlg);
@@ -122,11 +139,11 @@ define([ "message-bus", "customization", "toolbar", "i18n", "jquery", "jquery-ui
 				$("#button_feedback").addClass('selected');
 				txtEmail.val("");
 				txtComment.val("");
-				bus.send("activate-exclusive-control", "DrawPolygon");
 				bus.send("map:addLayer", {
 					"layerId" : feedbackLayerId,
 					"vector" : {}
 				});
+				activateDrawControl();
 				features = [];
 				dlg.dialog("open");
 			}
