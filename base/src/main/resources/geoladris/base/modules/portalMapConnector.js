@@ -72,7 +72,7 @@ define([ "message-bus", "iso8601" ], function(bus, iso8601) {
 	function deriveControlId(layerId) {
 		return "infocontrol-" + layerId;
 	}
-	
+
 	var tempMapLayerQueryInfo = {}
 
 	bus.listen("add-layer", function(e, layerInfo) {
@@ -250,4 +250,17 @@ define([ "message-bus", "iso8601" ], function(bus, iso8601) {
 		}
 	});
 
+	bus.listen("transparency-slider-changed", function(e, layerId, opacity) {
+		var mapLayers = mapLayersByLayerId[layerId];
+		if (mapLayers) {
+			for (var index = 0; index < mapLayers.length; index++) {
+				var mapLayerId = mapLayers[index];
+				bus.send("map:setLayerOpacity", {
+					"layerId" : mapLayerId,
+					"opacity" : opacity
+				});
+			}
+		}
+
+	});
 });

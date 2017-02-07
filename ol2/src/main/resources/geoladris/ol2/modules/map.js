@@ -94,16 +94,9 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		}
 	});
 
-	bus.listen("transparency-slider-changed", function(event, layerId, opacity) {
-		var mapLayers = mapLayersByLayerId[layerId];
-		if (mapLayers) {
-			for (var index = 0; index < mapLayers.length; index++) {
-				var mapLayerId = mapLayers[index];
-				var layer = map.getLayer(mapLayerId);
-				layer.setOpacity(opacity);
-			}
-			;
-		}
+	bus.listen("map:setLayerOpacity", function(event, message) {
+		var layer = map.getLayer(message.layerId);
+		layer.setOpacity(message.opacity);
 	});
 
 	/*
