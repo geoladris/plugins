@@ -215,6 +215,7 @@ define([ "message-bus", "iso8601", "geojson/geojson" ], function(bus, iso8601, g
 		defaultExclusiveControl = [];
 		currentControlIds = [];
 
+		queriableLayers = {};
 		mapLayersByLayerId = {};
 		zIndexes = {};
 		bus.send("map:removeAllLayers");

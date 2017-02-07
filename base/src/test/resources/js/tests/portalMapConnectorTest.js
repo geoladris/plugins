@@ -342,6 +342,47 @@ define([ "geoladris-tests" ], function(tests) {
 			}
 			injector.require([ "portalMapConnector" ], fcn);
 		});
+
+		it("Removing queryType in layer takes effect after reset-layers", function(done) {
+			var fcn = function(portalMapConnector) {
+				bus.send("add-layer", {
+					"id" : "mylayer1",
+					"active" : true,
+					"mapLayers" : [ {
+						"id" : "mymaplayer1",
+						"baseUrl" : "http://base.url",
+						"wmsName" : "ws:layer",
+						"queryType" : "wms"
+					} ]
+				});
+				bus.send("map:layerAdded", {
+					"layerId" : "mymaplayer1"
+				});
+				bus.send("reset-layers");
+
+				bus.send.calls.reset();
+				bus.send("add-layer", {
+					"id" : "mylayer1",
+					"active" : true,
+					"mapLayers" : [ {
+						"id" : "mymaplayer1",
+						"baseUrl" : "http://base.url",
+						"wmsName" : "ws:layer"
+					} ]
+				});
+				bus.send("map:layerAdded", {
+					"layerId" : "mymaplayer1"
+				});
+				expect(bus.send).not.toHaveBeenCalledWith("map:createControl", jasmine.any(Object));
+				
+				bus.send("layer-visibility", ["mylayer1", false]);
+				expect(bus.send).not.toHaveBeenCalledWith("map:deactivateControl", jasmine.any(Object));
+				
+				
+				done();
+			}
+			injector.require([ "portalMapConnector" ], fcn);
+		});
 	});
 
 });
