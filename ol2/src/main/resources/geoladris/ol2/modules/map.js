@@ -1,5 +1,7 @@
 define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 
+	var GeoJSON = new OpenLayers.Format.GeoJSON();
+	
 	var map = null;
 
 	OpenLayers.ProxyHost = "proxy?url=";
@@ -141,9 +143,13 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 	bus.listen("map:addFeature", function(e, message) {
 		var layerId = message["layerId"];
 		var layer = map.getLayer(layerId);
-		var feature = new OpenLayers.Format.GeoJSON().parseFeature(message.feature);
+		var feature = GeoJSON.parseFeature(message.feature);
 		layer.addFeatures(feature);
 		layer.redraw();
+		bus.send("map:featureAdded", {
+			"layerId" : layerId,
+			"feature" : JSON.parse(GeoJSON.write(feature))
+		});
 	});
 
 	bus.listen("map:removeAllFeatures", function(e, message) {

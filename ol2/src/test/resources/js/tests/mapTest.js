@@ -87,5 +87,36 @@ define([ "geoladris-tests" ], function(tests) {
 				done();
 			});
 		});
+
+		it("addFeature raises featureAdded event", function(done) {
+			injector.require([ "map" ], function(map) {
+				bus.send("map:addLayer", {
+					"layerId" : "mylayer",
+					"vector" : {}
+				});
+				var feature = {
+					"geometry" : null,
+					"properties" : {
+						"id" : 1
+					}
+				};
+				bus.send("map:addFeature", {
+					"layerId" : "mylayer",
+					"feature" : feature
+				});
+
+				var featureAddedArgs = bus.send.calls.allArgs().filter(function(args) {
+					return args[0] == "map:featureAdded";
+				})[0];
+				var featureAddedMessage=featureAddedArgs[1];
+				console.log(featureAddedMessage);
+				expect(featureAddedMessage.feature.geometry).toBe(null);
+				expect(featureAddedMessage.feature.properties).toEqual({
+					"id" : 1
+				});
+				done();
+			});
+		});
+
 	});
 });
