@@ -4,7 +4,7 @@
 
 'use strict';
 
-define(["module", "toolbar", "i18n", "jquery", "message-bus", "map", "jquery-ui"], function(module, toolbar, i18n, $, bus, map) {
+define(["module", "toolbar", "i18n", "jquery", "message-bus", "jquery-ui"], function(module, toolbar, i18n, $, bus) {
 	
 	var dialog = null;
 	var divContent = null;
@@ -46,16 +46,16 @@ define(["module", "toolbar", "i18n", "jquery", "message-bus", "map", "jquery-ui"
 
 		return dialog;
 	};
-	
+
 	var onChangeLayerPosition_ = function(evt, ui) {
 		var newLayersOrder = divContent.sortable('toArray');
 		for (var i = 0; i < newLayersOrder.length; i++) {
-			var id = newLayersOrder[i];
-			var layer = map.getLayer(id);
-			if (layer) {
-				map.setLayerIndex(layer, i);
-				// TODO: propagate change to other modules (and persist it in layers.json).
-			}
+			// TODO update layers json and reload all layers
+			// var id = newLayersOrder[i];
+			// var layer = map.getLayer(id);
+			// if (layer) {
+			// map.setLayerIndex(layer, i);
+			//			}
 		}
 	}
 	
@@ -66,7 +66,6 @@ define(["module", "toolbar", "i18n", "jquery", "message-bus", "map", "jquery-ui"
 	var btn = $("<a/>").attr("id", "order-button").addClass("blue_button toolbar_button").html(i18n["layer_order"]);
 	btn.appendTo(toolbar);
 	btn.click(function() {
-		layers = map.layers;
 		var dialog = getDialog_();
 		if (!dialog.dialog("isOpen")) {
 			getDialog_().dialog("open");
@@ -78,7 +77,7 @@ define(["module", "toolbar", "i18n", "jquery", "message-bus", "map", "jquery-ui"
 	
 	var insertLayerOnControl_ = function(layer) {
 		var item = $('<div>').attr('id', layer.id).addClass('layer-order-item');
-		var label = $('<span>').addClass('layer-name-item').html(layer.name);
+		var label = $('<span>').addClass('layer-name-item').html(layer.id);
 		item.append(label).appendTo(divContent);
 	}
 	
@@ -103,4 +102,12 @@ define(["module", "toolbar", "i18n", "jquery", "message-bus", "map", "jquery-ui"
 	});
 
 	bus.listen('layers-loaded', loadLayers_);
+
+	bus.listen("add-layer", function(e, layerInfo) {
+		for (var index = 0; index < layerInfo.mapLayers.length; index++) {
+			var mapLayer = layerInfo.mapLayers[index];
+			layers.push(mapLayer);
+			console.log(mapLayer.zIndex);
+		}
+	});
 });
