@@ -139,31 +139,50 @@ define([ "geoladris-tests" ], function(tests) {
 			bus.send("map:layerAdded", {
 				"layerId" : "mymaplayer2"
 			});
+			bus.send("add-layer", {
+				"id" : "mylayer2",
+				"active" : true,
+				"mapLayers" : [ {
+					"id" : "mymaplayer3",
+					"queryType" : "wms",
+					"baseUrl" : "http://base.url",
+					"wmsName" : "ws:layer",
+					"queryUrl" : "http://query.url"
+				} ]
+			});
+			bus.send("map:layerAdded", {
+				"layerId" : "mymaplayer3"
+			});
 
 			expect(bus.send).not.toHaveBeenCalledWith("map:activateControl", jasmine.any(Object));
-			expect(bus.send).not.toHaveBeenCalledWith("map:activateControl", jasmine.any(Object));
-			expect(bus.send).not.toHaveBeenCalledWith("map:deactivateControl", jasmine.any(Object));
 			expect(bus.send).not.toHaveBeenCalledWith("map:deactivateControl", jasmine.any(Object));
 			bus.send("layer-visibility", [ "mylayer1", true ]);
-			expect(bus.send).toHaveBeenCalledWith("map:activateControl", jasmine.objectContaining({
-				"controlId" : "infocontrol-mymaplayer1"
-			}));
-			expect(bus.send).toHaveBeenCalledWith("map:activateControl", jasmine.objectContaining({
-				"controlId" : "infocontrol-mymaplayer2"
-			}));
-			expect(bus.send).not.toHaveBeenCalledWith("map:deactivateControl", jasmine.objectContaining({
-				"controlId" : "infocontrol-mymaplayer1"
-			}));
-			expect(bus.send).not.toHaveBeenCalledWith("map:deactivateControl", jasmine.objectContaining({
-				"controlId" : "infocontrol-mymaplayer2"
-			}));
-			bus.send("layer-visibility", [ "mylayer1", false ]);
-			expect(bus.send).toHaveBeenCalledWith("map:deactivateControl", jasmine.objectContaining({
-				"controlId" : "infocontrol-mymaplayer1"
-			}));
-			expect(bus.send).toHaveBeenCalledWith("map:deactivateControl", jasmine.objectContaining({
-				"controlId" : "infocontrol-mymaplayer2"
-			}));
+			bus.send("layer-visibility", [ "mylayer2", false]);
+			bus.send.calls.reset();
+			bus.send("activate-exclusive-control", {
+				"controlId" : "scale",
+				"controlType" : "scale"
+			});
+			expect(bus.send).toHaveBeenCalledWith("map:activateControl", {
+				"controlId":"scale"
+			});
+			expect(bus.send).toHaveBeenCalledWith("map:deactivateControl", {
+				"controlId":"infocontrol-mymaplayer1"
+			});
+			expect(bus.send).toHaveBeenCalledWith("map:deactivateControl", {
+				"controlId":"infocontrol-mymaplayer2"
+			});
+			bus.send.calls.reset();
+			bus.send("activate-default-exclusive-control");
+			expect(bus.send).toHaveBeenCalledWith("map:deactivateControl", {
+				"controlId":"scale"
+			});
+			expect(bus.send).toHaveBeenCalledWith("map:activateControl", {
+				"controlId":"infocontrol-mymaplayer1"
+			});
+			expect(bus.send).toHaveBeenCalledWith("map:activateControl", {
+				"controlId":"infocontrol-mymaplayer2"
+			});
 		});
 
 		it("layer-visibility activates/deactivates only queriable layer controls", function() {

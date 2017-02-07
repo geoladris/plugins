@@ -184,7 +184,7 @@ define([ "message-bus", "iso8601", "geojson/geojson" ], function(bus, iso8601, g
 				"index" : i
 			});
 		}
-		
+
 		// Create highlight layer
 		bus.send("map:addLayer", {
 			"layerId" : highlightLayerId,
@@ -198,6 +198,8 @@ define([ "message-bus", "iso8601", "geojson/geojson" ], function(bus, iso8601, g
 				}
 			}
 		});
+
+		activateExclusiveControl(defaultExclusiveControl);
 	});
 
 	bus.listen("reset-layers", function() {
@@ -233,10 +235,23 @@ define([ "message-bus", "iso8601", "geojson/geojson" ], function(bus, iso8601, g
 				});
 
 				if (queriableLayers.hasOwnProperty(mapLayerId)) {
-					// Enable/Disable info control
-					bus.send(visibility ? "map:activateControl" : "map:deactivateControl", {
-						"controlId" : deriveControlId(mapLayerId)
-					});
+					// Update default exclusive control removing or adding the
+					// info control
+					if (visibility) {
+						defaultExclusiveControl.push(deriveControlId(mapLayerId));
+					} else {
+						var index = null;
+						for (var i = 0; i < defaultExclusiveControl.length; i++) {
+							if (defaultExclusiveControl[i] == deriveControlId(mapLayerId)) {
+								index = i;
+								break;
+							}
+						}
+						if (index != null) {
+							defaultExclusiveControl.splice(index, 1);
+						}
+					}
+					activateExclusiveControl(defaultExclusiveControl);
 				}
 			}
 		}
