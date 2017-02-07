@@ -15,6 +15,11 @@ define([ "geoladris-tests" ], function(tests) {
 				"toString" : function() {
 				}
 			});
+			injector.mock("geojson/geojson", {
+				"createFeature" : function() {
+					return {};
+				}
+			});
 		});
 
 		it("add-layer triggers map:addLayer immediately", function(done) {
@@ -65,13 +70,14 @@ define([ "geoladris-tests" ], function(tests) {
 				var calls = bus.send.calls;
 				calls.reset();
 				bus.send("layers-loaded");
-				expect(calls.count()).toBe(3);
-				expect(calls.argsFor(1)[0]).toEqual("map:setLayerIndex");
-				expect(calls.argsFor(1)[1].layerId).toEqual("maplayer2");
-				expect(calls.argsFor(1)[1].index).toEqual(0);
-				expect(calls.argsFor(2)[0]).toEqual("map:setLayerIndex");
-				expect(calls.argsFor(2)[1].layerId).toEqual("maplayer1");
-				expect(calls.argsFor(2)[1].index).toEqual(1);
+				expect(bus.send).toHaveBeenCalledWith("map:setLayerIndex", jasmine.objectContaining({
+					"layerId" : "maplayer2",
+					"index" : 0
+				}));
+				expect(bus.send).toHaveBeenCalledWith("map:setLayerIndex", jasmine.objectContaining({
+					"layerId" : "maplayer1",
+					"index" : 1
+				}));
 				done();
 			}
 			injector.require([ "portalMapConnector" ], fcn);

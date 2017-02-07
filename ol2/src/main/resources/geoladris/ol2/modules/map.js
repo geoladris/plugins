@@ -14,47 +14,6 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		controls : []
 	});
 
-	bus.listen("highlight-feature", function(event, geometry) {
-		var highlightLayer = map.getLayer("Highlighted Features");
-		highlightLayer.removeAllFeatures();
-		var feature = new OpenLayers.Feature.Vector();
-		feature.geometry = new OpenLayers.Format.GeoJSON().parseGeometry(geometry);
-		highlightLayer.addFeatures(feature);
-		highlightLayer.redraw();
-	});
-
-	bus.listen("clear-highlighted-features", function() {
-		var highlightLayer = map.getLayer("Highlighted Features");
-		highlightLayer.removeAllFeatures();
-		highlightLayer.redraw();
-	});
-	var addVectorLayer = function() {
-		var id = "Highlighted Features";
-
-		// Remove if exists
-		var vector = map.getLayer(id);
-		if (map !== null && vector) {
-			map.removeLayer(vector);
-		}
-
-		// Create new vector layer
-		vector = new OpenLayers.Layer.Vector(id, {
-			styleMap : new OpenLayers.StyleMap({
-				'strokeWidth' : 5,
-				fillOpacity : 0,
-				strokeColor : '#ee4400',
-				strokeOpacity : 0.5,
-				strokeLinecap : 'round'
-			})
-		});
-		vector.id = id;
-		map.addLayer(vector);
-	}
-
-	bus.listen("layers-loaded", function() {
-		addVectorLayer();
-	});
-
 	bus.listen("map:layerVisibility", function(event, message) {
 		var layer = map.getLayer(message.layerId);
 		layer.setVisibility(message.visibility);
@@ -184,6 +143,14 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		var layer = map.getLayer(layerId);
 		var feature = new OpenLayers.Format.GeoJSON().parseFeature(message.feature);
 		layer.addFeatures(feature);
+		layer.redraw();
+	});
+
+	bus.listen("map:removeAllFeatures", function(e, message) {
+		var layerId = message["layerId"];
+		var layer = map.getLayer(layerId);
+		layer.removeAllFeatures();
+		layer.redraw();
 	});
 
 	return map;

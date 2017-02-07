@@ -1,5 +1,10 @@
-define([ "message-bus", "iso8601" ], function(bus, iso8601) {
+define([ "message-bus", "iso8601", "geojson/geojson" ], function(bus, iso8601, geojson) {
 
+	/* highlight layer */
+	var highlightLayerId = "Highlighted Features";
+	var highlightLayerAdded = false;
+
+	/* Exclusive control management */
 	var currentControlIds = [];
 	var defaultExclusiveControl = [];
 
@@ -160,10 +165,14 @@ define([ "message-bus", "iso8601" ], function(bus, iso8601) {
 			// layer-visibility event
 
 			defaultExclusiveControl.push(queryInfo.controlId);
+			// We just need the information between add-layer and map:layerAdded
+			// events
+			delete tempMapLayerQueryInfo[message.layerId];
 		}
-		// We just need the information between add-layer and map:layerAdded
-		// events
-		delete tempMapLayerQueryInfo[message.layerId];
+
+		if (message.layerId == highlightLayerId) {
+			layerAdded = true;
+		}
 	});
 
 	bus.listen("layers-loaded", function(e) {
@@ -263,4 +272,45 @@ define([ "message-bus", "iso8601" ], function(bus, iso8601) {
 		}
 
 	});
+
+	bus.listen("highlight-feature", function(event, geometry) {
+		bus.send("map:removeAllFeatures", {
+			layerId : highlightLayerId
+		});
+		var feature = geojson.createFeature(geometry, {});
+		bus.send("map:addFeature", {
+			"layerId" : highlightLayerId,
+			"feature" : feature
+		});
+	});
+
+	bus.listen("clear-highlighted-features", function() {
+		bus.send("map:removeAllFeatures", {
+			layerId : highlightLayerId
+		});
+	});
+
+	bus.listen("layers-loaded", function() {
+		if (highlightLayerAdded) {
+			bus.send("map:removeLayer", {
+				"layerId" : highlightLayerId
+			});
+			layerAdded = false;
+		}
+
+		// Create new vector layer
+		bus.send("map:addLayer", {
+			"layerId" : highlightLayerId,
+			"vector" : {
+				"style" : {
+					'strokeWidth' : 5,
+					fillOpacity : 0,
+					strokeColor : '#ee4400',
+					strokeOpacity : 0.5,
+					strokeLinecap : 'round'
+				}
+			}
+		});
+	});
+
 });
