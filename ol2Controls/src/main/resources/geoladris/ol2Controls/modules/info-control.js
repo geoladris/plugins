@@ -19,7 +19,7 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "geoj
 	};
 	
 	function sendInfoFeatures(layerId, features, x, y) {
-		var mapPoint = map.getLonLatFromPixel({
+		var mapPoint = map.getMap().getLonLatFromPixel({
 			"x" : x,
 			"y" : y
 		});
@@ -44,11 +44,11 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "geoj
 			'click' : function(e) {
 				// bbox parameter
 				var tolerance = 5;
-				var point1 = map.getLonLatFromPixel(e.xy.offset({
+				var point1 = map.getMap().getLonLatFromPixel(e.xy.offset({
 					x : -tolerance,
 					y : -tolerance
 				}));
-				var point2 = map.getLonLatFromPixel(e.xy.offset({
+				var point2 = map.getMap().getLonLatFromPixel(e.xy.offset({
 					x : tolerance,
 					y : tolerance
 				}));
@@ -176,7 +176,7 @@ define([ "ol2/map", "message-bus", "customization", "ol2/controlRegistry", "geoj
 			}
 		});
 
-		var layer = map.getLayer(queryInfo.layerId);
+		var layer = map.getMap().getLayer(queryInfo.layerId);
 		control.layers = new Array();
 		control.layers.push(layer);
 

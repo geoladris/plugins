@@ -1,32 +1,39 @@
 define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 
 	var GeoJSON = new OpenLayers.Format.GeoJSON();
-	
+
 	var map = null;
 
 	OpenLayers.ProxyHost = "proxy?url=";
 
-	map = new OpenLayers.Map(module.config().htmlId, {
-		fallThrough : true,
-		theme : null,
-		projection : new OpenLayers.Projection("EPSG:900913"),
-		displayProjection : new OpenLayers.Projection("EPSG:4326"),
-		units : "m",
-		allOverlays : true,
-		controls : []
-	});
+	function getMap() {
+		if (map == null) {
+			map = new OpenLayers.Map(module.config().htmlId, {
+				fallThrough : true,
+				theme : null,
+				projection : new OpenLayers.Projection("EPSG:900913"),
+				displayProjection : new OpenLayers.Projection("EPSG:4326"),
+				units : "m",
+				allOverlays : true,
+				controls : [],
+				numZoomLevels:20
+			});
+		}
+
+		return map;
+	}
 
 	bus.listen("map:layerVisibility", function(event, message) {
-		var layer = map.getLayer(message.layerId);
+		var layer = getMap().getLayer(message.layerId);
 		layer.setVisibility(message.visibility);
 	});
 
 	bus.listen("zoom-in", function(event) {
-		map.zoomIn();
+		getMap().zoomIn();
 	});
 
 	bus.listen("zoom-out", function(event) {
-		map.zoomOut();
+		getMap().zoomOut();
 	});
 
 	function getCRSOr4326(obj) {
@@ -36,23 +43,23 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 
 	bus.listen("zoom-to", function(event, msg) {
 		if (msg instanceof OpenLayers.Bounds) {
-			map.zoomToExtent(msg);
+			getMap().zoomToExtent(msg);
 		} else if (msg instanceof Array) {
-			map.zoomToExtent(msg);
+			getMap().zoomToExtent(msg);
 		} else if (msg instanceof Object) {
 			var center = new OpenLayers.LonLat(msg.x, msg.y);
-			center.transform(getCRSOr4326(msg), map.projection);
+			center.transform(getCRSOr4326(msg), getMap().projection);
 
 			var zoomLevel = msg.zoomLevel;
 			if (zoomLevel && zoomLevel < 0) {
-				zoomLevel = Math.max(1, map.getNumZoomLevels() + zoomLevel);
+				zoomLevel = Math.max(1, getMap().getNumZoomLevels() + zoomLevel);
 			}
-			map.setCenter(center, zoomLevel);
+			getMap().setCenter(center, zoomLevel);
 		}
 	});
 
 	bus.listen("map:setLayerOpacity", function(event, message) {
-		var layer = map.getLayer(message.layerId);
+		var layer = getMap().getLayer(message.layerId);
 		layer.setOpacity(message.opacity);
 	});
 
@@ -61,22 +68,22 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 	 */
 	bus.listen("map-click", function(event, lat, lon) {
 		var mapPoint = new OpenLayers.LonLat(lon, lat);
-		mapPoint.transform(new OpenLayers.Projection("EPSG:4326"), map.projection);
-		map.events.triggerEvent("click", {
-			xy : map.getPixelFromLonLat(mapPoint)
+		mapPoint.transform(new OpenLayers.Projection("EPSG:4326"), getMap().projection);
+		getMap().events.triggerEvent("click", {
+			xy : getMap().getPixelFromLonLat(mapPoint)
 		});
 	});
 
 	bus.listen("map:removeLayer", function(e, message) {
-		var layer = map.getLayer(message.layerId);
+		var layer = getMap().getLayer(message.layerId);
 		layer.removeAllFeatures();
-		map.removeLayer(layer);
+		getMap().removeLayer(layer);
 	});
 
 	bus.listen("map:removeAllLayers", function(e) {
-		if (map !== null) {
-			while (map.layers.length > 0) {
-				map.removeLayer(map.layers[map.layers.length - 1]);
+		if (getMap() !== null) {
+			while (getMap().layers.length > 0) {
+				getMap().removeLayer(getMap().layers[getMap().layers.length - 1]);
 			}
 		}
 	});
@@ -121,24 +128,24 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 		}
 		if (layer != null) {
 			layer.id = message.layerId;
-			map.addLayer(layer);
+			getMap().addLayer(layer);
 			bus.send("map:layerAdded", [ message ]);
 		}
 	});
 
 	bus.listen("map:mergeLayerParameters", function(e, message) {
-		var layer = map.getLayer(message.layerId);
+		var layer = getMap().getLayer(message.layerId);
 		layer.mergeNewParams(message.parameters);
 	});
 
 	bus.listen("map:setLayerIndex", function(e, message) {
-		var layer = map.getLayer(message.layerId);
-		map.setLayerIndex(layer, message.index);
+		var layer = getMap().getLayer(message.layerId);
+		getMap().setLayerIndex(layer, message.index);
 	});
 
 	bus.listen("map:addFeature", function(e, message) {
 		var layerId = message["layerId"];
-		var layer = map.getLayer(layerId);
+		var layer = getMap().getLayer(layerId);
 		var feature = GeoJSON.parseFeature(message.feature);
 		layer.addFeatures(feature);
 		layer.redraw();
@@ -150,10 +157,12 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 
 	bus.listen("map:removeAllFeatures", function(e, message) {
 		var layerId = message["layerId"];
-		var layer = map.getLayer(layerId);
+		var layer = getMap().getLayer(layerId);
 		layer.removeAllFeatures();
 		layer.redraw();
 	});
 
-	return map;
+	return {
+		"getMap":getMap
+	};
 });

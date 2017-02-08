@@ -10,12 +10,12 @@ define([ "./map", "message-bus", "customization", "url-parameters" ], function(m
 		} else {
 			center = new OpenLayers.LonLat(customization["map.centerLonLat"]);
 		}
-		center.transform(epsg4326, map.projection);
+		center.transform(epsg4326, map.getMap().projection);
 		var zoomLevel = urlParams.get("map.initialZoomLevel");
 		if (zoomLevel == null) {
 			zoomLevel = customization["map.initialZoomLevel"];
 		}
-		map.setCenter(center, zoomLevel);
+		map.getMap().setCenter(center, zoomLevel);
 	};
 
 	bus.listen("layers-loaded", initialZoom);

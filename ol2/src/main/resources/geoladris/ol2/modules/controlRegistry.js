@@ -6,7 +6,7 @@ define([ "message-bus", "./map" ], function(bus, map) {
 	bus.listen("map:createControl", function(e, message) {
 		if (controlTypeCreatorFunction.hasOwnProperty(message.controlType)) {
 			var control = controlTypeCreatorFunction[message.controlType](message);
-			map.addControl(control);
+			map.getMap().addControl(control);
 			idControlInstance[message.controlId] = {
 				"control" : control,
 				"configuration" : JSON.parse(JSON.stringify(message))
@@ -50,7 +50,7 @@ define([ "message-bus", "./map" ], function(bus, map) {
 		if (control.active) {
 			control.deactivate();
 		}
-		map.removeControl(control);
+		map.getMap().removeControl(control);
 	});
 
 	return {
