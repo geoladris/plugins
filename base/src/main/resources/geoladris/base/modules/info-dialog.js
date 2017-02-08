@@ -1,8 +1,8 @@
-define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/ui", "highcharts", "highcharts-theme-sand" ], function(module, $, bus, map, i18n, customization, ui) {
+define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/ui", "geojson/geojson", "highcharts", "highcharts-theme-sand" ], function(module, $, bus, map, i18n, customization, ui, geojson) {
 	var wmsLayerInfo = {};
 	var infoFeatures = {};
 
-	var pointHighlightLayer = null;
+	var pointHighlightLayerName = null;
 
 	var dialog;
 
@@ -13,9 +13,26 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/
 	bus.listen("add-layer", function(event, layerInfo) {
 		var portalLayerName = layerInfo.label;
 		$.each(layerInfo.mapLayers, function(i, mapLayer) {
-			wmsLayerInfo[mapLayer.id] = {
-				"portalLayerName" : portalLayerName,
-				"wmsName" : mapLayer.wmsName
+			if (mapLayer.queryType) {
+				var aliases = null;
+				if (mapLayer.queryFieldNames) {
+					aliases = [];
+					var fieldNames = mapLayer.queryFieldNames;
+					var fieldAliases = mapLayer.queryFieldAliases;
+					for (var j = 0; j < fieldNames.length; j++) {
+						var alias = {
+							"name" : fieldNames[j],
+							"alias" : fieldAliases[j]
+						};
+						aliases.push(alias);
+					}
+				}
+
+				wmsLayerInfo[mapLayer.id] = {
+					"portalLayerName" : portalLayerName,
+					"wmsName" : mapLayer.wmsName,
+					"aliases" : aliases
+				}
 			}
 		});
 	});
@@ -26,47 +43,38 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/
 		}
 
 		infoFeatures = {};
-		if (pointHighlightLayer != null) {
-			pointHighlightLayer.removeAllFeatures();
-			map.removeLayer(pointHighlightLayer);
-			pointHighlightLayer = null;
+		if (pointHighlightLayerName != null) {
+			bus.send("map:removeLayer", {
+				"layerId" : "info-point-highlight-layer"
+			});
+			pointHighlightLayerName = null;
 		}
 	});
 
-	bus.listen("info-features", function(event, wmsLayerId, features, x, y) {
-		if (pointHighlightLayer == null) {
-			var styles = new OpenLayers.StyleMap({
-				"default" : {
-					graphicName : "cross",
-					pointRadius : 10,
-					strokeWidth : 1,
-					strokeColor : "#000000",
-					fillOpacity : 0.6,
-					fillColor : "#ee4400"
-				}
+	bus.listen("info-features", function(event, wmsLayerId, features, x, y, mapPoint) {
+		if (pointHighlightLayerName == null) {
+			pointHighlightLayerName = "info-point-highlight-layer";
+			bus.send("map:addLayer", {
+				"layerId" : pointHighlightLayerName,
+				"vector" : {
+					"style" : {
+						"default" : {
+							graphicName : "cross",
+							pointRadius : 10,
+							strokeWidth : 1,
+							strokeColor : "#000000",
+							fillOpacity : 0.6,
+							fillColor : "#ee4400"
+						}
+					}
+				},
 			});
-
-			pointHighlightLayer = new OpenLayers.Layer.Vector("point highlight layer", {
-				styleMap : styles
+			feature = geojson.createFeature(geojson.createPoint(
+					mapPoint.x, mapPoint.y), {});
+			bus.send("map:addFeature", {
+				"layerId" : pointHighlightLayerName,
+				"feature" : feature
 			});
-			pointHighlightLayer.id = "info-point-highlight-layer";
-			map.addLayer(pointHighlightLayer);
-		}
-		var mapPoint = map.getLonLatFromPixel({
-			"x" : x,
-			"y" : y
-		});
-		var layerFeatures = pointHighlightLayer.features;
-		var alreadyInLayer = false;
-		for (var i = 0; i < layerFeatures.length; i++) {
-			if (layerFeatures[i].geometry.x == mapPoint.lon && layerFeatures[i].geometry.y == mapPoint.lat) {
-				alreadyInLayer = true;
-			}
-		}
-		if (!alreadyInLayer) {
-			var pointFeature = new OpenLayers.Feature.Vector();
-			pointFeature.geometry = new OpenLayers.Geometry.Point(mapPoint.lon, mapPoint.lat);
-			pointHighlightLayer.addFeatures(pointFeature);
 		}
 
 		infoFeatures[wmsLayerId] = features;
@@ -82,7 +90,6 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/
 			if (id == "info_popup") {
 				bus.send("clear-info-features");
 				bus.send("clear-highlighted-features");
-				map.getLayer("Highlighted Features").destroyFeatures();
 			}
 		});
 
@@ -112,10 +119,17 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/
 			html : "<th class='command'><th class='command'>"
 		});
 
-		var layerNameFeatures = null;
-		var layerName = wmsLayerInfo[wmsLayerId]["portalLayerName"];
-
-		var aliases = features[0]["aliases"];
+		var aliases = wmsLayerInfo[wmsLayerId]["aliases"];
+		if (aliases == null && features.length >0) {
+			var properties= features[0].properties;
+			aliases = [];
+			for (propertyName in properties) {
+				aliases.push({					
+					"name" : propertyName,
+					"alias" : propertyName
+				});
+			}
+		}
 		for (var i = 0; i < aliases.length; i++) {
 			ui.create("th", {
 				parent : tr,
@@ -135,14 +149,14 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/
 				css : "command"
 			});
 
-			if (feature["bounds"] != null) {
+			if (feature["bbox"] != null) {
 				ui.create("button", {
 					id : "info-magnifier-" + wmsLayerId + "-" + index,
 					css : "info-magnifier",
 					parent : tdMagnifier,
 					image : "modules/images/zoom-to-object.png",
 					clickEventName : "zoom-to",
-					clickEventMessage : new OpenLayers.Bounds([ feature["bounds"].scale(1.2).toArray() ])
+					clickEventMessage : feature["bbox"]
 				});
 			}
 
@@ -157,13 +171,14 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/
 			});
 			imgWait.src = "styles/images/ajax-loader.gif";
 			imgWait.alt = "wait";
-
 			var wmsName = wmsLayerInfo[wmsLayerId]["wmsName"];
 			bus.send("ajax", {
 				url : 'indicators?layerId=' + wmsName,
 				success : function(indicators, textStatus, jqXHR) {
 					if (indicators.length > 0) {
-						bus.send("feature-indicators-received", [ wmsName, wmsLayerId, index, indicators ]);
+						bus.send("feature-indicators-received",
+								[ wmsName, wmsLayerId, index,
+										indicators ]);
 					}
 				},
 				errorMsg : "Could not obtain the indicator",
@@ -172,12 +187,11 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/
 				}
 			});
 
-			var aliases = feature["aliases"];
 			for (var i = 0; i < aliases.length; i++) {
 				ui.create("td", {
 					parent : tr,
 					css : "data",
-					html : feature.attributes[aliases[i].name]
+					html : feature.properties[aliases[i].name]
 				})
 			}
 
@@ -204,7 +218,8 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/
 		});
 	});
 
-	bus.listen("feature-indicators-received", function(event, wmsName, wmsLayerId, infoFeatureIndex, indicators) {
+	bus.listen("feature-indicators-received", function(event, wmsName,
+			wmsLayerId, infoFeatureIndex, indicators) {
 		infoFeatures[wmsLayerId][infoFeatureIndex]["indicators"] = indicators;
 		// TODO if there is more than one indicator, offer the
 		// choice to the user.
@@ -224,15 +239,17 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/
 		});// END each
 	})
 
-	bus.listen("show-feature-indicator", function(event, wmsName, wmsLayerId, featureIndex, indicatorIndex) {
+	bus.listen("show-feature-indicator", function(event, wmsName, wmsLayerId,
+			featureIndex, indicatorIndex) {
 		var feature = infoFeatures[wmsLayerId][featureIndex];
 		var indicator = feature["indicators"][indicatorIndex];
 
 		bus.send("ajax", {
-			url : "indicator?objectId=" + feature.attributes[indicator.idField] + //
-			"&objectName=" + feature.attributes[indicator.nameField] + //
-			"&layerId=" + wmsName + //
-			"&indicatorId=" + indicator.id,
+			url : "indicator?objectId=" + feature.properties[indicator.idField]
+					+ //
+					"&objectName=" + feature.properties[indicator.nameField] + //
+					"&layerId=" + wmsName + //
+					"&indicatorId=" + indicator.id,
 			success : function(chartData, textStatus, jqXHR) {
 				var chart = $("<div/>");
 				chart.highcharts(chartData);
@@ -241,20 +258,5 @@ define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/
 			errorMsg : "Could not obtain the indicator"
 		});
 
-	});
-
-	bus.listen("highlight-feature", function(event, geometry) {
-		var highlightLayer = map.getLayer("Highlighted Features");
-		highlightLayer.removeAllFeatures();
-		var feature = new OpenLayers.Feature.Vector();
-		feature.geometry = geometry;
-		highlightLayer.addFeatures(feature);
-		highlightLayer.redraw();
-	});
-
-	bus.listen("clear-highlighted-features", function() {
-		var highlightLayer = map.getLayer("Highlighted Features");
-		highlightLayer.removeAllFeatures();
-		highlightLayer.redraw();
 	});
 });

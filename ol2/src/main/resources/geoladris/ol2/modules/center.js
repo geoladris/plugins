@@ -1,4 +1,4 @@
-define([ "map", "message-bus", "customization", "url-parameters" ], function(map, bus, customization, urlParams) {
+define([ "./map", "message-bus", "customization", "url-parameters" ], function(map, bus, customization, urlParams) {
 
 	var initialZoom = function() {
 		var epsg4326 = new OpenLayers.Projection("EPSG:4326");
@@ -10,12 +10,12 @@ define([ "map", "message-bus", "customization", "url-parameters" ], function(map
 		} else {
 			center = new OpenLayers.LonLat(customization["map.centerLonLat"]);
 		}
-		center.transform(epsg4326, map.projection);
+		center.transform(epsg4326, map.getMap().projection);
 		var zoomLevel = urlParams.get("map.initialZoomLevel");
 		if (zoomLevel == null) {
 			zoomLevel = customization["map.initialZoomLevel"];
 		}
-		map.setCenter(center, zoomLevel);
+		map.getMap().setCenter(center, zoomLevel);
 	};
 
 	bus.listen("layers-loaded", initialZoom);

@@ -1,4 +1,4 @@
-define([ "message-bus", "customization", "map", "toolbar", "i18n", "jquery", "ui/ui", "jquery-ui", "openlayers", "./edit-controls" ],//
+define([ "message-bus", "customization", "toolbar", "i18n", "jquery", "ui/ui" ],//
 function(bus, customization, map, toolbar, i18n, $, ui) {
 
 	var feedbackLayers = {};
@@ -7,9 +7,9 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 	var dialogId = "feedback_popup";
 	var lblTimestamp;
 	var layerInput, emailInput, commentInput;
-	var editToolbar;
 
-	var feedbackLayer = new OpenLayers.Layer.Vector("Feedback");
+	var feedbackLayerId = "feedbackLayer";
+	var features = [];
 
 	ui.create("button", {
 		id : "feedback-button",
@@ -44,10 +44,19 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 		css : "feedback-form-left",
 		html : "Drawing tools: "
 	});
-	ui.create("div", {
-		id : "fb_toolbar",
+
+	ui.create("button", {
+		id : "feedback-draw-control",
 		parent : dialogId,
-		css : "olControlPortalToolbar"
+		text : i18n["feedback_addfeature_tooltip"],
+		sendEventCallback : activateDrawControl
+	});
+
+	ui.create("button", {
+		id : "feedback-modify-control",
+		parent : dialogId,
+		text : i18n["feedback_editfeature_tooltip"],
+		sendEventCallback : activateModifyControl
 	});
 
 	emailInput = ui.create("input", {
@@ -87,11 +96,22 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 		names : [ "layer", "email", "comment" ]
 	});
 
-	// Need to create after the dialog is in the DOM otherwise the call to
-	// getElementById returns null
-	editToolbar = new OpenLayers.Control.PortalToolbar(feedbackLayer, {
-		div : document.getElementById("fb_toolbar")
-	});
+	function activateDrawControl() {
+		bus.send("activate-exclusive-control", {
+			"controlId" : "feedback-drawFeature",
+			"controlType" : "drawFeature",
+			"editingLayerId" : feedbackLayerId,
+			"handlerType" : "polygon"
+		});
+	}
+
+	function activateModifyControl() {
+		bus.send("activate-exclusive-control", {
+			"controlId" : "feedback-modifyFeature",
+			"controlType" : "modifyFeature",
+			"editingLayerId" : feedbackLayerId
+		});
+	}
 
 	bus.listen("feedback-send", function(e, msg) {
 		var mailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -99,14 +119,20 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 			bus.send("error", i18n["Feedback.no-layer-selected"]);
 		} else if (!mailRegex.test(msg.email)) {
 			bus.send("error", i18n["Feedback.invalid-email-address"]);
-		} else if (!editToolbar.hasFeatures()) {
+		} else if (features.length == 0) {
 			bus.send("error", i18n["Feedback.no-geometries"]);
 		} else {
 			// Do submit
+			var polygons = [];
+			for (var i = 0; i < features.length; i++) {
+				polygons.push(features[i].geometry);
+			}
+			var multipolygon = geojson.createMultipolygon(polygons);
+
 			var data = {
 				"lang" : customization.languageCode,
 				"comment" : msg.comment,
-				"geometry" : editToolbar.getFeaturesAsWKT(),
+				"geometry" : geojson.toWKT(multipolygon),
 				"layerName" : msg.layer,
 				"email" : msg.email
 			};
@@ -138,11 +164,16 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 		if (layerInput.getElementsByTagName("option").length == 0) {
 			bus.send("error", i18n["Feedback.no_layer_visible"]);
 		} else {
-			map.addLayer(feedbackLayer);
 			bus.send("ui-button:feedback-button:activate", true);
 			commentInput.value = "";
 			emailInput.value = "";
-			bus.send("activate-exclusive-control", editToolbar);
+			bus.send("map:addLayer", {
+				"layerId" : feedbackLayerId,
+				"vector" : {}
+			});
+			activateDrawControl();
+			features = [];
+
 			bus.send("ui-show", "feedback_popup");
 		}
 	}
@@ -151,10 +182,11 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 		if (id != dialogId) {
 			return;
 		}
-		feedbackLayer.removeAllFeatures();
-		editToolbar.deactivate();
-		map.removeLayer(feedbackLayer);
 		bus.send("activate-default-exclusive-control");
+		bus.send("map:removeLayer", {
+			"layerId" : feedbackLayerId
+		});
+		features = [];
 		bus.send("ui-button:feedback-button:activate", false);
 	});
 
@@ -170,6 +202,12 @@ function(bus, customization, map, toolbar, i18n, $, ui) {
 		lblTimestamp.innerHTML = text;
 	}
 
+	bus.listen("map:featureAdded", function(e, message) {
+		if (message.layerId == "feedbackLayerId"){
+			features.push(message.feature);
+		}
+	});
+	
 	bus.listen("activate-feedback", activateFeedback);
 
 	// Listen events

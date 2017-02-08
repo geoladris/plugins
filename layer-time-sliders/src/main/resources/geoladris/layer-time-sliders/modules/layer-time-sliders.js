@@ -1,4 +1,4 @@
-define([ "jquery", "message-bus", "layout", "map", "layer-list-selector", "moment", "ui/ui" ], function($, bus, layout, map, layerListSelector, moment, ui) {
+define([ "jquery", "message-bus", "layout", "layer-list-selector", "moment", "ui/ui" ], function($, bus, layout, layerListSelector, moment, ui) {
 	var aTimestampsLayers = {};
 
 	var sliders = {};
@@ -48,13 +48,7 @@ define([ "jquery", "message-bus", "layout", "map", "layer-list-selector", "momen
 
 		slider.addEventListener("change", function(event) {
 			var date = new Date(event.detail.value);
-			layerInfo.mapLayers.forEach(function(mapLayer) {
-				var layer = map.getLayer(mapLayer.id);
-				layer.mergeNewParams({
-					'time' : date.toISO8601String()
-				});
-				bus.send("layer-time-slider.selection", [ layerInfo.id, date ]);
-			});
+			bus.send("layer-time-slider.selection", [ layerInfo.id, date ]);
 		});
 
 		slider.addEventListener("slide", function(event) {

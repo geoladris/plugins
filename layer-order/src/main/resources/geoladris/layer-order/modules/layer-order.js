@@ -4,8 +4,10 @@
 
 'use strict';
 
-define([ "layout", "module", "toolbar", "i18n", "jquery", "message-bus", "map", "ui/ui", "jquery-ui" ], function(layout, module, toolbar, i18n, $, bus, map, ui) {
+define([ "layout", "module", "toolbar", "i18n", "jquery", "message-bus", "ui/ui" ], function(layout, module, toolbar, i18n, $, bus, map, ui) {
 	var dialogId = "layer-order-pane";
+
+	var layers = [];
 
 	// Create ui components
 	ui.create("button", {
@@ -30,16 +32,16 @@ define([ "layout", "module", "toolbar", "i18n", "jquery", "message-bus", "map", 
 
 	ui.sortable(content);
 	content.addEventListener("change", function() {
-		var newLayersOrder = jcontent.sortable('toArray');
-		for (var i = 0; i < newLayersOrder.length; i++) {
-			var id = newLayersOrder[i];
-			var layer = map.getLayer(id);
-			if (layer) {
-				map.setLayerIndex(layer, i);
-				// TODO: propagate change to other modules (and persist it in
-				// layers.json).
-			}
-		}
+		// TODO implementar
+		// var newLayersOrder = jcontent.sortable('toArray');
+		// for (var i = 0; i < newLayersOrder.length; i++) {
+			// TODO update layers json and reload all layers
+			// var id = newLayersOrder[i];
+			// var layer = map.getLayer(id);
+			// if (layer) {
+			// map.setLayerIndex(layer, i);
+			// }
+		// }
 	});
 
 	// Link dialog visibility and toolbar button
@@ -65,14 +67,21 @@ define([ "layout", "module", "toolbar", "i18n", "jquery", "message-bus", "map", 
 	});
 
 	bus.listen("layers-loaded", function() {
-		for ( var n in map.layers) {
-			var layer = map.layers[n];
+		for ( var n in layers) {
+			var layer = layers[n];
 			ui.create("div", {
 				id : layer.id,
 				parent : dialogId + "-content",
 				css : "layer-order-item",
-				html : layer.name
+				html : layer.id
 			});
+		}
+	});
+
+	bus.listen("add-layer", function(e, layerInfo) {
+		for (var index = 0; index < layerInfo.mapLayers.length; index++) {
+			var mapLayer = layerInfo.mapLayers[index];
+			layers.push(mapLayer);
 		}
 	});
 });
