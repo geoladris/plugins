@@ -1,4 +1,4 @@
-define([ "module", "jquery", "message-bus", "map", "i18n", "customization", "ui/ui", "geojson/geojson", "highcharts", "highcharts-theme-sand" ], function(module, $, bus, map, i18n, customization, ui, geojson) {
+define([ "module", "jquery", "message-bus", "i18n", "customization", "ui/ui", "geojson/geojson", "highcharts", "highcharts-theme-sand" ], function(module, $, bus, i18n, customization, ui, geojson) {
 	var wmsLayerInfo = {};
 	var infoFeatures = {};
 

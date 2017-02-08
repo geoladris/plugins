@@ -1,5 +1,5 @@
 define([ "message-bus", "customization", "toolbar", "i18n", "jquery", "ui/ui" ],//
-function(bus, customization, map, toolbar, i18n, $, ui) {
+function(bus, customization, toolbar, i18n, $, ui) {
 
 	var feedbackLayers = {};
 

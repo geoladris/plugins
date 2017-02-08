@@ -4,7 +4,7 @@
 
 'use strict';
 
-define([ "layout", "module", "toolbar", "i18n", "jquery", "message-bus", "ui/ui" ], function(layout, module, toolbar, i18n, $, bus, map, ui) {
+define([ "layout", "module", "toolbar", "i18n", "jquery", "message-bus", "ui/ui" ], function(layout, module, toolbar, i18n, $, bus, ui) {
 	var dialogId = "layer-order-pane";
 
 	var layers = [];
