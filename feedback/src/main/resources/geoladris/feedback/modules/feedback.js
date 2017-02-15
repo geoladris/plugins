@@ -45,20 +45,27 @@ function(bus, customization, toolbar, i18n, $, ui) {
 		html : "Drawing tools: "
 	});
 
+	ui.create("div", {
+		id : "feedback-controls",
+		parent : dialogId
+	});
+	
 	ui.create("button", {
 		id : "feedback-draw-control",
-		parent : dialogId,
+		parent : "feedback-controls",
+		css : "blue_button toolbar_button",
 		text : i18n["feedback_addfeature_tooltip"],
 		clickEventCallback : activateDrawControl
 	});
 
 	ui.create("button", {
 		id : "feedback-modify-control",
-		parent : dialogId,
+		parent : "feedback-controls",
+		css : "blue_button toolbar_button",
 		text : i18n["feedback_editfeature_tooltip"],
 		clickEventCallback : activateModifyControl
 	});
-
+	
 	emailInput = ui.create("input", {
 		id : "feedback-input-email",
 		parent : dialogId,
