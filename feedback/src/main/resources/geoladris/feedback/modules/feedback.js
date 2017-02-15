@@ -49,14 +49,14 @@ function(bus, customization, toolbar, i18n, $, ui) {
 		id : "feedback-draw-control",
 		parent : dialogId,
 		text : i18n["feedback_addfeature_tooltip"],
-		sendEventCallback : activateDrawControl
+		clickEventCallback : activateDrawControl
 	});
 
 	ui.create("button", {
 		id : "feedback-modify-control",
 		parent : dialogId,
 		text : i18n["feedback_editfeature_tooltip"],
-		sendEventCallback : activateModifyControl
+		clickEventCallback : activateModifyControl
 	});
 
 	emailInput = ui.create("input", {
