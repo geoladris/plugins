@@ -107,6 +107,7 @@ define([ "geoladris-tests" ], function(tests) {
 					"vector" : {}
 				});
 				var feature = {
+					"type" : "Feature",
 					"geometry" : null,
 					"properties" : {
 						"id" : 1
@@ -129,6 +130,27 @@ define([ "geoladris-tests" ], function(tests) {
 			});
 		});
 
+		it("addFeature with ol2 API raises featureAdded event", function(done) {
+			test({}, function() {
+				bus.send("map:addLayer", {
+					"layerId" : "mylayer",
+					"vector" : {}
+				});
+
+				map.getLayer("mylayer").addFeatures([ new OpenLayers.Feature.Vector(null, {
+					"foo" : "bar"
+				}) ]);
+
+				var featureAddedArgs = bus.send.calls.allArgs().filter(function(args) {
+					return args[0] == "map:featureAdded";
+				})[0];
+				var featureAddedMessage = featureAddedArgs[1];
+				expect(featureAddedMessage.feature.geometry).toBe(null);
+				expect(featureAddedMessage.feature.id).not.toBeNull();
+				done();
+			});
+		});
+		
 		it("sets 20 zoom levels by default", function(done) {
 			test({}, function() {
 				expect(map.numZoomLevels).toBe(20);
@@ -144,5 +166,6 @@ define([ "geoladris-tests" ], function(tests) {
 				done();
 			});
 		});
+
 	});
 });

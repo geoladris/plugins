@@ -3,7 +3,7 @@ define([ "openlayers" ], function() {
 	var GeoJSON = new OpenLayers.Format.GeoJSON();
 
 	function parse(geojsonFeature) {
-		return GeoJSON.parse(geojsonFeature);
+		return GeoJSON.read(geojsonFeature);
 	}
 
 	function write(olFeature) {
