@@ -23,17 +23,13 @@ define([ "message-bus", "./map" ], function(bus, map) {
 	bus.listen("map:activateControl", function(e, message) {
 		checkControlId(message.controlId);
 		var control = idControlInstance[message.controlId].control;
-		if (!control.active) {
-			control.activate();
-		}
+		control.activate();
 	});
 
 	bus.listen("map:deactivateControl", function(e, message) {
 		checkControlId(message.controlId);
 		var control = idControlInstance[message.controlId].control;
-		if (control.active) {
-			control.deactivate();
-		}
+		control.deactivate();
 	});
 
 	bus.listen("map:updateControl", function(e, message) {
@@ -47,9 +43,7 @@ define([ "message-bus", "./map" ], function(bus, map) {
 	bus.listen("map:destroyControl", function(e, message) {
 		checkControlId(message.controlId);
 		var control = idControlInstance[message.controlId].control;
-		if (control.active) {
-			control.deactivate();
-		}
+		control.deactivate();
 		map.getMap().removeControl(control);
 	});
 
