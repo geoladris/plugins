@@ -26,7 +26,11 @@ define([ "geoladris-tests" ], function(tests) {
 			injector = initialization.injector;
 			bus = initialization.bus;
 
-			injector.mock("map", map);
+			injector.mock("map", {
+				getMap : function() {
+					return map;
+				}
+			});
 
 			spyOn(control, "activate");
 			spyOn(map, "addControl");
