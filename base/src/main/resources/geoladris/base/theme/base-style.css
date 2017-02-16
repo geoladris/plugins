@@ -1,3 +1,16 @@
+#loading-shade {
+	background: rgba(0, 0, 0, 0.7);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#loading-msg {
+	min-width: 12em;
+	padding: 15px;
+	background: white;
+}
+
 .dialog {
 	background: white;
 	border: 1px solid gray;
@@ -34,7 +47,7 @@
 	background-color: #38c;
 }
 
-.ui-input-container,.ui-text-area-field-container {
+.ui-input-container, .ui-text-area-field-container {
 	margin: 10px;
 }
 
