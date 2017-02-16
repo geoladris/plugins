@@ -1,6 +1,4 @@
-define([ "message-bus", "module", "openlayers" ], function(bus, module) {
-
-	var GeoJSON = new OpenLayers.Format.GeoJSON();
+define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, module, geojson) {
 
 	var map = null;
 
@@ -16,7 +14,7 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 				units : "m",
 				allOverlays : true,
 				controls : [],
-				numZoomLevels:20
+				numZoomLevels : 20
 			});
 		}
 
@@ -97,6 +95,12 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 			var layer = new OpenLayers.Layer.Vector(message.layerId, {
 				styleMap : styles
 			});
+			layer.events.register("featureadded", " ", function(event) {
+				sendFeatureAdded(message.layerId, event.feature);
+			});
+			layer.events.register("featuremodified", " ", function(event) {
+				sendFeatureModified(message.layerId, event.feature);
+			});
 		} else if (message.osm) {
 			layer = new OpenLayers.Layer.OSM(message.layerId, message.osm.osmUrls);
 		} else if (message.gmaps) {
@@ -146,14 +150,25 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 	bus.listen("map:addFeature", function(e, message) {
 		var layerId = message["layerId"];
 		var layer = getMap().getLayer(layerId);
-		var feature = GeoJSON.parseFeature(message.feature);
+		var feature = geojson.parse(message.feature);
 		layer.addFeatures(feature);
 		layer.redraw();
+		sendFeatureAdded(layerId, feature);
+	});
+
+	function sendFeatureAdded(layerId, olFeature) {
 		bus.send("map:featureAdded", {
 			"layerId" : layerId,
-			"feature" : JSON.parse(GeoJSON.write(feature))
+			"feature" : geojson.write(olFeature)
 		});
-	});
+	}
+
+	function sendFeatureModified(layerId, olFeature) {
+		bus.send("map:featureModified", {
+			"layerId" : layerId,
+			"feature" : geojson.write(olFeature)
+		});
+	}
 
 	bus.listen("map:removeAllFeatures", function(e, message) {
 		var layerId = message["layerId"];
@@ -163,6 +178,6 @@ define([ "message-bus", "module", "openlayers" ], function(bus, module) {
 	});
 
 	return {
-		"getMap":getMap
+		"getMap" : getMap
 	};
 });

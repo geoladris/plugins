@@ -1,5 +1,5 @@
-define([ "message-bus", "customization", "toolbar", "i18n", "jquery", "ui/ui" ],//
-function(bus, customization, toolbar, i18n, $, ui) {
+define([ "message-bus", "customization", "toolbar", "i18n", "jquery", "ui/ui", "geojson/geojson" ],//
+function(bus, customization, toolbar, i18n, $, ui, geojson) {
 
 	var feedbackLayers = {};
 
@@ -9,7 +9,7 @@ function(bus, customization, toolbar, i18n, $, ui) {
 	var layerInput, emailInput, commentInput;
 
 	var feedbackLayerId = "feedbackLayer";
-	var features = [];
+	var features = {};
 
 	ui.create("button", {
 		id : "feedback-button",
@@ -121,15 +121,15 @@ function(bus, customization, toolbar, i18n, $, ui) {
 			bus.send("error", i18n["Feedback.no-layer-selected"]);
 		} else if (!mailRegex.test(msg.email)) {
 			bus.send("error", i18n["Feedback.invalid-email-address"]);
-		} else if (features.length == 0) {
+		} else if (Object.keys(features).length == 0) {
 			bus.send("error", i18n["Feedback.no-geometries"]);
 		} else {
 			// Do submit
 			var polygons = [];
-			for (var i = 0; i < features.length; i++) {
-				polygons.push(features[i].geometry);
+			for ( var id in features) {
+				polygons.push(features[id].geometry);
 			}
-			var multipolygon = geojson.createMultipolygon(polygons);
+			var multipolygon = geojson.createMultiPolygon(polygons);
 
 			var data = {
 				"lang" : customization.languageCode,
@@ -185,7 +185,7 @@ function(bus, customization, toolbar, i18n, $, ui) {
 				"editingLayerId" : feedbackLayerId
 			});
 			activateDrawControl();
-			features = [];
+			features = {};
 
 			bus.send("ui-show", "feedback_popup");
 		}
@@ -199,7 +199,7 @@ function(bus, customization, toolbar, i18n, $, ui) {
 		bus.send("map:removeLayer", {
 			"layerId" : feedbackLayerId
 		});
-		features = [];
+		features = {};
 
 		bus.send("map:destroyControl", {
 			"controlId" : "feedback-drawFeature"
@@ -223,11 +223,13 @@ function(bus, customization, toolbar, i18n, $, ui) {
 		lblTimestamp.innerHTML = text;
 	}
 
-	bus.listen("map:featureAdded", function(e, message) {
-		if (message.layerId == "feedbackLayerId"){
-			features.push(message.feature);
+	function keepFeature(e, message){
+		if (message.layerId == feedbackLayerId) {
+			features[message.feature.id] = message.feature;
 		}
-	});
+	}
+	bus.listen("map:featureAdded", keepFeature);
+	bus.listen("map:featureModified", keepFeature);
 	
 	bus.listen("activate-feedback", activateFeedback);
 
