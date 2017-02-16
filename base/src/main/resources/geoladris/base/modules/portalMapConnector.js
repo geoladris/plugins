@@ -41,19 +41,8 @@ define([ "message-bus", "iso8601", "geojson/geojson" ], function(bus, iso8601, g
 		activateExclusiveControl(defaultExclusiveControl);
 	});
 
-	bus.listen("activate-exclusive-control", function(event, control) {
-		if (!control) {
-			control = [];
-		} else if (Object.prototype.toString.call(control) !== '[object Array]') {
-			control = [ control ];
-		}
-		var controlIds = [];
-		for (var i = 0; i < control.length; i++) {
-			var controlInfo = control[i];
-			bus.send("map:createControl", controlInfo);
-			controlIds.push(controlInfo.controlId);
-		}
-		activateExclusiveControl(controlIds);
+	bus.listen("activate-exclusive-control", function(event, message) {
+		activateExclusiveControl(message.controlIds);
 	});
 
 	bus.listen("modules-loaded", function(e, message) {

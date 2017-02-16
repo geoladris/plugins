@@ -105,18 +105,13 @@ function(bus, customization, toolbar, i18n, $, ui) {
 
 	function activateDrawControl() {
 		bus.send("activate-exclusive-control", {
-			"controlId" : "feedback-drawFeature",
-			"controlType" : "drawFeature",
-			"editingLayerId" : feedbackLayerId,
-			"handlerType" : "polygon"
+			"controlIds" : [ "feedback-drawFeature" ]
 		});
 	}
 
 	function activateModifyControl() {
 		bus.send("activate-exclusive-control", {
-			"controlId" : "feedback-modifyFeature",
-			"controlType" : "modifyFeature",
-			"editingLayerId" : feedbackLayerId
+			"controlIds" : [ "feedback-modifyFeature" ]
 		});
 	}
 
@@ -178,6 +173,17 @@ function(bus, customization, toolbar, i18n, $, ui) {
 				"layerId" : feedbackLayerId,
 				"vector" : {}
 			});
+			bus.send("map:createControl", {
+				"controlId" : "feedback-drawFeature",
+				"controlType" : "drawFeature",
+				"editingLayerId" : feedbackLayerId,
+				"handlerType" : "polygon"
+			});
+			bus.send("map:createControl", {
+				"controlId" : "feedback-modifyFeature",
+				"controlType" : "modifyFeature",
+				"editingLayerId" : feedbackLayerId
+			});
 			activateDrawControl();
 			features = [];
 
@@ -194,6 +200,14 @@ function(bus, customization, toolbar, i18n, $, ui) {
 			"layerId" : feedbackLayerId
 		});
 		features = [];
+
+		bus.send("map:destroyControl", {
+			"controlId" : "feedback-drawFeature"
+		});
+		bus.send("map:destroyControl", {
+			"controlId" : "feedback-modifyFeature"
+		});
+		
 		bus.send("ui-button:feedback-button:activate", false);
 	});
 
