@@ -2,9 +2,16 @@ define([ "geoladris-tests" ], function(tests) {
 	describe("map", function() {
 		var bus;
 		var injector;
+		var map;
+		var parentId = "parent";
 
-		beforeEach(function() {
-			var initialization = tests.init("ol2", {}, {
+		function test(config, check) {
+			tests.replaceParent(parentId);
+			config.htmlId = parentId;
+
+			var initialization = tests.init("ol2", {
+				"map" : config
+			}, {
 				// paths are relative to 'modules'
 				"openlayers" : "../jslib/OpenLayers/OpenLayers.debug"
 			});
@@ -18,10 +25,15 @@ define([ "geoladris-tests" ], function(tests) {
 					}
 				}
 			});
-		});
+
+			injector.require([ "map" ], function(m) {
+				map = m.getMap();
+				check();
+			});
+		}
 
 		it("sets map center on zoom-to with object", function(done) {
-			injector.require([ "map" ], function(map) {
+			test({}, function() {
 				map.addLayer(new OpenLayers.Layer.WMS("osm", "http://ows.terrestris.de/osm/service", {
 					layers : "OSM-WMS",
 					isBaseLayer : true,
@@ -48,7 +60,7 @@ define([ "geoladris-tests" ], function(tests) {
 		});
 
 		it("maintains zoom level on zoom-to if not specified", function(done) {
-			injector.require([ "map" ], function(map) {
+			test({}, function() {
 				map.addLayer(new OpenLayers.Layer.WMS("osm", "http://ows.terrestris.de/osm/service", {
 					layers : "OSM-WMS",
 					isBaseLayer : true,
@@ -69,7 +81,7 @@ define([ "geoladris-tests" ], function(tests) {
 		});
 
 		it("sets zoom level starting from nearest if zoomLevel is negative on zoom-to", function(done) {
-			injector.require([ "map" ], function(map) {
+			test({}, function() {
 				map.addLayer(new OpenLayers.Layer.WMS("osm", "http://ows.terrestris.de/osm/service", {
 					layers : "OSM-WMS",
 					isBaseLayer : true,
@@ -89,7 +101,7 @@ define([ "geoladris-tests" ], function(tests) {
 		});
 
 		it("addFeature raises featureAdded event", function(done) {
-			injector.require([ "map" ], function(map) {
+			test({}, function() {
 				bus.send("map:addLayer", {
 					"layerId" : "mylayer",
 					"vector" : {}
@@ -108,7 +120,7 @@ define([ "geoladris-tests" ], function(tests) {
 				var featureAddedArgs = bus.send.calls.allArgs().filter(function(args) {
 					return args[0] == "map:featureAdded";
 				})[0];
-				var featureAddedMessage=featureAddedArgs[1];
+				var featureAddedMessage = featureAddedArgs[1];
 				expect(featureAddedMessage.feature.geometry).toBe(null);
 				expect(featureAddedMessage.feature.properties).toEqual({
 					"id" : 1
@@ -117,5 +129,20 @@ define([ "geoladris-tests" ], function(tests) {
 			});
 		});
 
+		it("sets 20 zoom levels by default", function(done) {
+			test({}, function() {
+				expect(map.numZoomLevels).toBe(20);
+				done();
+			});
+		});
+
+		it("sets numZoomLevels from configuration", function(done) {
+			test({
+				numZoomLevels : 14
+			}, function() {
+				expect(map.numZoomLevels).toBe(14);
+				done();
+			});
+		});
 	});
 });

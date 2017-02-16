@@ -1,4 +1,5 @@
 define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, module, geojson) {
+	var config = module.config();
 
 	var map = null;
 
@@ -6,7 +7,7 @@ define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, mod
 
 	function getMap() {
 		if (map == null) {
-			map = new OpenLayers.Map(module.config().htmlId, {
+			map = new OpenLayers.Map(config.htmlId, {
 				fallThrough : true,
 				theme : null,
 				projection : new OpenLayers.Projection("EPSG:900913"),
@@ -14,7 +15,7 @@ define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, mod
 				units : "m",
 				allOverlays : true,
 				controls : [],
-				numZoomLevels : 20
+				numZoomLevels : config.numZoomLevels || 20
 			});
 		}
 
