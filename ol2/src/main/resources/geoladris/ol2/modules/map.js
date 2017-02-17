@@ -154,7 +154,6 @@ define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, mod
 		var feature = geojson.parse(message.feature);
 		layer.addFeatures(feature);
 		layer.redraw();
-		sendFeatureAdded(layerId, feature);
 	});
 
 	function sendFeatureAdded(layerId, olFeature) {

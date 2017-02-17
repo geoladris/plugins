@@ -118,9 +118,11 @@ define([ "geoladris-tests" ], function(tests) {
 					"feature" : feature
 				});
 
-				var featureAddedArgs = bus.send.calls.allArgs().filter(function(args) {
+				var featureAddedCalls = bus.send.calls.allArgs().filter(function(args) {
 					return args[0] == "map:featureAdded";
-				})[0];
+				});
+				expect(featureAddedCalls.length).toBe(1);
+				var featureAddedArgs = featureAddedCalls[0];
 				var featureAddedMessage = featureAddedArgs[1];
 				expect(featureAddedMessage.feature.geometry).toBe(null);
 				expect(featureAddedMessage.feature.properties).toEqual({
@@ -130,7 +132,7 @@ define([ "geoladris-tests" ], function(tests) {
 			});
 		});
 
-		it("addFeature with ol2 API raises featureAdded event", function(done) {
+		it("add feature with ol2 API raises featureAdded event", function(done) {
 			test({}, function() {
 				bus.send("map:addLayer", {
 					"layerId" : "mylayer",
@@ -150,7 +152,32 @@ define([ "geoladris-tests" ], function(tests) {
 				done();
 			});
 		});
-		
+
+		it("modify feature with ol2 API raises featureModified event", function(done) {
+			test({}, function() {
+				bus.send("map:addLayer", {
+					"layerId" : "mylayer",
+					"vector" : {}
+				});
+
+				var feature = new OpenLayers.Feature.Vector(null, {
+					"foo" : "bar"
+				});
+				map.getLayer("mylayer").addFeatures([ feature ]);
+				map.getLayer("mylayer").events.triggerEvent("featuremodified", {
+					"feature" : feature
+				});
+
+				var featureModifiedArgs = bus.send.calls.allArgs().filter(function(args) {
+					return args[0] == "map:featureModified";
+				})[0];
+				var featureModifiedMessage = featureModifiedArgs[1];
+				expect(featureModifiedMessage.feature.geometry).toBe(null);
+				expect(featureModifiedMessage.feature.id).not.toBeNull();
+				done();
+			});
+		});
+
 		it("sets 20 zoom levels by default", function(done) {
 			test({}, function() {
 				expect(map.numZoomLevels).toBe(20);
