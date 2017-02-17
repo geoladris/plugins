@@ -5,22 +5,18 @@ define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, mod
 
 	OpenLayers.ProxyHost = "proxy?url=";
 
-	function getMap() {
-		if (map == null) {
-			map = new OpenLayers.Map(config.htmlId, {
-				fallThrough : true,
-				theme : null,
-				projection : new OpenLayers.Projection("EPSG:900913"),
-				displayProjection : new OpenLayers.Projection("EPSG:4326"),
-				units : "m",
-				allOverlays : true,
-				controls : [],
-				numZoomLevels : config.numZoomLevels || 20
-			});
-		}
-
-		return map;
-	}
+	bus.listen("modules-initialized", function(e, message) {
+		map = new OpenLayers.Map(config.htmlId, {
+			fallThrough : true,
+			theme : null,
+			projection : new OpenLayers.Projection("EPSG:900913"),
+			displayProjection : new OpenLayers.Projection("EPSG:4326"),
+			units : "m",
+			allOverlays : true,
+			controls : [],
+			numZoomLevels : config.numZoomLevels || 20
+		});
+	});
 
 	bus.listen("map:layerVisibility", function(event, message) {
 		var layer = getMap().getLayer(message.layerId);
@@ -176,6 +172,13 @@ define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, mod
 		layer.removeAllFeatures();
 		layer.redraw();
 	});
+
+	function getMap() {
+		if (map == null) {
+			throw "Map is ready only in modules-loaded event";
+		}
+		return map;
+	}
 
 	return {
 		"getMap" : getMap
