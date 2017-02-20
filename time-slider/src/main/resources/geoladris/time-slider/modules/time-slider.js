@@ -1,13 +1,26 @@
-define([ "message-bus", "toolbar", "ui/ui" ], function(bus, toolbar, ui) {
+define([ "module", "message-bus", "ui/ui" ], function(module, bus, ui) {
 
 	var timestampSet = {};
 	var slider;
-	var container = ui.create("div", {
-		id : "time_slider_pane",
-		parent : toolbar.attr("id"),
-		css : "toolbar_button"
+	var container;
+
+	bus.listen("modules-initialized", function(e, message) {
+		var config = module.config();
+		var htmlId = null;
+		if (config.hasOwnProperty("htmlId")) {
+			htmlId = config.htmlId;
+		} else {
+			// backwards compatibility
+			htmlId = "toolbar"
+		}
+		container = ui.create("div", {
+			id : "time_slider_pane",
+			parent : htmlId,
+			css : "toolbar_button"
+		});
+		container.style.display = "none";
 	});
-	container.style.display = "none";
+	
 
 	function setLabel(date) {
 		var label = date.toLocaleDateString(undefined, {

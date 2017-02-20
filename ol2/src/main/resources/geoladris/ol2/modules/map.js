@@ -6,7 +6,15 @@ define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, mod
 	OpenLayers.ProxyHost = "proxy?url=";
 
 	bus.listen("modules-initialized", function(e, message) {
-		map = new OpenLayers.Map(config.htmlId, {
+		var htmlId = null;
+		if (config.hasOwnProperty("htmlId")) {
+			htmlId = config.htmlId;
+		} else {
+			// backwards compatibility
+			htmlId = "map"
+		}
+
+		map = new OpenLayers.Map(htmlId, {
 			fallThrough : true,
 			theme : null,
 			projection : new OpenLayers.Projection("EPSG:900913"),
