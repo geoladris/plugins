@@ -27,6 +27,7 @@ define([ "geoladris-tests" ], function(tests) {
 			});
 
 			injector.require([ "map" ], function(m) {
+				bus.send("modules-initialized");
 				map = m.getMap();
 				check();
 			});

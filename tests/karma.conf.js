@@ -28,7 +28,7 @@ module.exports = function(config) {
 		port : 9876,
 		logLevel : config.LOG_INFO,
 		browsers : [ 'PhantomJS' ],
-		plugins : [ 'karma-jasmine', 'karma-junit-reporter', 'karma-requirejs', 'karma-phantomjs-launcher', 'karma-coverage' ],
+		plugins : [ 'karma-jasmine', 'karma-junit-reporter', 'karma-requirejs', 'karma-phantomjs-launcher', 'karma-chrome-launcher', 'karma-coverage' ],
 		singleRun : true,
 		colors : true,
 		autoWatch : false,

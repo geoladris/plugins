@@ -36,18 +36,19 @@ define([ "module", "message-bus", "ui/ui" ], function(module, bus, ui) {
 
 		if (timestamps.length > 0) {
 			var values = timestamps.map(function(e) {
-				var d = new Date();
-				d.setISO8601(e);
-				return d.getTime();
+				return new Date(e).getTime();
 			});
+			var last = values[values.length - 1];
 
 			slider = ui.create("slider", {
 				id : "time-slider",
 				parent : container,
 				values : values,
-				value : values[values.length - 1],
+				value : last,
 				snap : true
 			});
+
+			bus.send("time-slider.selection", new Date(last));
 
 			var lastValue;
 			slider.addEventListener("change", function(event) {
@@ -62,8 +63,7 @@ define([ "module", "message-bus", "ui/ui" ], function(module, bus, ui) {
 			container.style.display = "";
 			bus.listen("time-slider.selection", timeSliderSelection);
 
-			var tmpDate = new Date();
-			tmpDate.setISO8601(timestamps[lastTimestampIndex]);
+			var tmpDate = new Date(timestamps[lastTimestampIndex]);
 			setLabel(tmpDate);
 
 			function timeSliderSelection(event, date) {
@@ -71,8 +71,7 @@ define([ "module", "message-bus", "ui/ui" ], function(module, bus, ui) {
 				var d = new Date(lastValue);
 				if (d.getTime() != date.getTime()) {
 					for (var i = 0; i < timestamps.length; i++) {
-						// d = new Date(timestamps[i]);
-						d.setISO8601(timestamps[i]);
+						d = new Date(timestamps[i]);
 						if (d.getTime() == date.getTime()) {
 							bus.send("ui-slider:time-slider:set-value", d.getTime());
 							setLabel(d);
