@@ -160,8 +160,7 @@ define([ "geoladris-tests" ], function(tests) {
 			bus.send("layer-visibility", [ "mylayer2", false]);
 			bus.send.calls.reset();
 			bus.send("activate-exclusive-control", {
-				"controlId" : "scale",
-				"controlType" : "scale"
+				"controlIds" : [ "scale" ]
 			});
 			expect(bus.send).toHaveBeenCalledWith("map:activateControl", {
 				"controlId":"scale"
@@ -292,14 +291,13 @@ define([ "geoladris-tests" ], function(tests) {
 			expect(bus.send).not.toHaveBeenCalledWith("map:activateControl");
 		});
 
-		it("activate-exclusive-control creates and activates the specified controls", function() {
+		it("activate-exclusive-control activates existing controls, does not create it", function() {
+			// "a" control must have been created in a prior call to map:createControl 
 			var controlInfo = {
-				"controlId" : "a",
-				"controlType" : "type",
-				"conf" : "conf"
+				"controlIds" : [ "a" ]
 			};
 			bus.send("activate-exclusive-control", controlInfo);
-			expect(bus.send).toHaveBeenCalledWith("map:createControl", controlInfo);
+			expect(bus.send).not.toHaveBeenCalledWith("map:createControl", controlInfo);
 			expect(bus.send).toHaveBeenCalledWith("map:activateControl", {
 				"controlId" : "a"
 			});
