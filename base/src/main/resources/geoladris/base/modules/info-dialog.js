@@ -156,7 +156,8 @@ define([ "module", "jquery", "message-bus", "i18n", "customization", "ui/ui", "g
 					parent : tdMagnifier,
 					image : "modules/images/zoom-to-object.png",
 					clickEventName : "zoom-to",
-					clickEventMessage : feature["bbox"]
+					// the parameter is itself an array
+					clickEventMessage : [ feature["bbox"] ]
 				});
 			}
 
