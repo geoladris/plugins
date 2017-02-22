@@ -1,9 +1,10 @@
 #time_slider_pane {
 	z-index: 2000;
-	width: 180px;
+	width: 280px;
 	font-size: 11px;
 	border: 1px solid #333;
 	background-color: #456;
+	margin-top: 5px;
 }
 
 #time-slider {
