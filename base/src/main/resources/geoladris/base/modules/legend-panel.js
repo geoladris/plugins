@@ -67,11 +67,6 @@ define([ "jquery", "i18n", "customization", "message-bus", "layout", "ui/ui" ], 
 					}
 				});
 			}
-			ui.create("div", {
-				id : id + "_img",
-				parent : id + "_container",
-				css : "legend_image",
-			});
 
 			var url = legendInfo.legendUrl;
 			if (legendInfo.timeDependent && legendInfo.timestamp) {

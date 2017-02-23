@@ -63,7 +63,8 @@ define([ "jquery", "message-bus", "customization", "module" ], function($, bus, 
 		}
 
 		if (mapLayer.legend) {
-			if (mapLayer.legend == "auto" && mapLayer.type == "wms") {
+			mapLayerType = mapLayer.type || "wms";
+			if (mapLayer.legend == "auto" && mapLayerType == "wms") {
 				mapLayer.legendURL = getGetLegendGraphicUrl(mapLayer);
 			} else {
 				mapLayer.legendURL = "static/loc/" + customization.languageCode + "/images/" + mapLayer.legend;
@@ -107,7 +108,8 @@ define([ "jquery", "message-bus", "customization", "module" ], function($, bus, 
 		if (portalLayer.inlineLegendUrl) {
 			if (portalLayer.inlineLegendUrl == "auto") {
 				var mapLayers = portalLayer.mapLayers;
-				if (mapLayers.length > 0 && mapLayers[0].type == "wms") {
+				mapLayerType = mapLayers[0].type || "wms";
+				if (mapLayers.length > 0 && mapLayerType == "wms") {
 					portalLayer.inlineLegendUrl = getGetLegendGraphicUrl(mapLayers[0]);
 				} else {
 					portalLayer.inlineLegendUrl = null;
