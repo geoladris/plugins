@@ -115,8 +115,13 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/u
 	});
 
 	bus.listen("layer-visibility", function(event, layerId, visible) {
-		bus.send("ui-button:inline-legend-button-" + layerId + ":enable", visible);
 		document.getElementById(layerId).checked = visible;
+		var inlineLegend = $("#inline-legend-button-" + layerId);
+		if (visible) {
+			inlineLegend.addClass("visible");
+		} else {
+			inlineLegend.removeClass("visible");
+		}
 	});
 
 	var updateLabel = function(layerId, layerFormat, date) {
