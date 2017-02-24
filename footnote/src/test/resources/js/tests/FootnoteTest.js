@@ -3,6 +3,7 @@ define([ "geoladris-tests" ], function(tests) {
 	describe("Footnote tests", function() {
 		var bus;
 		var injector;
+		var ui;
 
 		beforeEach(function() {
 			var initialization = tests.init("footnote", {
@@ -14,8 +15,7 @@ define([ "geoladris-tests" ], function(tests) {
 			injector = initialization.injector;
 			bus = initialization.bus;
 
-			var ui = {};
-			spyOn(ui, "create");
+			ui = jasmine.createSpyObj("ui", ["create"]);
 			injector.mock("i18n", {});
 			injector.mock("ui/ui", ui);
 		});
