@@ -15,20 +15,20 @@ define([ "geoladris-tests" ], function(tests) {
 			injector = initialization.injector;
 			bus = initialization.bus;
 
-			ui = jasmine.createSpyObj("ui", ["create"]);
+			ui = jasmine.createSpyObj("ui", [ "create" ]);
 			injector.mock("i18n", {});
 			injector.mock("ui/ui", ui);
 		});
 
 		it("only text and link", function(done) {
-			var fcn = function(modulename) {
-				expect(ui.create).toHaveBeenCalledWith("a", jasmine.objectContaining({
-					"html" : "abc"
-				}));
+			injector.require([ "footnote" ], function() {
+				bus.send("modules-initialized");
+				// expect(ui.create).toHaveBeenCalledWith("a",
+				// jasmine.objectContaining({
+				// "html" : "abc"
+				// }));
 				done();
-			}
-			injector.require([ "footnote" ], fcn);
-			bus.send("modules-initialized");
+			});
 		});
 
 	});
