@@ -1,4 +1,5 @@
-define([ "jquery", "i18n", "customization", "message-bus", "layout", "ui/ui" ], function($, i18n, customization, bus, layout, ui) {
+define([ "jquery", "i18n", "customization", "message-bus", "layout", "ui/ui" ], function($, i18n, customization, bus,
+		layout, ui) {
 
 	/*
 	 * keep the information about layer legends that will be necessary when they
@@ -22,15 +23,14 @@ define([ "jquery", "i18n", "customization", "message-bus", "layout", "ui/ui" ], 
 	});
 
 	var refreshLegendArray = function(legendArray) {
-		content.innerHTML = "";
-
 		for (var i = 0; i < legendArray.length; i++) {
 			var legendInfo = legendArray[i];
+			var id = dialogId + legendInfo.id;
 			if (!legendInfo.visibility) {
+				content.removeChild(document.getElementById(id + "_container"));
 				continue;
 			}
 
-			var id = dialogId + legendInfo.id;
 			ui.create("div", {
 				id : id + "_container",
 				parent : dialogId + "_content",
