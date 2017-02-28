@@ -1,4 +1,4 @@
-define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/ui", "jquery-ui", "fancy-box" ], function($, bus, layerListSelector, i18n, moment, ui) {
+define([ "jquery", "message-bus", "layer-list-selector", "i18n", "moment", "ui/ui", "fancy-box" ], function($, bus, layerListSelector, i18n, moment, ui) {
 
 	var layerActions = [];
 	var groupActions = [];
