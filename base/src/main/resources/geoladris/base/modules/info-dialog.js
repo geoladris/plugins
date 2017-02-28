@@ -5,6 +5,7 @@ define([ "module", "jquery", "message-bus", "i18n", "customization", "ui/ui", "g
 	var pointHighlightLayerName = null;
 
 	var dialog;
+	var divResults;
 
 	bus.listen("reset-layers", function() {
 		wmsLayerInfo = {};
@@ -38,8 +39,8 @@ define([ "module", "jquery", "message-bus", "i18n", "customization", "ui/ui", "g
 	});
 
 	bus.listen("clear-info-features", function(event, features, x, y) {
-		if (dialog) {
-			dialog.innerHTML = "";
+		if (divResults) {
+			divResults.innerHTML = "";
 		}
 
 		infoFeatures = {};
@@ -95,7 +96,7 @@ define([ "module", "jquery", "message-bus", "i18n", "customization", "ui/ui", "g
 
 		// TODO check if there is a custom pop up instead of showing the
 		// standard one
-		var divResults = ui.create("div", {
+		divResults = ui.create("div", {
 			id : "result_area_" + wmsLayerId,
 			parent : dialog
 		});
