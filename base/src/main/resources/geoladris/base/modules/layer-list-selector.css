@@ -6,11 +6,16 @@
 	width: 25em;
 	height: calc(100% - 215px);
 	overflow-y: auto;
+	pointer-events: none;
+}
+
+#layers_container>* {
+	pointer-events: auto;
 }
 
 .layer_container_panel {
-  background: white;
-  padding: 10px 20px;
+	background: white;
+	padding: 10px 20px;
 }
 
 #layer_list_selector_pane {
