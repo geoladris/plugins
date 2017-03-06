@@ -2,8 +2,8 @@ package org.geoladris.auth;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.geoladris.Geoladris;
 import org.geoladris.config.Config;
-import org.geoladris.servlet.AppContextListener;
 
 public class Auth {
   public static final String PLUGIN_NAME = "auth";
@@ -22,8 +22,7 @@ public class Auth {
    *         authorised roles, <code>false</code> otherwise.
    */
   public static boolean isAuthorized(HttpServletRequest request) {
-    Config config =
-        (Config) request.getServletContext().getAttribute(AppContextListener.ATTR_CONFIG);
+    Config config = (Config) request.getAttribute(Geoladris.ATTR_CONFIG);
     String rolesProp = config.getProperties().getProperty(PROP_AUTHORIZED_ROLES);
     String[] roles = rolesProp != null ? rolesProp.split("\\s*,\\s*") : new String[0];
 

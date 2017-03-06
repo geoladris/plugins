@@ -2,21 +2,19 @@
 <web-fragment version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd">
-
-	<ordering>
-		<after>
-			<name>core</name>
-		</after>
-	</ordering>
-
-	<listener>
-		<listener-class>org.fao.unredd.IndicatorsContextListener</listener-class>
-	</listener>
 	<listener>
 		<listener-class>org.fao.unredd.LayersContextListener</listener-class>
 	</listener>
 
 	<!-- indicators -->
+	<filter>
+		<filter-name>indicators-filter</filter-name>
+		<filter-class>org.fao.unredd.IndicatorsFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>indicators-filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 	<servlet>
 		<servlet-name>indicator-list-servlet</servlet-name>
 		<servlet-class>org.fao.unredd.indicators.IndicatorListServlet</servlet-class>

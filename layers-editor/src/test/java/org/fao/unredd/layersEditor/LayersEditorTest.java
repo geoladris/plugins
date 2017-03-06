@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.geoladris.Geoladris;
 import org.geoladris.config.Config;
 import org.junit.Before;
 import org.junit.Rule;
@@ -48,6 +49,7 @@ public class LayersEditorTest {
   private static final boolean APPEND = true;
   private LayersServlet servlet;
   private Config defaultconfig;
+  private HttpServletRequest request;
 
   @Rule
   public TemporaryFolder testFolder = new TemporaryFolder();
@@ -63,7 +65,9 @@ public class LayersEditorTest {
     defaultconfig = mock(Config.class);
     ServletContext context = mock(ServletContext.class);
     when(config.getServletContext()).thenReturn(context);
-    when(context.getAttribute("config")).thenReturn(defaultconfig);
+    request = mock(HttpServletRequest.class);
+    when(request.getAttribute(Geoladris.ATTR_CONFIG)).thenReturn(defaultconfig);
+    when(request.getServletContext()).thenReturn(context);
   }
 
   /**
@@ -77,7 +81,6 @@ public class LayersEditorTest {
   public void testDoPutHttpServletRequestHttpServletResponse()
       throws ServletException, IOException {
 
-    HttpServletRequest req = mock(HttpServletRequest.class);
     HttpServletResponse resp = mock(HttpServletResponse.class);
 
     File tmpDir = testFolder.getRoot();
@@ -94,9 +97,9 @@ public class LayersEditorTest {
     FileUtils.writeStringToFile(layersJSONCopy, "dirty", APPEND);
 
     BufferedReader readerLayers = new BufferedReader(new FileReader(layersJSON));
-    when(req.getReader()).thenReturn(readerLayers);
+    when(request.getReader()).thenReturn(readerLayers);
 
-    servlet.doPut(req, resp);
+    servlet.doPut(request, resp);
 
     File backupFolder = new File(tmpDir, "backup");
     InputStream afterPutBackupIs = null;
@@ -117,16 +120,15 @@ public class LayersEditorTest {
 
   @Test
   public void returnsErrorIfNoLayersJSON() throws Exception {
-    HttpServletRequest req = mock(HttpServletRequest.class);
     HttpServletResponse resp = mock(HttpServletResponse.class);
 
     when(defaultconfig.getDir()).thenReturn(testFolder.getRoot());
 
     InputStreamReader input = new InputStreamReader(getClass().getResourceAsStream("/layers.json"));
     BufferedReader readerLayers = new BufferedReader(input);
-    when(req.getReader()).thenReturn(readerLayers);
+    when(request.getReader()).thenReturn(readerLayers);
 
-    servlet.doPut(req, resp);
+    servlet.doPut(request, resp);
 
     verify(resp).sendError(eq(HttpServletResponse.SC_INTERNAL_SERVER_ERROR), anyString());
   }
@@ -142,7 +144,7 @@ public class LayersEditorTest {
     when(defaultconfig.getDir()).thenReturn(testFolder.getRoot());
     File file = testFolder.newFile(LayersServlet.LAYERS_JSON);
     IOUtils.copy(getClass().getResourceAsStream("/layers.json"), new FileOutputStream(file));
-    servlet.doGet(mock(HttpServletRequest.class), resp);
+    servlet.doGet(request, resp);
 
     writer.flush();
 

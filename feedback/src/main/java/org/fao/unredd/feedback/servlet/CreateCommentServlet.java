@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.fao.unredd.feedback.CannotSendMailException;
 import org.fao.unredd.feedback.Feedback;
 import org.fao.unredd.feedback.MissingArgumentException;
+import org.geoladris.Geoladris;
 import org.geoladris.PersistenceException;
 import org.geoladris.config.Config;
 import org.geoladris.servlet.StatusServletException;
@@ -22,8 +23,8 @@ public class CreateCommentServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    Config config = (Config) req.getServletContext().getAttribute("config");
-    Locale locale = (Locale) req.getAttribute("locale");
+    Config config = (Config) req.getAttribute(Geoladris.ATTR_CONFIG);
+    Locale locale = (Locale) req.getAttribute(Geoladris.ATTR_LOCALE);
     ResourceBundle messages = config.getMessages(locale);
 
     String geom = req.getParameter("geometry");

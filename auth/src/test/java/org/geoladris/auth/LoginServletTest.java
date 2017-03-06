@@ -15,8 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.geoladris.Geoladris;
 import org.geoladris.config.Config;
-import org.geoladris.servlet.AppContextListener;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,7 +33,6 @@ public class LoginServletTest {
     when(config.getProperties()).thenReturn(properties);
 
     ServletContext context = mock(ServletContext.class);
-    when(context.getAttribute(AppContextListener.ATTR_CONFIG)).thenReturn(config);
 
     ServletConfig servletConfig = mock(ServletConfig.class);
     when(servletConfig.getServletContext()).thenReturn(context);
@@ -46,6 +45,7 @@ public class LoginServletTest {
 
     HttpSession session = mock(HttpSession.class);
     when(request.getSession()).thenReturn(session);
+    when(request.getAttribute(Geoladris.ATTR_CONFIG)).thenReturn(config);
   }
 
   @Test

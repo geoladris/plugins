@@ -1,18 +1,21 @@
 package org.fao.unredd;
 
-import javax.servlet.ServletContext;
+import java.util.List;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.fao.unredd.layers.LayersModuleConfigurationProvider;
-import org.geoladris.config.Config;
+import org.geoladris.Geoladris;
+import org.geoladris.config.ModuleConfigurationProvider;
 
 public class LayersContextListener implements ServletContextListener {
+  @SuppressWarnings("unchecked")
   @Override
   public void contextInitialized(ServletContextEvent sce) {
-    ServletContext servletContext = sce.getServletContext();
-    final Config config = (Config) servletContext.getAttribute("config");
-    config.addModuleConfigurationProvider(new LayersModuleConfigurationProvider());
+    List<ModuleConfigurationProvider> providers = (List<ModuleConfigurationProvider>) sce
+        .getServletContext().getAttribute(Geoladris.ATTR_CONFIG_PROVIDERS);
+    providers.add(new LayersModuleConfigurationProvider());
   }
 
   @Override

@@ -14,9 +14,9 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.geoladris.Geoladris;
 import org.geoladris.config.Config;
 import org.geoladris.config.PortalRequestConfiguration;
-import org.geoladris.servlet.AppContextListener;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -71,10 +71,10 @@ public class AuthConfigurationProviderTest {
     when(config.getProperties()).thenReturn(properties);
 
     ServletContext context = mock(ServletContext.class);
-    when(context.getAttribute(AppContextListener.ATTR_CONFIG)).thenReturn(config);
 
     HttpServletRequest request = mock(HttpServletRequest.class);
     when(request.getServletContext()).thenReturn(context);
+    when(request.getAttribute(Geoladris.ATTR_CONFIG)).thenReturn(config);
 
     return request;
   }

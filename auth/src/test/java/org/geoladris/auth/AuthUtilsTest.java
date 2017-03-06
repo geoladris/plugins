@@ -10,6 +10,7 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.geoladris.Geoladris;
 import org.geoladris.config.Config;
 import org.junit.Test;
 
@@ -46,10 +47,10 @@ public class AuthUtilsTest {
 		when(config.getProperties()).thenReturn(properties);
 
 		ServletContext context = mock(ServletContext.class);
-		when(context.getAttribute("config")).thenReturn(config);
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		when(request.getServletContext()).thenReturn(context);
+		when(request.getAttribute(Geoladris.ATTR_CONFIG)).thenReturn(config);
 
 		return request;
 	}

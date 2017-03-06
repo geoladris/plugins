@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.geoladris.Geoladris;
 import org.geoladris.config.Config;
-import org.geoladris.servlet.AppContextListener;
 
 public class LoginServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
@@ -39,7 +39,7 @@ public class LoginServlet extends HttpServlet {
   }
 
   private boolean isAuthorized(HttpServletRequest request) {
-    Config config = (Config) getServletContext().getAttribute(AppContextListener.ATTR_CONFIG);
+    Config config = (Config) request.getAttribute(Geoladris.ATTR_CONFIG);
     String rolesProp = config.getProperties().getProperty(PROP_AUTHORIZED_ROLES);
     String[] roles = rolesProp != null ? rolesProp.split("\\s*,\\s*") : new String[0];
 

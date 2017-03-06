@@ -2,16 +2,14 @@
 <web-fragment version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd">
-
-	<ordering>
-		<after>
-			<name>core</name>
-		</after>
-	</ordering>
-
-	<listener>
-		<listener-class>org.fao.unredd.feedback.servlet.FeedbackContextListener</listener-class>
-	</listener>
+	<filter>
+		<filter-name>feedback-filter</filter-name>
+		<filter-class>org.fao.unredd.feedback.servlet.FeedbackFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>feedback-filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	<servlet>
 		<servlet-name>create-comment-servlet</servlet-name>

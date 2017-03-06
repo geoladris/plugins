@@ -10,7 +10,6 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.geoladris.Geoladris;
 import org.geoladris.config.Config;
 import org.geoladris.servlet.ClientContentServlet;
 
@@ -32,7 +32,6 @@ public class LayersServlet extends HttpServlet {
   public static final String UTF_8 = "UTF-8";
   public static final String LAYERS_JSON = "layers.json";
 
-  private static final String CONFIG = "config";
   private static final String BACKUP_FOLDER = "backup";
   private static final long serialVersionUID = 1L;
 
@@ -41,7 +40,7 @@ public class LayersServlet extends HttpServlet {
       throws ServletException, IOException {
     resp.setContentType(APPLICATION_JSON);
     resp.setCharacterEncoding(UTF_8);
-    Config config = (Config) getServletContext().getAttribute(CONFIG);
+    Config config = (Config) req.getAttribute(Geoladris.ATTR_CONFIG);
     String layersTemplate = IOUtils.toString(new File(config.getDir(), LAYERS_JSON).toURI(), UTF_8);
 
     PrintWriter writer = resp.getWriter();
@@ -52,8 +51,7 @@ public class LayersServlet extends HttpServlet {
   protected void doPut(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
 
-    ServletContext ctx = getServletContext();
-    Config config = (Config) ctx.getAttribute(CONFIG);
+    Config config = (Config) req.getAttribute(Geoladris.ATTR_CONFIG);
     File backupDir = new File(config.getDir(), BACKUP_FOLDER);
     File layersJSON = new File(config.getDir(), LAYERS_JSON);
     if (layersJSON.exists()) {
