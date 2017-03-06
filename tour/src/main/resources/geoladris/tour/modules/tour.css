@@ -1,4 +1,10 @@
-#tour-button {
-	float: left;
-	margin-left: 20px;
+.tour-button {
+	display: inline-block;
+	margin: 10px;
+	padding: 8px;
+	text-decoration: none;
+	font-weight: bold;
+	font-size: 12px;
+	color: white;
+	background: gray;
 }

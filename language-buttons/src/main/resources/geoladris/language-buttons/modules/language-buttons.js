@@ -1,12 +1,17 @@
-define([ "toolbar", "customization", "mustache" ], function(toolbar, customization, mustache) {
-	var view = {
-		langs : customization.languages,
-		selectedClass : function() {
-			return this == customization.languageCode ? "selected" : "";
-		}
-	};
-
-	var template = '{{#langs}}<a class="blue_button toolbar_button lang_button {{selectedClass}}" href="?lang={{code}}" id="button_{{code}}">{{name}}</a>{{/langs}}';
-	var output = mustache.render(template, view);
-	toolbar.append(output);
+define([ "message-bus", "toolbar", "customization", "ui/ui" ], function(bus, toolbar, customization, ui) {
+	var langs = customization.languages;
+	for (var i = 0; i < langs.length; i++) {
+		ui.create("button", {
+			id : "lang-button-" + langs[i].code,
+			parent : toolbar.attr("id"),
+			text : langs[i].name,
+			css : "blue_button toolbar_button lang_button",
+			clickEventName : "ui-open-url",
+			clickEventMessage : {
+				url : "?lang=" + langs[i].code,
+				target : "_self"
+			}
+		});
+		bus.send("ui-button:lang-button-" + langs[i].code + ":activate", customization.languageCode == langs[i].code);
+	}
 });

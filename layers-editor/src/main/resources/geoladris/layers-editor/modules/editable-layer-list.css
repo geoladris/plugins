@@ -1,7 +1,15 @@
-@import url("//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css");
+@import
+	url("//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css")
+	;
+
+.layer-list-accordion-header>p {
+	display: inline-block;
+	width: 80%;
+}
 
 .editable-layer-list-button {
-	display: block;
+	display: inline-block;
+	margin: 0px 2px;
 	height: 16px;
 	width: 16px;
 	padding: 0;
@@ -34,7 +42,7 @@
 	font-weight: bold;
 	font-style: italic;
 	font-size: 12px;
-	background-color: rgba(255,255,255,0.2);
+	background-color: rgba(255, 255, 255, 0.2);
 }
 
 #layers_container {

@@ -1,4 +1,4 @@
-define([ "message-bus", "customization" ], function(bus, customization) {
+define([ "message-bus", "customization", "ui/ui" ], function(bus, customization, ui) {
 
 	var idLinkInfo = {};
 
@@ -13,13 +13,14 @@ define([ "message-bus", "customization" ], function(bus, customization) {
 	}
 
 	var buildLink = function(id, eventName) {
-		aLink = $("<a/>");
-		aLink.addClass("layer_info_button");
-		aLink.attr("id", "layer_info_button_" + id);
-		aLink.click(function() {
-			bus.send(eventName, [ id ]);
+		var link = ui.create("button", {
+			id : "layer_info_button_" + id,
+			css : "layer_info_button",
+			clickEventCallback : function() {
+				bus.send(eventName, [ id ]);
+			}
 		});
-		return aLink;
+		return $(link);
 	}
 
 	bus.listen("reset-layers", function() {

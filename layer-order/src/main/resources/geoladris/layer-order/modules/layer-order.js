@@ -4,103 +4,84 @@
 
 'use strict';
 
-define(["module", "toolbar", "i18n", "jquery", "message-bus", "map", "jquery-ui"], function(module, toolbar, i18n, $, bus, map) {
-	
-	var dialog = null;
-	var divContent = null;
+define([ "layout", "module", "toolbar", "i18n", "jquery", "message-bus", "ui/ui" ], function(layout, module, toolbar, i18n, $, bus, ui) {
+	var dialogId = "layer-order-pane";
+
 	var layers = [];
-	var layersLoaded = false;
 
-	/**
-	 * This function is also in legend-panel.js. Maybe is a good idea refactor it and extract a class to
-	 * generate UI components. But today is not the moment to do this. Micho García <micho.garcia@geomati.co>
-	 */
-	var getDialog_ = function() {
-		if (dialog == null) {
-			dialog = $("<div/>");
-			dialog.attr("title", i18n["layer_order"]);
-			dialog.attr("id", "layer_order_pane");
-			divContent = $("<div/>");
-			divContent.appendTo(dialog);
-			divContent.attr("id", "layer_order_content");
-			dialog.dialog({
-				position : {
-					my : "left top",
-					at : "right bottom+15",
-					of : "#order-button"
-				},
-				closeOnEscape : false,
-				autoOpen : false,
-				height : 500,
-				minHeight : 400,
-				width : 325,
-				zIndex : 2000,
-				resizable : true,
-				close: onCloseDialog_
-			});
-			divContent.sortable({
-				cursor: "move"
-			});
-			divContent.on('sortstop', onChangeLayerPosition_);
-		}
+	// Create ui components
+	ui.create("button", {
+		id : "order-button",
+		parent : toolbar.attr("id"),
+		css : "blue_button toolbar_button",
+		text : i18n["layer_order"],
+		clickEventName : "ui-toggle",
+		clickEventMessage : dialogId
+	});
 
-		return dialog;
-	};
-	
-	var onChangeLayerPosition_ = function(evt, ui) {
-		var newLayersOrder = divContent.sortable('toArray');
-		for (var i = 0; i < newLayersOrder.length; i++) {
-			var id = newLayersOrder[i];
-			var layer = map.getLayer(id);
-			if (layer) {
-				map.setLayerIndex(layer, i);
-				// TODO: propagate change to other modules (and persist it in layers.json).
-			}
-		}
-	}
-	
-	var onCloseDialog_ = function(evt) {
-		divContent.empty();
-	}
+	ui.create("dialog", {
+		id : dialogId,
+		parent : layout.map.attr("id"),
+		title : i18n["layer_order"],
+		closeButton : true
+	});
+	var content = ui.create("div", {
+		id : dialogId + "-content",
+		parent : dialogId
+	});
 
-	var btn = $("<a/>").attr("id", "order-button").addClass("blue_button toolbar_button").html(i18n["layer_order"]);
-	btn.appendTo(toolbar);
-	btn.click(function() {
-		layers = map.layers;
-		var dialog = getDialog_();
-		if (!dialog.dialog("isOpen")) {
-			getDialog_().dialog("open");
-			showLayersOnDialog_();
-		} else {
-			getDialog_().dialog("close");
+	ui.sortable(content);
+	content.addEventListener("change", function() {
+		// TODO implementar
+		// var newLayersOrder = jcontent.sortable('toArray');
+		// for (var i = 0; i < newLayersOrder.length; i++) {
+			// TODO update layers json and reload all layers
+			// var id = newLayersOrder[i];
+			// var layer = map.getLayer(id);
+			// if (layer) {
+			// map.setLayerIndex(layer, i);
+			// }
+		// }
+	});
+
+	// Link dialog visibility and toolbar button
+	bus.listen("ui-toggle", function(e, id) {
+		if (id == dialogId) {
+			bus.send("ui-button:order-button:toggle");
 		}
 	});
-	
-	var insertLayerOnControl_ = function(layer) {
-		var item = $('<div>').attr('id', layer.id).addClass('layer-order-item');
-		var label = $('<span>').addClass('layer-name-item').html(layer.name);
-		item.append(label).appendTo(divContent);
-	}
-	
-	var showLayersOnDialog_ = function() {
-		if (layersLoaded) {
-			for (var n in layers) {
-				var layer = layers[n];
-				insertLayerOnControl_(layer);
-			}
-		} else {
-			// TODO poner aquí un gif loading
+	bus.listen("ui-hide", function(e, id) {
+		if (id == dialogId) {
+			bus.send("ui-button:order-button:activate", false);
 		}
-	}
+	});
+	bus.listen("ui-show", function(e, id) {
+		if (id == dialogId) {
+			bus.send("ui-button:order-button:activate", true);
+		}
+	});
 
-	var loadLayers_ = function() {
-		layersLoaded = true;
-	}
-
+	// Update content according to layers
 	bus.listen("reset-layers", function() {
-		layers = [];
-		layersLoaded = false;
+		content.innerHTML = "";
 	});
 
-	bus.listen('layers-loaded', loadLayers_);
+	bus.listen("layers-loaded", function() {
+		for ( var n in layers) {
+			var layer = layers[n];
+			ui.create("div", {
+				id : layer.id,
+				parent : dialogId + "-content",
+				css : "layer-order-item",
+				html : layer.id
+			});
+		}
+	});
+
+	bus.listen("add-layer", function(e, layerInfo) {
+		for (var index = 0; index < layerInfo.mapLayers.length; index++) {
+			var mapLayer = layerInfo.mapLayers[index];
+			layers.push(mapLayer);
+		}
+	});
 });

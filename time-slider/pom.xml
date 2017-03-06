@@ -10,4 +10,12 @@
 	</parent>
 	<artifactId>time-slider</artifactId>
 	<name>time-slider</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>core</artifactId>
+			<version>${core.version}</version>
+		</dependency>
+	</dependencies>
 </project>

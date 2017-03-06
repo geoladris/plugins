@@ -3,16 +3,22 @@
 	margin-left: 20px;
 }
 
-.feedback-form-left {
-	float: left;
-	clear: left;
-	display: block;
-	width: 9em;
-	text-align: right;
-	padding-right: 10px;
-	line-height: 2em;
+#feedback_popup>.olControlPortalToolbar, .feedback-form-left {
+	display: table-cell;
+	vertical-align: middle;
 }
 
-#feedback-layer-combo {
-	width: 11em;
+.feedback-form-left {
+	min-width: 8em;
+	padding-left: 10px;
+	text-align: left;
+}
+
+#feedback_popup>.olControlPortalToolbar {
+	margin: 0px;
+	padding: 0px;
+}
+
+#feedback-controls {
+	overflow: auto
 }

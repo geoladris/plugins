@@ -1,5 +1,5 @@
 // layer-list is imported to have it first in the list
-define([ "jquery", "message-bus", "layer-list-selector", "i18n", "jquery-ui", "layer-list" ], function($, bus, layerListSelector, i18n) {
+define([ "jquery", "message-bus", "layer-list-selector", "i18n", "ui/ui", "layer-list" ], function($, bus, layerListSelector, i18n, ui) {
 
 	/*
 	 * keep the information about the layers that will be necessary when they
@@ -8,16 +8,18 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "jquery-ui", "l
 	var layersInfo = {};
 
 	// Create the div
-	var divActiveLayers = $("<div/>").attr("id", "active_layers").addClass("layer_container_panel");
+	var container = ui.create("div", {
+		id : "active_layers",
+		css : "layer_container_panel",
+	});
 
-	var table = $('<table style="width:100%;margin:auto"></table>');
-	divActiveLayers.append(table);
-
-	layerListSelector.registerLayerPanel("layers_transparency_selector", 20, i18n.selected_layers, divActiveLayers);
+	layerListSelector.registerLayerPanel("layers_transparency_selector", 20, i18n.selected_layers, container);
 
 	function delLayer(layerId) {
-		$('#' + layerId + '_tr1').remove();
-		$('#' + layerId + '_tr2').remove();
+		var e = document.getElementById(layerId + "_active_container");
+		if (e) {
+			container.removeChild(e);
+		}
 	}
 
 	bus.listen("reset-layers", function() {
@@ -47,54 +49,42 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "jquery-ui", "l
 		var tr1, tdLegend, inlineLegend, colspan;
 
 		var layerInfo = layersInfo[layerId];
-		if (layerInfo) {
+		if (!layerInfo) {
+			return;
+		}
 
-			colspan = 2;
+		function addLayer(layerId) {
+			var layerContainer = ui.create("div", {
+				id : layerId + "_active_container",
+				parent : container,
+				css : "active_layer_container"
+			});
 
-			function addLayer(layerId) {
-				// Layer label
-				tr1 = $('<tr id="' + layerId + '_tr1"></tr>');
-
-				tdLegend = null;
-				if (layerInfo.hasOwnProperty("inlineLegendUrl")) {
-					tdLegend = $("<td/>").addClass("layer_legend");
-					inlineLegend = $('<img class="inline-legend" src="' + layerInfo.inlineLegendUrl + '">');
-					tdLegend.append(inlineLegend);
-				}
-
-				if (tdLegend !== null) {
-					tr1.append(tdLegend);
-					colspan = 1;
-				}
-
-				tr1.append($('<td colspan="' + colspan + '">' + layerInfo.label + '</td>'));
-
-				// Transparency slider
-				var transparencyDiv = $('<div style="margin-top:4px; margin-bottom:12px;" id="' + layerId + '_transparency_slider"></div>');
-				var td = $('<td colspan="2"></td>');
-				td.append(transparencyDiv);
-				var tr2 = $('<tr id="' + layerId + '_tr2"></tr>');
-				tr2.append(td);
-
-				// Append elements to table
-				table.append(tr1);
-				table.append(tr2);
-
-				transparencyDiv.slider({
-					min : 0,
-					max : 100,
-					value : 100 * layerInfo.opacity,
-					slide : function(event, ui) {
-						bus.send("transparency-slider-changed", [ layerId, ui.value / 100 ]);
-					}
+			if (layerInfo.hasOwnProperty("inlineLegendUrl")) {
+				ui.create("td", {
+					parent : layerContainer,
+					css : "layer_legend",
+					html : '<img class="inline-legend" src="' + layerInfo.inlineLegendUrl + '">'
 				});
 			}
 
-			if (visibility) {
-				addLayer(layerId);
-			} else {
-				delLayer(layerId);
-			}
+			var slider = ui.create("slider", {
+				id : layerId + "_transparency_slider",
+				parent : container,
+				label : layerInfo.label,
+				values : [ 0, 100 ],
+				value : 100 * layerInfo.opacity || 100,
+				snap : false
+			});
+			slider.addEventListener("slide", function(event) {
+				bus.send("transparency-slider-changed", [ layerId, event.detail.value / 100 ]);
+			});
+		}
+
+		if (visibility) {
+			addLayer(layerId);
+		} else {
+			delLayer(layerId);
 		}
 	});
 
@@ -104,12 +94,8 @@ define([ "jquery", "message-bus", "layer-list-selector", "i18n", "jquery-ui", "l
 			layerInfo["opacity"] = opacity;
 		}
 
-		var slider = $("#" + layerId + "_transparency_slider");
-		var opacityPercentage = 100 * opacity;
-		if (slider.slider("value") != opacityPercentage) {
-			slider.slider("value", opacityPercentage);
-		}
+		bus.send("ui-slider:" + layerId + "_transparency_slider:set-value", 100 * opacity);
 	});
 
-	return divActiveLayers;
+	return $(container);
 });

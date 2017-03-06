@@ -1,31 +1,40 @@
-define([ "module", "toolbar", "message-bus", "jquery", "tipsy" ], function(module, toolbar, bus, $) {
+define(["module", "toolbar", "message-bus", "jquery", "ui/ui"], function(module, toolbar, bus, $, ui) {
 
 	var steps = module.config().steps;
 
 	var infoFeatures;
 
+	function tooltipText(index, text) {
+		var div = ui.create("div", {
+			html : "<p>" + text + "</p>"
+		});
+		ui.create("button", {
+			id : "tour-next-" + index,
+			parent : div,
+			css : "tour-button",
+			text : "Seguir"
+		});
+		ui.create("button", {
+			id : "tour-close-" + index,
+			parent : div,
+			css : "tour-button",
+			text : "Cerrar"
+		});
+		return div.innerHTML;
+	}
+
 	var showStep = function(stepIndex) {
 		var step = steps[stepIndex];
 
-		var text = step.text + "<br/><br/><button id='tour-next-" + stepIndex + "' style='margin-right:10px'>Seguir</button><button id='tour-close-" + stepIndex + "' style='margin-left:10px'>Cerrar</button>";
-		var tipsyConf = {
-			trigger : "manual",
-			title : "tour-info",
-			html : true,
-			opacity : 1
-		};
-		if (step["gravity"]) {
-			tipsyConf["gravity"] = step.gravity;
-		} else {
-			tipsyConf["gravity"] = $.fn.tipsy.autoNS;
-		}
-		$("#" + step.id).attr("tour-info", text).tipsy(tipsyConf);
+		var tooltip = ui.tooltip(step.id, {
+			text : tooltipText(stepIndex, step.text),
+			location : step.location
+		});
 
-		$("#" + step.id).tipsy("show");
 		var btnNext = $("#tour-next-" + stepIndex);
 		btnNext.focus();
 		btnNext.click(function() {
-			$("#" + step.id).tipsy("hide");
+			tooltip.parentNode.removeChild(tooltip);
 			for (nextEvent in step.next) {
 				var times = 1;
 				if (!isNaN(parseInt(nextEvent.charAt(0)))) {
@@ -57,16 +66,19 @@ define([ "module", "toolbar", "message-bus", "jquery", "tipsy" ], function(modul
 
 		});
 		$("#tour-close-" + stepIndex).click(function() {
-			$("#" + step.id).tipsy("hide");
+			tooltip.parentNode.removeChild(tooltip);
 		});
 	};
 
-	var btn = $("<a/>").attr("id", "tour-button").addClass("blue_button toolbar_button").html("Guía interactiva");
-	btn.appendTo(toolbar);
-	btn.click(function() {
-		showStep(0);
-		return false;
-	});
+	ui.create("button", {
+		id : "tour-button",
+		parent : toolbar.attr("id"),
+		css : "blue_button toolbar_button",
+		html : "Guía interactiva",
+		clickEventCallback : function() {
+			showStep(0);
+		}
+	})
 
 	/*
 	 * helpers to highlight and zoom info features
@@ -80,5 +92,4 @@ define([ "module", "toolbar", "message-bus", "jquery", "tipsy" ], function(modul
 	bus.listen("zoom-info-feature", function(event, index) {
 		bus.send("zoom-to", infoFeatures[index]["bounds"].scale(1.2));
 	});
-
 });

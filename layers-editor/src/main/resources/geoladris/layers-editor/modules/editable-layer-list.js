@@ -1,4 +1,4 @@
-define([ "message-bus", "./layers-edit-form", "./layers-api", "jquery", "jquery-ui" ], function(bus, forms, layerRoot, $) {
+define([ "message-bus", "./layers-edit-form", "./layers-api", "jquery", "ui/ui" ], function(bus, forms, layerRoot, $, ui) {
 	bus.listen("before-adding-layers", function() {
 		bus.send("register-layer-action", function(layer) {
 			return link(layer.id, forms.editLayer);
@@ -7,108 +7,91 @@ define([ "message-bus", "./layers-edit-form", "./layers-api", "jquery", "jquery-
 			return link(group.id, forms.editGroup);
 		});
 		bus.send("register-group-action", function(group) {
-			return $("<a/>").addClass("editable-layer-list-button").addClass("layer_newLayer_button").click(function() {
-				forms.newLayer(group.id);
+			var action = ui.create("button", {
+				css : "editable-layer-list-button layer_newLayer_button",
+				clickEventCallback : function() {
+					forms.newLayer(group.id);
+				}
 			});
+			return $(action);
 		});
 		bus.send("register-layer-action", function(layer) {
-			return $("<a/>").addClass("editable-layer-list-button").addClass("layer_deleteLayer_button").click(function() {
-				layerRoot.removePortalLayer(layer.id);
+			var action = ui.create("button", {
+				css : "editable-layer-list-button layer_deleteLayer_button",
+				clickEventCallback : function() {
+					layerRoot.removePortalLayer(layer.id);
+				}
 			});
+			return $(action);
 		});
 		bus.send("register-group-action", function(group) {
-			return $("<a/>").addClass("editable-layer-list-button").addClass("layer_deleteGroup_button").click(function() {
-				layerRoot.removeGroup(group.id);
+			var action = ui.create("button", {
+				css : "editable-layer-list-button layer_deleteGroup_button",
+				clickEventCallback : function() {
+					layerRoot.removeGroup(group.id);
+				}
 			});
+			return $(action);
 		});
 	});
 
 	function link(id, callback) {
-		return $("<a/>").addClass("editable-layer-list-button").addClass("layer_edit_button").click(function() {
-			callback.call(null, id);
+		var action = ui.create("button", {
+			css : "editable-layer-list-button layer_edit_button",
+			clickEventCallback : function() {
+				callback.call(null, id);
+			}
 		});
+		return $(action);
 	}
 
 	bus.listen("layers-loaded", function() {
+		var button = document.getElementById("newGroupButton");
+		if (button && button.parentNode) {
+			button.parentNode.removeChild(button);
+		}
 
-		$("#newGroupButton").remove();
-		$("<div/>")//
-		.attr("id", "newGroupButton")//
-		.css("margin-top", "2px")//
-		.html("Nuevo grupo...")//
-		.button()//
-		.click(function() {
-			forms.newGroup();
-		})//
-		.appendTo($("#layers_container"));//
-
-		// Añadir placeholder para soltar subgrupos
-		$(".group").each(function(i, el) {
-			var groupInfo = layerRoot.getGroup($(el).attr("data-group"));
-			if (groupInfo && groupInfo.items && groupInfo.items.length === 0) { // Sólo en grupos vacíos
-				$("<div/>").addClass("group_placeholder").addClass("group-container").appendTo($("#group-content-table-" + groupInfo.id));
+		button = ui.create("button", {
+			id : "newGroupButton",
+			parent : "layers_container",
+			html : "Nuevo grupo...",
+			clickEventCallback : function() {
+				forms.newGroup();
 			}
 		});
 
-		// Añadir placeholder para soltar capas
-		$("<tr/>").addClass("layer_placeholder").appendTo(".layer-container");
+		function getGroupId(domId) {
+			var id = domId.replace("all_layers_group_", "");
+			id = id.replace("-container", "");
+			return id;
+		}
 
-		$(".group-container").sortable({
-			handle : ".group-title",
-			connectWith : ".group-container",
-			axis : "y",
-			cursor : "move",
-			placeholder : "root_group_placeholder",
-			forcePlaceholderSize : true,
-			stop : function(event, ui) {
-				// IE doesn't register the blur when sorting
-				// so trigger focusout handlers to remove .ui-state-focus
-				ui.item.children(".ui-accordion-header").triggerHandler("focusout");
-				// Refresh accordion to handle new order
-				$("#all_layers > div").each(function() {
-					if ($(this).hasClass("ui-accordion")) {
-						$(this).accordion("refresh");
-					}
-				});
+		function getLayerId(domId) {
+			return domId.replace("-container", "");
+		}
 
-				var groupId = ui.item.attr("data-group");
-				var newPosition = ui.item.index();
-				var currentAncestor = ui.item.parent();
-				while (currentAncestor.attr("id") != "all_layers" && currentAncestor.attr('data-group') == undefined) {
-					currentAncestor = currentAncestor.parent();
-				}
-				var parentDiv = currentAncestor.attr("id") == "all_layers" ? null : currentAncestor.attr("data-group");
-
-				layerRoot.moveGroup(groupId, parentDiv, newPosition);
+		function getParent(item) {
+			var ancestor = item.parentNode;
+			while (ancestor.id != "all_layers" && !ancestor.classList.contains("layer-list-accordion-container")) {
+				ancestor = ancestor.parentNode;
 			}
+			return (ancestor.id == "all_layers") ? null : getGroupId(ancestor.id);
+		}
+
+		var groupContainer = document.getElementById("all_layers");
+		ui.sortable(groupContainer);
+		groupContainer.addEventListener("change", function(e) {
+			var item = e.detail.item;
+			layerRoot.moveGroup(getGroupId(item.id), getParent(item), e.detail.newIndex);
 		});
 
-		$("#all_layers").accordion("destroy");
-		$("#all_layers > div").accordion({
-			animate : false,
-			header : " > div.group-title",
-			heightStyle : "content",
-			collapsible : true,
-			active : false
-		});
-
-		$(".layer-container").sortable({
-			connectWith : ".layer-container",
-			axis : "y",
-			cursor : "move",
-			placeholder : "root_group_placeholder",
-			forcePlaceholderSize : true,
-			stop : function(event, ui) {
-				var layerId = ui.item.attr("data-layer");
-				var newPosition = ui.item.index();
-				var currentAncestor = ui.item.parent();
-				while (currentAncestor.attr("id") != "all_layers" && currentAncestor.attr('data-group') == undefined) {
-					currentAncestor = currentAncestor.parent();
-				}
-				var parentId = currentAncestor.attr("id") == "all_layers" ? null : currentAncestor.attr("data-group");
-				layerRoot.moveLayer(layerId, parentId, newPosition);
-			}
+		var containers = document.getElementsByClassName("layer-list-accordion accordion-content");
+		Array.prototype.forEach.call(containers, function(container) {
+			ui.sortable(container);
+			container.addEventListener("change", function(e) {
+				var item = e.detail.item;
+				layerRoot.moveLayer(getLayerId(item.id), getParent(item), e.detail.newIndex);
+			});
 		});
 	});
-
 });

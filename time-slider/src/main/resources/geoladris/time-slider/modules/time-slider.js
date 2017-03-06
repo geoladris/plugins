@@ -1,68 +1,80 @@
-define([ "jquery", "message-bus", "toolbar", "jquery-ui" ], function($, bus, toolbar, ui) {
+define([ "module", "message-bus", "ui/ui" ], function(module, bus, ui) {
 
 	var timestampSet = {};
-	var divTimeSlideContainer;
+	var slider;
+	var container;
 
-	divTimeSlideContainer = $("<div/>").attr("id", "time_slider_pane");
-	divTimeSlideContainer.addClass("toolbar_button");
-	divTimeSlideContainer.hide();
-	toolbar.append(divTimeSlideContainer);
+	bus.listen("modules-initialized", function(e, message) {
+		var config = module.config();
+		var htmlId = null;
+		if (config.hasOwnProperty("htmlId")) {
+			htmlId = config.htmlId;
+		} else {
+			// backwards compatibility
+			htmlId = "toolbar"
+		}
+		container = ui.create("div", {
+			id : "time_slider_pane",
+			parent : htmlId,
+			css : "toolbar_button"
+		});
+		container.style.display = "none";
+	});
+	
+
+	function setLabel(date) {
+		var label = date.toLocaleDateString(undefined, {
+			month : "short",
+			year : "numeric"
+		});
+		bus.send("ui-input:time-slider:set-label", label);
+	}
 
 	var draw = function() {
-		var timestamps, div, lastTimestampIndex;
-
-		timestamps = $.map(timestampSet, function(value, key) {
-			return key;
-		}).sort();
-		lastTimestampIndex = timestamps.length - 1;
+		var timestamps = Object.keys(timestampSet).sort();
+		var lastTimestampIndex = timestamps.length - 1;
 
 		if (timestamps.length > 0) {
-			div = divTimeSlideContainer;
+			var values = timestamps.map(function(e) {
+				return new Date(e).getTime();
+			});
+			var last = values[values.length - 1];
 
-			var divTimeSliderLabel = $('<span id="time_slider_label"/>');
-			div.append(divTimeSliderLabel);
-
-			var divTimeSlider = $('<div id="time_slider"/>');
-			div.append(divTimeSlider);
-
-			divTimeSlider.slider({
-				change : function(event, ui) {
-					var d = new Date();
-					d.setISO8601(timestamps[ui.value]);
-					bus.send("time-slider.selection", d);
-				},
-				slide : function(event, ui) {
-					divTimeSliderLabel.text(Date.getLocalizedDate(timestamps[ui.value]));
-				},
-				max : lastTimestampIndex,
-				value : lastTimestampIndex
+			slider = ui.create("slider", {
+				id : "time-slider",
+				parent : container,
+				values : values,
+				value : last,
+				snap : true
 			});
 
-			divTimeSliderLabel.text(Date.getLocalizedDate(timestamps[lastTimestampIndex]));
+			bus.send("time-slider.selection", new Date(last));
 
-			div.show();
+			var lastValue;
+			slider.addEventListener("change", function(event) {
+				lastValue = new Date(event.detail.value);
+				bus.send("time-slider.selection", lastValue);
+			});
 
-			// Send time-slider.selection message to show the date on the layer
-			// selection pane
-			// right after page load
-			divTimeSlider.slider("value", lastTimestampIndex);
+			slider.addEventListener("slide", function(event) {
+				setLabel(new Date(event.detail.value));
+			});
 
+			container.style.display = "";
 			bus.listen("time-slider.selection", timeSliderSelection);
+
+			var tmpDate = new Date(timestamps[lastTimestampIndex]);
+			setLabel(tmpDate);
 
 			function timeSliderSelection(event, date) {
 				var timestamps = Object.keys(timestampSet);
-				var divTimeSlider = $("#time_slider");
-				var position = divTimeSlider.slider("value");
-				// var d = new Date(timestamps[position]);
-				var d = new Date();
-				d.setISO8601(timestamps[position]);
+				var d = new Date(lastValue);
 				if (d.getTime() != date.getTime()) {
 					for (var i = 0; i < timestamps.length; i++) {
-						// d = new Date(timestamps[i]);
-						d.setISO8601(timestamps[i]);
+						d = new Date(timestamps[i]);
 						if (d.getTime() == date.getTime()) {
-							divTimeSlider.slider("value", i);
-							divTimeSliderLabel.text(date.getLocalizedDate());
+							bus.send("ui-slider:time-slider:set-value", d.getTime());
+							setLabel(d);
 							break;
 						}
 					}
@@ -88,9 +100,7 @@ define([ "jquery", "message-bus", "toolbar", "jquery-ui" ], function($, bus, too
 
 	bus.listen("reset-layers", function() {
 		timestampSet = {};
-		divTimeSlideContainer.hide();
-		$("#time_slider_label").remove();
-		$("#time_slider").remove();
+		container.innerHTML = "";
+		container.style.display = "none";
 	});
-
 });

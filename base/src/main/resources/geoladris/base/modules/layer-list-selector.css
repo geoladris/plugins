@@ -2,22 +2,37 @@
 	left: 10px;
 	position: absolute;
 	top: 215px;
-	min-width: 250px;
 	z-index: 1100;
+	width: 25em;
+	height: calc(100% - 215px - 2em);
+	overflow-y: auto;
+	pointer-events: none;
+}
+
+#layers_container>* {
+	pointer-events: auto;
 }
 
 .layer_container_panel {
-	padding: 10px 15px;
-	background-color: black;
-	border-radius: 6px;
-	color: white;
-	font-size: 11px;
-	border: 1px solid #666666;
+	background: white;
+	padding: 10px 20px;
 }
 
 #layer_list_selector_pane {
-    top: 186px;
-    left: 10px;
-    position: absolute;
-    z-index: 1100;
+	top: 180px;
+	left: 10px;
+	position: absolute;
+	z-index: 1100;
+}
+
+#layer_list_selector_pane>.button-enabled {
+	padding: 6px 10px;
+	margin-right: 10px;
+	background-color: #38c;
+	color: white;
+	float: left;
+}
+
+#layer_list_selector_pane>.button-active {
+	background-color: #5ae;
 }
