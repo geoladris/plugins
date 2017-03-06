@@ -4,7 +4,7 @@ define([ "message-bus", "toolbar", "customization", "ui/ui" ], function(bus, too
 		ui.create("button", {
 			id : "lang-button-" + langs[i].code,
 			parent : toolbar.attr("id"),
-			text : langs[i].name,
+			html : langs[i].name,
 			css : "blue_button toolbar_button lang_button",
 			clickEventName : "ui-open-url",
 			clickEventMessage : {

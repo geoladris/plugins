@@ -104,7 +104,7 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "ui
 			id : "layers-editor-cancel",
 			parent : DIALOG_ID,
 			css : "dialog-ok-button",
-			text : i18n["layers-editor.cancel"] || "Cancel",
+			html : i18n["layers-editor.cancel"] || "Cancel",
 			clickEventName : "ui-hide",
 			clickEventMessage : DIALOG_ID
 		});
@@ -113,7 +113,7 @@ define([ "i18n", "./layers-schema", "./layers-api", "message-bus", "jquery", "ui
 			id : "layers-editor-apply",
 			parent : DIALOG_ID,
 			css : "dialog-ok-button",
-			text : i18n["layers-editor.apply"] || "Apply"
+			html : i18n["layers-editor.apply"] || "Apply"
 		});
 		apply.addEventListener("click", function(event) {
 			if (event.button == 0) {

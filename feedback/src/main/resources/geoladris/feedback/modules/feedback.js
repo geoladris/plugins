@@ -15,7 +15,7 @@ function(bus, customization, toolbar, i18n, $, ui, geojson) {
 		id : "feedback-button",
 		parent : toolbar.attr("id"),
 		css : "blue_button toolbar_button",
-		text : "Feedback",
+		html : "Feedback",
 		clickEventName : "activate-feedback"
 	});
 
@@ -54,7 +54,7 @@ function(bus, customization, toolbar, i18n, $, ui, geojson) {
 		id : "feedback-draw-control",
 		parent : "feedback-controls",
 		css : "blue_button toolbar_button",
-		text : i18n["feedback_addfeature_tooltip"],
+		html : i18n["feedback_addfeature_tooltip"],
 		clickEventCallback : activateDrawControl
 	});
 
@@ -62,7 +62,7 @@ function(bus, customization, toolbar, i18n, $, ui, geojson) {
 		id : "feedback-modify-control",
 		parent : "feedback-controls",
 		css : "blue_button toolbar_button",
-		text : i18n["feedback_editfeature_tooltip"],
+		html : i18n["feedback_editfeature_tooltip"],
 		clickEventCallback : activateModifyControl
 	});
 	
@@ -84,14 +84,14 @@ function(bus, customization, toolbar, i18n, $, ui, geojson) {
 		id : "feedback-send",
 		parent : dialogId,
 		css : "dialog-ok-button",
-		text : "Send"
+		html : "Send"
 	});
 
 	ui.create("button", {
 		id : "feedback-cancel",
 		parent : dialogId,
 		css : "dialog-ok-button",
-		text : "Cancel",
+		html : "Cancel",
 		clickEventName : "ui-hide",
 		clickEventMessage : dialogId
 	});

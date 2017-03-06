@@ -12,13 +12,13 @@ define(["module", "toolbar", "message-bus", "jquery", "ui/ui"], function(module,
 			id : "tour-next-" + index,
 			parent : div,
 			css : "tour-button",
-			text : "Seguir"
+			html : "Seguir"
 		});
 		ui.create("button", {
 			id : "tour-close-" + index,
 			parent : div,
 			css : "tour-button",
-			text : "Cerrar"
+			html : "Cerrar"
 		});
 		return div.innerHTML;
 	}

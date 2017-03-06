@@ -24,7 +24,7 @@ define([ "message-bus", "layout", "customization", "i18n", "ui/ui" ], function(b
 		var button = ui.create("button", {
 			id : id,
 			parent : buttons,
-			text : text,
+			html : text,
 			clickEventName : "show-layer-panel",
 			clickEventMessage : id
 		});

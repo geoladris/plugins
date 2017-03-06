@@ -14,7 +14,7 @@ define([ "layout", "module", "toolbar", "i18n", "jquery", "message-bus", "ui/ui"
 		id : "order-button",
 		parent : toolbar.attr("id"),
 		css : "blue_button toolbar_button",
-		text : i18n["layer_order"],
+		html : i18n["layer_order"],
 		clickEventName : "ui-toggle",
 		clickEventMessage : dialogId
 	});

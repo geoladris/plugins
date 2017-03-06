@@ -58,7 +58,7 @@ define([ "jquery", "i18n", "customization", "message-bus", "layout", "ui/ui" ], 
 				ui.create("button", {
 					id : id + "_source_link",
 					parent : id + "_header",
-					text : legendInfo.sourceLabel,
+					html : legendInfo.sourceLabel,
 					css : "layer_legend_source_link",
 					clickEventName : "ui-open-url",
 					clickEventMessage : {

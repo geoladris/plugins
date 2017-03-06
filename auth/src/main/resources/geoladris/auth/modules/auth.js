@@ -51,7 +51,7 @@ define([ "message-bus", "i18n", "./auth-user", "module", "ui/ui" ], function(bus
 			id : buttonConf.div,
 			parent : buttonConf.parentDiv,
 			css : "auth-login-logout-button toolbar_button blue_button",
-			text : i18n["auth.logout"] || "Logout",
+			html : i18n["auth.logout"] || "Logout",
 			clickEventName : "ajax",
 			clickEventMessage : {
 				type : 'GET',
@@ -73,7 +73,7 @@ define([ "message-bus", "i18n", "./auth-user", "module", "ui/ui" ], function(bus
 			id : buttonConf.div,
 			parent : buttonConf.parentDiv,
 			css : "auth-login-logout-button toolbar_button blue_button",
-			text : i18n["auth.login"]  || "Login",
+			html : i18n["auth.login"]  || "Login",
 			clickEventName : "ui-show",
 			clickEventMessage : DIALOG_ID
 		});
