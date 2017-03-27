@@ -40,7 +40,7 @@ public class LayersServlet extends HttpServlet {
       throws ServletException, IOException {
     resp.setContentType(APPLICATION_JSON);
     resp.setCharacterEncoding(UTF_8);
-    Config config = (Config) req.getAttribute(Geoladris.ATTR_CONFIG);
+    Config config = (Config) getServletContext().getAttribute(Geoladris.ATTR_CONFIG);
     String layersTemplate = IOUtils.toString(new File(config.getDir(), LAYERS_JSON).toURI(), UTF_8);
 
     PrintWriter writer = resp.getWriter();
@@ -50,8 +50,7 @@ public class LayersServlet extends HttpServlet {
   @Override
   protected void doPut(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-
-    Config config = (Config) req.getAttribute(Geoladris.ATTR_CONFIG);
+    Config config = (Config) getServletContext().getAttribute(Geoladris.ATTR_CONFIG);
     File backupDir = new File(config.getDir(), BACKUP_FOLDER);
     File layersJSON = new File(config.getDir(), LAYERS_JSON);
     if (layersJSON.exists()) {

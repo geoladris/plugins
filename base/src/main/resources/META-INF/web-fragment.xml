@@ -5,16 +5,11 @@
 	<listener>
 		<listener-class>org.fao.unredd.LayersContextListener</listener-class>
 	</listener>
+	<listener>
+		<listener-class>org.fao.unredd.IndicatorsContextListener</listener-class>
+	</listener>
 
 	<!-- indicators -->
-	<filter>
-		<filter-name>indicators-filter</filter-name>
-		<filter-class>org.fao.unredd.IndicatorsFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>indicators-filter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
 	<servlet>
 		<servlet-name>indicator-list-servlet</servlet-name>
 		<servlet-class>org.fao.unredd.indicators.IndicatorListServlet</servlet-class>

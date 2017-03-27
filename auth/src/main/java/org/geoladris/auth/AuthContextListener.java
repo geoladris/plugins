@@ -1,21 +1,17 @@
 package org.geoladris.auth;
 
-import java.util.List;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.geoladris.Geoladris;
-import org.geoladris.config.ModuleConfigurationProvider;
+import org.geoladris.config.Config;
 
 public class AuthContextListener implements ServletContextListener {
 
-  @SuppressWarnings("unchecked")
   @Override
   public void contextInitialized(ServletContextEvent event) {
-    List<ModuleConfigurationProvider> providers = (List<ModuleConfigurationProvider>) event
-        .getServletContext().getAttribute(Geoladris.ATTR_CONFIG_PROVIDERS);
-    providers.add(new AuthConfigurationProvider());
+    Config config = (Config) event.getServletContext().getAttribute(Geoladris.ATTR_CONFIG);
+    config.addModuleConfigurationProvider(new AuthConfigurationProvider());
   }
 
   @Override

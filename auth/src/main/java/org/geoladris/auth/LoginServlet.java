@@ -39,7 +39,7 @@ public class LoginServlet extends HttpServlet {
   }
 
   private boolean isAuthorized(HttpServletRequest request) {
-    Config config = (Config) request.getAttribute(Geoladris.ATTR_CONFIG);
+    Config config = (Config) getServletContext().getAttribute(Geoladris.ATTR_CONFIG);
     String rolesProp = config.getProperties().getProperty(PROP_AUTHORIZED_ROLES);
     String[] roles = rolesProp != null ? rolesProp.split("\\s*,\\s*") : new String[0];
 

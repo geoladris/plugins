@@ -27,7 +27,7 @@ public class VerifyCommentServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    Config config = (Config) req.getAttribute(Geoladris.ATTR_CONFIG);
+    Config config = (Config) getServletContext().getAttribute(Geoladris.ATTR_CONFIG);
     Locale locale = (Locale) req.getAttribute(Geoladris.ATTR_LOCALE);
     ResourceBundle messages = config.getMessages(locale);
 

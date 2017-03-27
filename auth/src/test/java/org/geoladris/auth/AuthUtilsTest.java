@@ -2,6 +2,7 @@ package org.geoladris.auth;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -9,6 +10,7 @@ import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.geoladris.Geoladris;
 import org.geoladris.config.Config;
@@ -50,7 +52,10 @@ public class AuthUtilsTest {
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		when(request.getServletContext()).thenReturn(context);
-		when(request.getAttribute(Geoladris.ATTR_CONFIG)).thenReturn(config);
+		HttpSession session = mock(HttpSession.class);
+		when(session.getServletContext()).thenReturn(context);
+		when(request.getSession(anyBoolean())).thenReturn(session);
+		when(context.getAttribute(Geoladris.ATTR_CONFIG)).thenReturn(config);
 
 		return request;
 	}

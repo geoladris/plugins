@@ -1,21 +1,16 @@
 package org.fao.unredd.geoexplorerReader;
 
-import java.util.List;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.geoladris.Geoladris;
-import org.geoladris.config.ModuleConfigurationProvider;
+import org.geoladris.config.Config;
 
 public class GeoExplorerReaderContextListener implements ServletContextListener {
-
-  @SuppressWarnings("unchecked")
   @Override
   public void contextInitialized(ServletContextEvent sce) {
-    List<ModuleConfigurationProvider> providers = (List<ModuleConfigurationProvider>) sce
-        .getServletContext().getAttribute(Geoladris.ATTR_CONFIG_PROVIDERS);
-    providers.add(new GeoExplorerDBConfigurationProvider());
+    Config config = (Config) sce.getServletContext().getAttribute(Geoladris.ATTR_CONFIG);
+    config.addModuleConfigurationProvider(new GeoExplorerDBConfigurationProvider());
   }
 
   @Override

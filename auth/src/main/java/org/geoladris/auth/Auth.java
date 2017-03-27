@@ -1,5 +1,6 @@
 package org.geoladris.auth;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.geoladris.Geoladris;
@@ -22,7 +23,8 @@ public class Auth {
    *         authorised roles, <code>false</code> otherwise.
    */
   public static boolean isAuthorized(HttpServletRequest request) {
-    Config config = (Config) request.getAttribute(Geoladris.ATTR_CONFIG);
+    ServletContext context = request.getSession(true).getServletContext();
+    Config config = (Config) context.getAttribute(Geoladris.ATTR_CONFIG);
     String rolesProp = config.getProperties().getProperty(PROP_AUTHORIZED_ROLES);
     String[] roles = rolesProp != null ? rolesProp.split("\\s*,\\s*") : new String[0];
 

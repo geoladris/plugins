@@ -45,7 +45,7 @@ public class LoginServletTest {
 
     HttpSession session = mock(HttpSession.class);
     when(request.getSession()).thenReturn(session);
-    when(request.getAttribute(Geoladris.ATTR_CONFIG)).thenReturn(config);
+    when(context.getAttribute(Geoladris.ATTR_CONFIG)).thenReturn(config);
   }
 
   @Test

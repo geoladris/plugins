@@ -66,7 +66,7 @@ public class LayersEditorTest {
     ServletContext context = mock(ServletContext.class);
     when(config.getServletContext()).thenReturn(context);
     request = mock(HttpServletRequest.class);
-    when(request.getAttribute(Geoladris.ATTR_CONFIG)).thenReturn(defaultconfig);
+    when(context.getAttribute(Geoladris.ATTR_CONFIG)).thenReturn(defaultconfig);
     when(request.getServletContext()).thenReturn(context);
   }
 
