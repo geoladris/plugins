@@ -1,5 +1,4 @@
-define([ "wellknown" ], function(wellknown) {
-
+define([ 'wellknown' ], function(wellknown) {
 	function createPolygon(externalRing, internalRings) {
 		if (!internalRings) {
 			internalRings = [];
@@ -9,11 +8,11 @@ define([ "wellknown" ], function(wellknown) {
 			allRings[i] = toCoordinateList(allRings[i]);
 		}
 		return {
-			"type" : "Polygon",
-			"coordinates" : allRings
-		}
+			'type': 'Polygon',
+			'coordinates': allRings
+		};
 	}
-	
+
 	function toCoordinateList(ordinateList) {
 		var coordinates = [];
 		for (var i = 0; i < ordinateList.length; i += 2) {
@@ -23,46 +22,46 @@ define([ "wellknown" ], function(wellknown) {
 	}
 
 	return {
-		"createFeature" : function(geometry, properties) {
+		'createFeature': function(geometry, properties) {
 			return {
-				"type" : "Feature",
-				"geometry" : geometry,
-				"properties" : properties
-			}
+				'type': 'Feature',
+				'geometry': geometry,
+				'properties': properties
+			};
 		},
-		"createPoint" : function(x, y) {
+		'createPoint': function(x, y) {
 			return {
-				"type" : "Point",
-				"coordinates" : [ x, y ]
-			}
+				'type': 'Point',
+				'coordinates': [ x, y ]
+			};
 		},
-		"createLineString" : function() {
+		'createLineString': function() {
 			return {
-				"type" : "LineString",
-				"coordinates" : toCoordinateList(arguments)
-			}
+				'type': 'LineString',
+				'coordinates': toCoordinateList(arguments)
+			};
 		},
-		"createPolygon" : createPolygon,
-		"createMultiPolygon" : function(polygons) {
+		'createPolygon': createPolygon,
+		'createMultiPolygon': function(polygons) {
 			polygonCoordinates = polygons.map(function(polygon) {
 				return polygon.coordinates;
 			});
 			return {
-				"type" : "MultiPolygon",
-				"coordinates" : polygonCoordinates
-			}
+				'type': 'MultiPolygon',
+				'coordinates': polygonCoordinates
+			};
 		},
-		"createPolygonFromBBox" : function(bbox) {
+		'createPolygonFromBBox': function(bbox) {
 			var x1 = bbox[0];
 			var y1 = bbox[1];
 			var x2 = bbox[2];
 			var y2 = bbox[3];
-			return createPolygon([x1, y1, x2, y1, x2, y2, x1, y2, x1, y1]);
+			return createPolygon([ x1, y1, x2, y1, x2, y2, x1, y2, x1, y1 ]);
 		},
-		"toWKT" : function(geojson) {
+		'toWKT': function(geojson) {
 			return wellknown.stringify(geojson);
 		},
-		"fromWKT" : function(wkt) {
+		'fromWKT': function(wkt) {
 			return wellknown.parse(wkt);
 		}
 	};

@@ -1,5 +1,4 @@
-define([ "openlayers" ], function() {
-
+define([ 'openlayers' ], function() {
 	var GeoJSON = new OpenLayers.Format.GeoJSON();
 
 	function parse(geojsonFeature) {
@@ -12,14 +11,14 @@ define([ "openlayers" ], function() {
 		/*
 		 * id attribute ignored by OL2 GeoJSON format
 		 */
-		if (olFeature.hasOwnProperty("id")) {
-			ret["id"] = olFeature.id;
+		if (olFeature.hasOwnProperty('id')) {
+			ret.id = olFeature.id;
 		}
 		return ret;
 	}
 
 	return {
-		"parse" : parse,
-		"write" : write
-	}
+		'parse': parse,
+		'write': write
+	};
 });

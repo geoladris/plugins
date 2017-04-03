@@ -1,28 +1,28 @@
-define([ "message-bus", "ui/ui" ], function(bus, ui) {
-	var DIALOG_ID = "show-info-dialog";
+define([ 'message-bus', 'ui/ui' ], function(bus, ui) {
+	var DIALOG_ID = 'show-info-dialog';
 
-	bus.listen("show-info", function(event, title, link) {
-		var dialog = ui.create("dialog", {
-			id : DIALOG_ID,
-			parent : document.body,
-			title : title,
-			modal : true,
-			visible : true,
-			closeButton : true,
+	bus.listen('show-info', function(event, title, link) {
+		var dialog = ui.create('dialog', {
+			id: DIALOG_ID,
+			parent: document.body,
+			title: title,
+			modal: true,
+			visible: true,
+			closeButton: true
 		});
 
-		var content = ui.create("div", {
-			id : DIALOG_ID + "_content",
-			parent : dialog
+		var content = ui.create('div', {
+			id: DIALOG_ID + '_content',
+			parent: dialog
 		});
 
-		if (typeof link === "string") {
+		if (typeof link === 'string') {
 			content.innerHTML = "<iframe src='" + link + "'>";
 		} else {
 			content.appendChild(link);
 		}
 
-		bus.listen("ui-hide", function(e, id) {
+		bus.listen('ui-hide', function(e, id) {
 			if (id == DIALOG_ID) {
 				var elem = dialog;
 				while (elem) {
@@ -36,7 +36,7 @@ define([ "message-bus", "ui/ui" ], function(bus, ui) {
 		});
 	});
 
-	bus.listen("hide-info", function() {
-		bus.send("ui-hide", DIALOG_ID);
+	bus.listen('hide-info', function() {
+		bus.send('ui-hide', DIALOG_ID);
 	});
 });

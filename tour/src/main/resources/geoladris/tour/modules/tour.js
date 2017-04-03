@@ -1,24 +1,23 @@
-define(["module", "toolbar", "message-bus", "jquery", "ui/ui"], function(module, toolbar, bus, $, ui) {
-
+define(['module', 'toolbar', 'message-bus', 'jquery', 'ui/ui'], function(module, toolbar, bus, $, ui) {
 	var steps = module.config().steps;
 
 	var infoFeatures;
 
 	function tooltipText(index, text) {
-		var div = ui.create("div", {
-			html : "<p>" + text + "</p>"
+		var div = ui.create('div', {
+			html: '<p>' + text + '</p>'
 		});
-		ui.create("button", {
-			id : "tour-next-" + index,
-			parent : div,
-			css : "tour-button",
-			html : "Seguir"
+		ui.create('button', {
+			id: 'tour-next-' + index,
+			parent: div,
+			css: 'tour-button',
+			html: 'Seguir'
 		});
-		ui.create("button", {
-			id : "tour-close-" + index,
-			parent : div,
-			css : "tour-button",
-			html : "Cerrar"
+		ui.create('button', {
+			id: 'tour-close-' + index,
+			parent: div,
+			css: 'tour-button',
+			html: 'Cerrar'
 		});
 		return div.innerHTML;
 	}
@@ -27,11 +26,11 @@ define(["module", "toolbar", "message-bus", "jquery", "ui/ui"], function(module,
 		var step = steps[stepIndex];
 
 		var tooltip = ui.tooltip(step.id, {
-			text : tooltipText(stepIndex, step.text),
-			location : step.location
+			text: tooltipText(stepIndex, step.text),
+			location: step.location
 		});
 
-		var btnNext = $("#tour-next-" + stepIndex);
+		var btnNext = $('#tour-next-' + stepIndex);
 		btnNext.focus();
 		btnNext.click(function() {
 			tooltip.parentNode.removeChild(tooltip);
@@ -45,7 +44,7 @@ define(["module", "toolbar", "message-bus", "jquery", "ui/ui"], function(module,
 					var parameters = step.next[nextEvent];
 					for (paramIndex in parameters) {
 						var parameter = parameters[paramIndex];
-						if (typeof parameter == "string" && parameter.charAt(0) == "X") {
+						if (typeof parameter === 'string' && parameter.charAt(0) == 'X') {
 							parameters[paramIndex] = eval(parameter.substr(1));
 						}
 					}
@@ -58,38 +57,37 @@ define(["module", "toolbar", "message-bus", "jquery", "ui/ui"], function(module,
 				fnc = function() {
 					showStep(stepIndex + 1);
 					bus.stopListen(step.wait, fnc);
-				}
+				};
 				bus.listen(step.wait, fnc);
 			} else {
 				showStep(stepIndex + 1);
 			}
-
 		});
-		$("#tour-close-" + stepIndex).click(function() {
+		$('#tour-close-' + stepIndex).click(function() {
 			tooltip.parentNode.removeChild(tooltip);
 		});
 	};
 
-	ui.create("button", {
-		id : "tour-button",
-		parent : toolbar.attr("id"),
-		css : "blue_button toolbar_button",
-		html : "Guía interactiva",
-		clickEventCallback : function() {
+	ui.create('button', {
+		id: 'tour-button',
+		parent: toolbar.attr('id'),
+		css: 'blue_button toolbar_button',
+		html: 'Guía interactiva',
+		clickEventCallback: function() {
 			showStep(0);
 		}
-	})
+	});
 
 	/*
 	 * helpers to highlight and zoom info features
 	 */
-	bus.listen("info-features", function(event, wmsLayerId, features, x, y) {
+	bus.listen('info-features', function(event, wmsLayerId, features, x, y) {
 		infoFeatures = features;
 	});
-	bus.listen("highlight-info-feature", function(event, index) {
-		bus.send("highlight-feature", infoFeatures[index]["highlightGeom"]);
+	bus.listen('highlight-info-feature', function(event, index) {
+		bus.send('highlight-feature', infoFeatures[index].highlightGeom);
 	});
-	bus.listen("zoom-info-feature", function(event, index) {
-		bus.send("zoom-to", infoFeatures[index]["bounds"].scale(1.2));
+	bus.listen('zoom-info-feature', function(event, index) {
+		bus.send('zoom-to', infoFeatures[index].bounds.scale(1.2));
 	});
 });

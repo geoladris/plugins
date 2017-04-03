@@ -1,50 +1,50 @@
-define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, module, geojson) {
+define([ 'message-bus', 'module', './geojson', 'openlayers' ], function(bus, module, geojson) {
 	var config = module.config();
 
 	var map = null;
 
-	OpenLayers.ProxyHost = "proxy?url=";
+	OpenLayers.ProxyHost = 'proxy?url=';
 
-	bus.listen("modules-initialized", function(e, message) {
+	bus.listen('modules-initialized', function(e, message) {
 		var htmlId = null;
-		if (config.hasOwnProperty("htmlId")) {
+		if (config.hasOwnProperty('htmlId')) {
 			htmlId = config.htmlId;
 		} else {
 			// backwards compatibility
-			htmlId = "map"
+			htmlId = 'map';
 		}
 
 		map = new OpenLayers.Map(htmlId, {
-			fallThrough : true,
-			theme : null,
-			projection : new OpenLayers.Projection("EPSG:900913"),
-			displayProjection : new OpenLayers.Projection("EPSG:4326"),
-			units : "m",
-			allOverlays : true,
-			controls : [],
-			numZoomLevels : config.numZoomLevels || 20
+			fallThrough: true,
+			theme: null,
+			projection: new OpenLayers.Projection('EPSG:900913'),
+			displayProjection: new OpenLayers.Projection('EPSG:4326'),
+			units: 'm',
+			allOverlays: true,
+			controls: [],
+			numZoomLevels: config.numZoomLevels || 20
 		});
 	});
 
-	bus.listen("map:layerVisibility", function(event, message) {
+	bus.listen('map:layerVisibility', function(event, message) {
 		var layer = getMap().getLayer(message.layerId);
 		layer.setVisibility(message.visibility);
 	});
 
-	bus.listen("zoom-in", function(event) {
+	bus.listen('zoom-in', function(event) {
 		getMap().zoomIn();
 	});
 
-	bus.listen("zoom-out", function(event) {
+	bus.listen('zoom-out', function(event) {
 		getMap().zoomOut();
 	});
 
 	function getCRSOr4326(obj) {
-		var crsName = obj.hasOwnProperty("crs") ? obj.crs : "EPSG:4326";
+		var crsName = obj.hasOwnProperty('crs') ? obj.crs : 'EPSG:4326';
 		return new OpenLayers.Projection(crsName);
 	}
 
-	bus.listen("zoom-to", function(event, msg) {
+	bus.listen('zoom-to', function(event, msg) {
 		if (msg instanceof OpenLayers.Bounds) {
 			getMap().zoomToExtent(msg);
 		} else if (msg instanceof Array) {
@@ -61,7 +61,7 @@ define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, mod
 		}
 	});
 
-	bus.listen("map:setLayerOpacity", function(event, message) {
+	bus.listen('map:setLayerOpacity', function(event, message) {
 		var layer = getMap().getLayer(message.layerId);
 		layer.setOpacity(message.opacity);
 	});
@@ -69,21 +69,21 @@ define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, mod
 	/*
 	 * To simulate clicks. Used at least in the tour
 	 */
-	bus.listen("map-click", function(event, lat, lon) {
+	bus.listen('map-click', function(event, lat, lon) {
 		var mapPoint = new OpenLayers.LonLat(lon, lat);
-		mapPoint.transform(new OpenLayers.Projection("EPSG:4326"), getMap().projection);
-		getMap().events.triggerEvent("click", {
-			xy : getMap().getPixelFromLonLat(mapPoint)
+		mapPoint.transform(new OpenLayers.Projection('EPSG:4326'), getMap().projection);
+		getMap().events.triggerEvent('click', {
+			xy: getMap().getPixelFromLonLat(mapPoint)
 		});
 	});
 
-	bus.listen("map:removeLayer", function(e, message) {
+	bus.listen('map:removeLayer', function(e, message) {
 		var layer = getMap().getLayer(message.layerId);
 		layer.removeAllFeatures();
 		getMap().removeLayer(layer);
 	});
 
-	bus.listen("map:removeAllLayers", function(e) {
+	bus.listen('map:removeAllLayers', function(e) {
 		if (getMap() !== null) {
 			while (getMap().layers.length > 0) {
 				getMap().removeLayer(getMap().layers[getMap().layers.length - 1]);
@@ -91,69 +91,69 @@ define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, mod
 		}
 	});
 
-	bus.listen("map:addLayer", function(e, message) {
+	bus.listen('map:addLayer', function(e, message) {
 		var layer = null;
 		if (message.vector) {
 			var vectorLayer = message.vector;
 			var styles = new OpenLayers.StyleMap(vectorLayer.style);
 
 			var layer = new OpenLayers.Layer.Vector(message.layerId, {
-				styleMap : styles
+				styleMap: styles
 			});
-			layer.events.register("featureadded", " ", function(event) {
+			layer.events.register('featureadded', ' ', function(event) {
 				sendFeatureAdded(message.layerId, event.feature);
 			});
-			layer.events.register("featuremodified", " ", function(event) {
+			layer.events.register('featuremodified', ' ', function(event) {
 				sendFeatureModified(message.layerId, event.feature);
 			});
 		} else if (message.osm) {
 			layer = new OpenLayers.Layer.OSM(message.layerId, message.osm.osmUrls);
 		} else if (message.gmaps) {
 			layer = new OpenLayers.Layer.Google(message.layerId, {
-				type : google.maps.MapTypeId[message.gmaps["gmaps-type"]]
+				type: google.maps.MapTypeId[message.gmaps['gmaps-type']]
 			});
 		} else if (message.wfs) {
-			layer = new OpenLayers.Layer.Vector("WFS", {
-				strategies : [ new OpenLayers.Strategy.Fixed() ],
-				protocol : new OpenLayers.Protocol.WFS({
-					version : "1.0.0",
-					url : message.wfs.baseUrl,
-					featureType : message.wfs.wmsName
+			layer = new OpenLayers.Layer.Vector('WFS', {
+				strategies: [ new OpenLayers.Strategy.Fixed() ],
+				protocol: new OpenLayers.Protocol.WFS({
+					version: '1.0.0',
+					url: message.wfs.baseUrl,
+					featureType: message.wfs.wmsName
 				}),
-				projection : new OpenLayers.Projection("EPSG:4326")
+				projection: new OpenLayers.Projection('EPSG:4326')
 			});
 		} else if (message.wms) {
 			layer = new OpenLayers.Layer.WMS(message.layerId, message.wms.baseUrl, {
-				layers : message.wms.wmsName,
-				buffer : 0,
-				transitionEffect : "resize",
-				removeBackBufferDelay : 0,
-				isBaseLayer : false,
-				transparent : true,
-				format : message.wms.imageFormat || 'image/png'
+				layers: message.wms.wmsName,
+				buffer: 0,
+				transitionEffect: 'resize',
+				removeBackBufferDelay: 0,
+				isBaseLayer: false,
+				transparent: true,
+				format: message.wms.imageFormat || 'image/png'
 			}, {
-				noMagic : true
+				noMagic: true
 			});
 		}
 		if (layer != null) {
 			layer.id = message.layerId;
 			getMap().addLayer(layer);
-			bus.send("map:layerAdded", [ message ]);
+			bus.send('map:layerAdded', [ message ]);
 		}
 	});
 
-	bus.listen("map:mergeLayerParameters", function(e, message) {
+	bus.listen('map:mergeLayerParameters', function(e, message) {
 		var layer = getMap().getLayer(message.layerId);
 		layer.mergeNewParams(message.parameters);
 	});
 
-	bus.listen("map:setLayerIndex", function(e, message) {
+	bus.listen('map:setLayerIndex', function(e, message) {
 		var layer = getMap().getLayer(message.layerId);
 		getMap().setLayerIndex(layer, message.index);
 	});
 
-	bus.listen("map:addFeature", function(e, message) {
-		var layerId = message["layerId"];
+	bus.listen('map:addFeature', function(e, message) {
+		var layerId = message.layerId;
 		var layer = getMap().getLayer(layerId);
 		var feature = geojson.parse(message.feature);
 		layer.addFeatures(feature);
@@ -161,21 +161,21 @@ define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, mod
 	});
 
 	function sendFeatureAdded(layerId, olFeature) {
-		bus.send("map:featureAdded", {
-			"layerId" : layerId,
-			"feature" : geojson.write(olFeature)
+		bus.send('map:featureAdded', {
+			'layerId': layerId,
+			'feature': geojson.write(olFeature)
 		});
 	}
 
 	function sendFeatureModified(layerId, olFeature) {
-		bus.send("map:featureModified", {
-			"layerId" : layerId,
-			"feature" : geojson.write(olFeature)
+		bus.send('map:featureModified', {
+			'layerId': layerId,
+			'feature': geojson.write(olFeature)
 		});
 	}
 
-	bus.listen("map:removeAllFeatures", function(e, message) {
-		var layerId = message["layerId"];
+	bus.listen('map:removeAllFeatures', function(e, message) {
+		var layerId = message.layerId;
 		var layer = getMap().getLayer(layerId);
 		layer.removeAllFeatures();
 		layer.redraw();
@@ -183,12 +183,12 @@ define([ "message-bus", "module", "./geojson", "openlayers" ], function(bus, mod
 
 	function getMap() {
 		if (map == null) {
-			throw "Map is ready only in modules-loaded event";
+			throw 'Map is ready only in modules-loaded event';
 		}
 		return map;
 	}
 
 	return {
-		"getMap" : getMap
+		'getMap': getMap
 	};
 });

@@ -1,23 +1,22 @@
-define([ "./map", "message-bus", "customization", "url-parameters" ], function(map, bus, customization, urlParams) {
-
+define([ './map', 'message-bus', 'customization', 'url-parameters' ], function(map, bus, customization, urlParams) {
 	var initialZoom = function() {
-		var epsg4326 = new OpenLayers.Projection("EPSG:4326");
+		var epsg4326 = new OpenLayers.Projection('EPSG:4326');
 
 		var center;
-		var urlCenter = urlParams.get("map.centerLonLat");
+		var urlCenter = urlParams.get('map.centerLonLat');
 		if (urlCenter != null) {
-			center = new OpenLayers.LonLat(urlCenter.split(","));
+			center = new OpenLayers.LonLat(urlCenter.split(','));
 		} else {
-			center = new OpenLayers.LonLat(customization["map.centerLonLat"]);
+			center = new OpenLayers.LonLat(customization['map.centerLonLat']);
 		}
 		center.transform(epsg4326, map.getMap().projection);
-		var zoomLevel = urlParams.get("map.initialZoomLevel");
+		var zoomLevel = urlParams.get('map.initialZoomLevel');
 		if (zoomLevel == null) {
-			zoomLevel = customization["map.initialZoomLevel"];
+			zoomLevel = customization['map.initialZoomLevel'];
 		}
 		map.getMap().setCenter(center, zoomLevel);
 	};
 
-	bus.listen("layers-loaded", initialZoom);
-	bus.listen("initial-zoom", initialZoom);
+	bus.listen('layers-loaded', initialZoom);
+	bus.listen('initial-zoom', initialZoom);
 });

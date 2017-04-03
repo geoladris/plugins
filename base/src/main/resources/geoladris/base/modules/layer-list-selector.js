@@ -1,39 +1,39 @@
-define([ "message-bus", "layout", "customization", "i18n", "ui/ui" ], function(bus, layout, customization, i18n, ui) {
+define([ 'message-bus', 'layout', 'customization', 'i18n', 'ui/ui' ], function(bus, layout, customization, i18n, ui) {
 	var divsById = {};
 	var buttonPriorities = [];
 
-	var contents = ui.create("div", {
-		id : "layers_container",
-		parent : document.body
+	var contents = ui.create('div', {
+		id: 'layers_container',
+		parent: document.body
 	});
-	var buttons = ui.create("div", {
-		id : "layer_list_selector_pane",
-		parent : document.body
+	var buttons = ui.create('div', {
+		id: 'layer_list_selector_pane',
+		parent: document.body
 	});
-	buttons.style.display = "none";
+	buttons.style.display = 'none';
 
-	bus.listen("show-layer-panel", function(event, id) {
+	bus.listen('show-layer-panel', function(event, id) {
 		for ( var divId in divsById) {
 			var active = (divId == id);
-			divsById[divId].style.display = active ? "" : "none";
-			bus.send("ui-button:" + divId + ":activate", active);
+			divsById[divId].style.display = active ? '' : 'none';
+			bus.send('ui-button:' + divId + ':activate', active);
 		}
 	});
 
 	var registerLayerPanel = function(id, priority, text, content) {
-		var button = ui.create("button", {
-			id : id,
-			parent : buttons,
-			html : text,
-			clickEventName : "show-layer-panel",
-			clickEventMessage : id
+		var button = ui.create('button', {
+			id: id,
+			parent: buttons,
+			html: text,
+			clickEventName: 'show-layer-panel',
+			clickEventMessage: id
 		});
 
 		buttonPriorities.push({
-			"id" : id,
-			"button" : button,
-			"priority" : priority,
-			"content" : content
+			'id': id,
+			'button': button,
+			'priority': priority,
+			'content': content
 		});
 
 		contents.appendChild(content);
@@ -59,7 +59,7 @@ define([ "message-bus", "layout", "customization", "i18n", "ui/ui" ], function(b
 	};
 
 	var renderButtons = function() {
-		buttons.innerHTML = "";
+		buttons.innerHTML = '';
 		buttonPriorities.sort(function(a, b) {
 			return a.priority - b.priority;
 		});
@@ -69,16 +69,16 @@ define([ "message-bus", "layout", "customization", "i18n", "ui/ui" ], function(b
 			buttons.appendChild(bp.button);
 		}
 
-		bus.send("show-layer-panel", buttonPriorities[0].id);
-		buttons.style.display = "";
-	}
+		bus.send('show-layer-panel', buttonPriorities[0].id);
+		buttons.style.display = '';
+	};
 
-	bus.listen("modules-loaded", function() {
+	bus.listen('modules-loaded', function() {
 		renderButtons();
 	});
 
 	return {
-		"registerLayerPanel" : registerLayerPanel,
-		"removeLayerPanel" : removeLayerPanel
+		'registerLayerPanel': registerLayerPanel,
+		'removeLayerPanel': removeLayerPanel
 	};
 });

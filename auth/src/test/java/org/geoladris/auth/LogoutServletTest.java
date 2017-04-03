@@ -13,37 +13,37 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class LogoutServletTest {
-	private LogoutServlet servlet;
-	private HttpSession session;
-	private HttpServletRequest request;
-	private HttpServletResponse response;
+  private LogoutServlet servlet;
+  private HttpSession session;
+  private HttpServletRequest request;
+  private HttpServletResponse response;
 
-	@Before
-	public void setup() {
-		servlet = new LogoutServlet();
+  @Before
+  public void setup() {
+    servlet = new LogoutServlet();
 
-		session = mock(HttpSession.class);
-		request = mock(HttpServletRequest.class);
-		response = mock(HttpServletResponse.class);
+    session = mock(HttpSession.class);
+    request = mock(HttpServletRequest.class);
+    response = mock(HttpServletResponse.class);
 
-		when(request.getSession()).thenReturn(session);
-	}
+    when(request.getSession()).thenReturn(session);
+  }
 
-	@Test
-	public void doesLogout() throws Exception {
-		servlet.doGet(request, response);
-		verify(request).logout();
-	}
+  @Test
+  public void doesLogout() throws Exception {
+    servlet.doGet(request, response);
+    verify(request).logout();
+  }
 
-	@Test
-	public void invalidatesSession() throws Exception {
-		servlet.doGet(request, response);
-		verify(session).invalidate();
-	}
+  @Test
+  public void invalidatesSession() throws Exception {
+    servlet.doGet(request, response);
+    verify(session).invalidate();
+  }
 
-	@Test
-	public void sendsNoContent() throws Exception {
-		servlet.doGet(request, response);
-		verify(response).sendError(HttpServletResponse.SC_NO_CONTENT);
-	}
+  @Test
+  public void sendsNoContent() throws Exception {
+    servlet.doGet(request, response);
+    verify(response).sendError(HttpServletResponse.SC_NO_CONTENT);
+  }
 }
