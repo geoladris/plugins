@@ -29,6 +29,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<core.version>6.0-SNAPSHOT</core.version>
 		<csgis.geoladris.version>1.0-SNAPSHOT</csgis.geoladris.version>
+		<!-- See https://nodejs.org/en/download/ for latest node and npm (lts) versions -->
+		<node.version>v6.9.2</node.version>
+		<npm.version>3.10.9</npm.version>
 	</properties>
 
 	<distributionManagement>
@@ -120,56 +123,74 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<configuration>
+							<nodeVersion>${node.version}</nodeVersion>
+							<npmVersion>${npm.version}</npmVersion>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm build</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>run build --if-present</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>test</id>
+						<goals>
+							<goal>karma</goal>
+						</goals>
+						<configuration>
+							<karmaConfPath>${project.basedir}/test/karma.conf.js</karmaConfPath>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
 		<profile>
-			<id>js-testing</id>
+			<id>npm</id>
 			<activation>
 				<file>
-					<exists>${basedir}/test/karma.conf.js</exists>
+					<missing>package.json</missing>
 				</file>
 			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.github.eirslett</groupId>
-						<artifactId>frontend-maven-plugin</artifactId>
-						<version>1.0</version>
-						<executions>
-							<execution>
-								<id>install node and npm</id>
-								<goals>
-									<goal>install-node-and-npm</goal>
-								</goals>
-								<configuration>
-									<!-- See https://nodejs.org/en/download/ for latest node and npm (lts) versions -->
-									<nodeVersion>v6.9.2</nodeVersion>
-									<npmVersion>3.10.9</npmVersion>
-								</configuration>
-							</execution>
-							<execution>
-								<id>npm install</id>
-								<goals>
-									<goal>npm</goal>
-								</goals>
-								<configuration>
-									<arguments>install</arguments>
-								</configuration>
-							</execution>
-							<execution>
-								<id>javascript tests</id>
-								<goals>
-									<goal>karma</goal>
-								</goals>
-								<configuration>
-									<karmaConfPath>${project.basedir}/test/karma.conf.js</karmaConfPath>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
+			<properties>
+				<skip.npm>true</skip.npm>
+			</properties>
+		</profile>
+		<profile>
+			<id>karma</id>
+			<activation>
+				<file>
+					<missing>test/karma.conf.js</missing>
+				</file>
+			</activation>
+			<properties>
+				<skip.karma>true</skip.karma>
+			</properties>
 		</profile>
 	</profiles>
 </project>

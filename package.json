@@ -7,9 +7,5 @@
     "eslint": "^3.18.0",
     "eslint-config-airbnb-es5": "^1.1.0",
     "eslint-plugin-react": "^6.10.3"
-  },
-  "scripts": {
-    "install": "find . -mindepth 2 -maxdepth 2 -name package.json -execdir npm install \\;",
-    "test": "find . -mindepth 2 -maxdepth 2 -name package.json -execdir npm test \\;"
   }
 }
