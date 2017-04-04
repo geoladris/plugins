@@ -3,7 +3,7 @@ target/
 .project
 .classpath
 .settings
-*/node
-*/etc
+/*etc
 node_modules
+node
 npm-debug.log
