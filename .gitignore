@@ -4,5 +4,6 @@ target/
 .classpath
 .settings
 */node
-*/node_modules
+*/etc
+node_modules
 npm-debug.log
