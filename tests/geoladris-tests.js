@@ -4,12 +4,12 @@ define('geoladris-tests', ['Squire', 'message-bus'], function(Squire, bus) {
 
 	function init(config, additionalPaths) {
 		var paths = additionalPaths || {};
-		paths.jquery = '../../node_modules/jquery/dist/jquery.min';
-		paths['message-bus'] = '../../node_modules/geoladris-core/core/js/modules/message-bus';
+		paths.jquery = '../node_modules/jquery/dist/jquery.min';
+		paths['message-bus'] = '../node_modules/@geoladris/core/modules/message-bus';
 
 		var c = {
 			context: CONTEXT,
-			baseUrl: '/base/js/modules',
+			baseUrl: '/base/modules',
 			paths: paths
 		};
 

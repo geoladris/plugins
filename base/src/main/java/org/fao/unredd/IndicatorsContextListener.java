@@ -6,15 +6,14 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.log4j.Logger;
 import org.fao.unredd.layers.bd.DBLayerFactory;
 import org.geoladris.Geoladris;
 import org.geoladris.config.Config;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IndicatorsContextListener implements ServletContextListener {
 
-  private static final Logger logger = LoggerFactory.getLogger(IndicatorsContextListener.class);
+  private static final Logger logger = Logger.getLogger(IndicatorsContextListener.class);
 
   @Override
   public void contextInitialized(ServletContextEvent sce) {

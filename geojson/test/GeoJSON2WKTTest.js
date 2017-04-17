@@ -1,6 +1,5 @@
 define([ 'geoladris-tests' ], function(tests) {
 	describe('geojson', function() {
-		var bus;
 		var injector;
 
 		beforeEach(function() {
@@ -8,7 +7,6 @@ define([ 'geoladris-tests' ], function(tests) {
 				'wellknown': '../jslib/wellknown'
 			});
 			injector = initialization.injector;
-			bus = initialization.bus;
 		});
 
 		it('toWKT', function(done) {

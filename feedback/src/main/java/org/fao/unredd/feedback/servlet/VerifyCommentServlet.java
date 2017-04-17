@@ -10,19 +10,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.fao.unredd.feedback.Feedback;
 import org.fao.unredd.feedback.VerificationCodeNotFoundException;
 import org.geoladris.Geoladris;
 import org.geoladris.PersistenceException;
 import org.geoladris.config.Config;
 import org.geoladris.servlet.StatusServletException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class VerifyCommentServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
-  private static Logger logger = LoggerFactory.getLogger(VerifyCommentServlet.class);
+  private static Logger logger = Logger.getLogger(VerifyCommentServlet.class);
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)

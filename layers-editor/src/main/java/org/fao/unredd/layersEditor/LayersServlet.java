@@ -21,12 +21,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.geoladris.Geoladris;
 import org.geoladris.config.Config;
-import org.geoladris.servlet.ClientContentServlet;
 
 @MultipartConfig
 public class LayersServlet extends HttpServlet {
 
-  private static Logger logger = Logger.getLogger(ClientContentServlet.class);
+  private static Logger logger = Logger.getLogger(LayersServlet.class);
 
   public static final String APPLICATION_JSON = "application/json";
   public static final String UTF_8 = "UTF-8";

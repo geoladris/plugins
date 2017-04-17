@@ -8,6 +8,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.log4j.Logger;
 import org.fao.unredd.feedback.DBFeedbackPersistence;
 import org.fao.unredd.feedback.Feedback;
 import org.fao.unredd.feedback.Mailer;
@@ -15,11 +16,9 @@ import org.fao.unredd.feedback.MissingArgumentException;
 import org.geoladris.Geoladris;
 import org.geoladris.PersistenceException;
 import org.geoladris.config.Config;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FeedbackContextListener implements ServletContextListener {
-  private static final Logger logger = LoggerFactory.getLogger(FeedbackContextListener.class);
+  private static final Logger logger = Logger.getLogger(FeedbackContextListener.class);
   private Timer timer;
 
   @Override

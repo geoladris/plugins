@@ -1,6 +1,9 @@
 {
-  "name": "ol2Controls",
+  "name": "@geoladris/ol2Controls",
   "version": "6.0.0-SNAPSHOT",
+  "dependencies": {
+    "@geoladris/core": "geoladris/core#js_deps"
+  },
   "devDependencies": {
     "babel-eslint": "^7.2.1",
     "eslint": "^3.18.0",
@@ -8,6 +11,6 @@
     "eslint-plugin-react": "^6.10.3"
   },
   "scripts": {
-    "lint": "eslint js/modules test"
+    "lint": "eslint modules test"
   }
 }

@@ -20,7 +20,7 @@ define([ 'geoladris-tests' ], function(tests) {
 		beforeEach(function() {
 			var initialization = tests.init({}, {
 				// paths are relative to 'modules'
-				'openlayers': '../jslib/OpenLayers/OpenLayers.debug'
+				'openlayers': '../jslib/openlayers'
 			});
 			injector = initialization.injector;
 			bus = initialization.bus;

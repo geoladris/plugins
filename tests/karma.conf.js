@@ -4,16 +4,16 @@ module.exports = function(config) {
 		frameworks: ['jasmine', 'requirejs'],
 		files: ['../tests/test-main.js', '../tests/geoladris-tests.js', 'node_modules/jquery/dist/jquery.min.js', //
 			{
-				pattern: 'node_modules/geoladris-core/core/js/modules/message-bus.js',
+				pattern: 'node_modules/@geoladris/core/modules/message-bus.js',
 				included: false
 			}, {
 				pattern: 'node_modules/squirejs/**/*.js',
 				included: false
 			}, {
-				pattern: 'js/modules/**/*.js',
+				pattern: 'modules/**/*.js',
 				included: false
 			}, {
-				pattern: 'js/jslib/**/*.js',
+				pattern: 'jslib/**/*.js',
 				included: false
 			}, {
 				pattern: 'test/**/*.js',
@@ -30,7 +30,7 @@ module.exports = function(config) {
 		colors: true,
 		autoWatch: false,
 		preprocessors: {
-			'src/main/resources/geoladris/*/modules/**/*.js': ['coverage']
+			'modules/**/*.js': ['coverage']
 		},
 		junitReporter: {
 			outputFile: 'target/reports/junit/TESTS-xunit.xml',

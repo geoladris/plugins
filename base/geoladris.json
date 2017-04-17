@@ -1,0 +1,28 @@
+{
+  "default-conf": {
+    "banner": {
+      "hide": false,
+      "show-flag": true,
+      "show-logos": true
+    },
+    "info-dialog": {
+      "open-in-center": false
+    },
+    "toolbar": {
+      "time_slider_pane": 1000,
+      "feedback-button": 10,
+      "tour-button": 5
+    }
+  },
+  "npmResources": {
+    "highcharts": true,
+    "highcharts/themes/sand-signika.js": "highcharts-theme-sand.js",
+    "moment": true,
+    "requirejs-text": true
+  },
+  "requirejsShim": {
+    "highcharts": ["jquery"],
+    "highcharts-theme-sand": ["highcharts"]
+  },
+  "installInRoot": true
+}

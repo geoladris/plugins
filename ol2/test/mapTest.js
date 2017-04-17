@@ -13,7 +13,7 @@ define([ 'geoladris-tests' ], function(tests) {
 				'map': config
 			}, {
 				// paths are relative to 'modules'
-				'openlayers': '../jslib/OpenLayers/OpenLayers.debug'
+				'openlayers': '../jslib/openlayers'
 			});
 			bus = initialization.bus;
 			injector = initialization.injector;

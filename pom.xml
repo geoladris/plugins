@@ -66,8 +66,32 @@
 	<build>
 		<resources>
 			<resource>
-				<directory>js</directory>
-				<targetPath>geoladris/${project.artifactId}</targetPath>
+				<directory>modules</directory>
+				<targetPath>modules</targetPath>
+			</resource>
+			<resource>
+				<directory>styles</directory>
+				<targetPath>styles</targetPath>
+			</resource>
+			<resource>
+				<directory>jslib</directory>
+				<targetPath>jslib</targetPath>
+			</resource>
+			<resource>
+				<directory>theme</directory>
+				<targetPath>theme</targetPath>
+			</resource>
+			<resource>
+				<directory></directory>
+				<includes>
+					<include>package.json</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory></directory>
+				<includes>
+					<include>geoladris.json</include>
+				</includes>
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -145,15 +169,6 @@
 						</goals>
 						<configuration>
 							<arguments>install</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>npm build</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<configuration>
-							<arguments>run build --if-present</arguments>
 						</configuration>
 					</execution>
 					<execution>

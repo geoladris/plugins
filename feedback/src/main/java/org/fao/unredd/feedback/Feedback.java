@@ -6,14 +6,13 @@ import java.util.ResourceBundle;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
+import org.apache.log4j.Logger;
 import org.geoladris.PersistenceException;
 import org.geoladris.config.Config;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Feedback {
 
-  private static final Logger logger = LoggerFactory.getLogger(Feedback.class);
+  private static final Logger logger = Logger.getLogger(Feedback.class);
 
   private FeedbackPersistence persistence;
   private Mailer mailInfo;
