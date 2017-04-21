@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.fao.unredd</groupId>
 	<artifactId>plugins-root</artifactId>
-	<version>6.0-SNAPSHOT</version>
+	<version>6.0.0</version>
 	<packaging>pom</packaging>
 
 	<name>geoladris plugins</name>
@@ -21,13 +21,15 @@
 		<module>layers-editor</module>
 		<module>auth</module>
 		<module>ol2</module>
-    <module>geojson</module>
-    <module>ol2Controls</module>
-  </modules>
+		<module>geojson</module>
+		<module>ol2Controls</module>
+	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<core.version>6.0-SNAPSHOT</core.version>
-		<csgis.geoladris.version>1.0-SNAPSHOT</csgis.geoladris.version>
+		<core.version>6.0.0</core.version>
+		<!-- See https://nodejs.org/en/download/ for latest node and npm (lts) versions -->
+		<node.version>v6.10.2</node.version>
+		<npm.version>3.10.10</npm.version>
 	</properties>
 
 	<distributionManagement>
@@ -152,10 +154,8 @@
 									<goal>install-node-and-npm</goal>
 								</goals>
 								<configuration>
-									<!-- See https://nodejs.org/en/download/ for latest node and npm 
-										(lts) versions -->
-									<nodeVersion>v6.9.2</nodeVersion>
-									<npmVersion>3.10.9</npmVersion>
+									<nodeVersion>${node.version}</nodeVersion>
+									<npmVersion>${npm.version}</npmVersion>
 								</configuration>
 							</execution>
 							<execution>
