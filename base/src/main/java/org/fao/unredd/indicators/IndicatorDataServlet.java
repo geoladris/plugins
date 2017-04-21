@@ -29,7 +29,7 @@ public class IndicatorDataServlet extends HttpServlet {
       throw new StatusServletException(400, "layerId and indicatorId parameters are mandatory");
     } else {
       try {
-        LayerFactory layerFactory = (LayerFactory) req.getAttribute("layer-factory");
+        LayerFactory layerFactory = (LayerFactory) getServletContext().getAttribute("layer-factory");
         if (layerFactory.exists(layerId)) {
           Layer layer = layerFactory.newLayer(layerId);
           Output output = layer.getOutput(indicatorId);
