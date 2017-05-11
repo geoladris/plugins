@@ -4,7 +4,7 @@ define([ 'geoladris-tests' ], function(tests) {
 
 		beforeEach(function() {
 			var initialization = tests.init({}, {
-				'wellknown': '../jslib/wellknown'
+				'wellknown': '../node_modules/wellknown/wellknown'
 			});
 			injector = initialization.injector;
 		});

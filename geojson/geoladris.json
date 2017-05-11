@@ -1,5 +1,7 @@
 {
-  "npmResources": {
-    "wellknown/wellknown.js" : true
-  }
+	"requirejs": {
+		"paths": {
+			"wellknown": "node_modules/wellknown/wellknown.js"
+		}
+	}
 }

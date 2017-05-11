@@ -21,7 +21,7 @@ require.config({
 	baseUrl: '/base',
 	paths: {
 		'jquery': 'node_modules/jquery/dist/jquery.min',
-		'message-bus': 'node_modules/@geoladris/core/modules/message-bus',
+		'message-bus': 'node_modules/@geoladris/core/src/message-bus',
 		'Squire': 'node_modules/squirejs/src/Squire'
 	},
 	deps: allTestFiles,

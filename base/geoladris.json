@@ -1,28 +1,30 @@
 {
-  "default-conf": {
-    "banner": {
-      "hide": false,
-      "show-flag": true,
-      "show-logos": true
-    },
-    "info-dialog": {
-      "open-in-center": false
-    },
-    "toolbar": {
-      "time_slider_pane": 1000,
-      "feedback-button": 10,
-      "tour-button": 5
-    }
-  },
-  "npmResources": {
-    "highcharts": true,
-    "highcharts/themes/sand-signika.js": "highcharts-theme-sand.js",
-    "moment": true,
-    "requirejs-text": true
-  },
-  "requirejsShim": {
-    "highcharts": ["jquery"],
-    "highcharts-theme-sand": ["highcharts"]
-  },
-  "installInRoot": true
+	"default-conf": {
+		"banner": {
+			"hide": false,
+			"show-flag": true,
+			"show-logos": true
+		},
+		"info-dialog": {
+			"open-in-center": false
+		},
+		"toolbar": {
+			"time_slider_pane": 1000,
+			"feedback-button": 10,
+			"tour-button": 5
+		}
+	},
+	"requirejs": {
+		"paths": {
+			"highcharts": "node_modules/highcharts/highcharts",
+			"highcharts-theme-sand": "node_modules/highcharts/themes/sand-signika",
+			"moment": "node_modules/moment/moment",
+			"requirejs-text": "node_modules/requirejs-text/text"
+		},
+		"shim": {
+			"highcharts": ["jquery"],
+			"highcharts-theme-sand": ["highcharts"]
+		}
+	},
+	"installInRoot": true
 }

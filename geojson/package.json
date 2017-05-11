@@ -19,13 +19,11 @@
     "babel-eslint": "^7.2.1",
     "eslint": "^3.18.0",
     "eslint-config-airbnb-es5": "^1.1.0",
-    "eslint-plugin-react": "^6.10.3",
-    "@geoladris/build-tools": "file:/home/vicgonco/workspace/geoladris/build-tools"
+    "eslint-plugin-react": "^6.10.3"
   },
   "scripts": {
-    "install": "gl-npm-resources.js",
-    "test": "karma start test/karma.conf.js",
-    "testd": "karma start --single-run=false --auto-watch --browsers=Chrome --reporters=progress test/karma.conf.js",
-    "lint": "eslint js/modules test"
+    "test": "karma start",
+    "testd": "karma start --single-run=false --auto-watch --browsers=Chrome --reporters=progress",
+    "lint": "eslint src test"
   }
 }

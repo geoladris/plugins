@@ -3,7 +3,7 @@ target/
 .project
 .classpath
 .settings
-*/jslib
+*/test/js-coverage
 */etc
 node_modules
 node

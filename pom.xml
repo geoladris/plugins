@@ -29,9 +29,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<core.version>6.0-SNAPSHOT</core.version>
 		<csgis.geoladris.version>1.0-SNAPSHOT</csgis.geoladris.version>
-		<!-- See https://nodejs.org/en/download/ for latest node and npm (lts) versions -->
-		<node.version>v6.9.2</node.version>
-		<npm.version>3.10.9</npm.version>
+		<!-- See https://nodejs.org/en/download/ for latest node version -->
+		<node.version>v6.10.1</node.version>
+		<!-- See https://yarnpkg.com/ for latest yarn version -->
+		<yarn.version>v0.23.2</yarn.version>
 	</properties>
 
 	<distributionManagement>
@@ -66,20 +67,24 @@
 	<build>
 		<resources>
 			<resource>
-				<directory>modules</directory>
-				<targetPath>modules</targetPath>
+				<directory>src</directory>
+				<targetPath>src</targetPath>
+				<excludes>
+					<exclude>main/**</exclude>
+					<exclude>test/**</exclude>
+				</excludes>
 			</resource>
 			<resource>
 				<directory>styles</directory>
 				<targetPath>styles</targetPath>
 			</resource>
 			<resource>
-				<directory>jslib</directory>
-				<targetPath>jslib</targetPath>
-			</resource>
-			<resource>
 				<directory>theme</directory>
 				<targetPath>theme</targetPath>
+			</resource>
+			<resource>
+				<directory>jslib</directory>
+				<targetPath>jslib</targetPath>
 			</resource>
 			<resource>
 				<directory></directory>
@@ -150,22 +155,22 @@
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.0</version>
+				<version>1.4</version>
 				<executions>
 					<execution>
-						<id>install node and npm</id>
+						<id>install-node-and-yarn</id>
 						<goals>
-							<goal>install-node-and-npm</goal>
+							<goal>install-node-and-yarn</goal>
 						</goals>
 						<configuration>
 							<nodeVersion>${node.version}</nodeVersion>
-							<npmVersion>${npm.version}</npmVersion>
+							<yarnVersion>${yarn.version}</yarnVersion>
 						</configuration>
 					</execution>
 					<execution>
-						<id>npm install</id>
+						<id>yarn install</id>
 						<goals>
-							<goal>npm</goal>
+							<goal>yarn</goal>
 						</goals>
 						<configuration>
 							<arguments>install</arguments>
@@ -177,7 +182,8 @@
 							<goal>karma</goal>
 						</goals>
 						<configuration>
-							<karmaConfPath>${project.basedir}/test/karma.conf.js</karmaConfPath>
+							<failOnError>true</failOnError>
+							<karmaConfPath>${project.basedir}/karma.conf.js</karmaConfPath>
 						</configuration>
 					</execution>
 				</executions>
@@ -200,7 +206,7 @@
 			<id>karma</id>
 			<activation>
 				<file>
-					<missing>test/karma.conf.js</missing>
+					<missing>karma.conf.js</missing>
 				</file>
 			</activation>
 			<properties>
