@@ -7,6 +7,7 @@
 		"requirejs-text": "^2.0.15",
 		"@geoladris/core": "geoladris/core#js_deps"
 	},
+	"files": ["/src/**js", "src/**css", "/styles", "/theme", "/geoladris.json"],
 	"devDependencies": {
 		"squirejs": "^0.2.1",
 		"karma": "~1.3.0",
