@@ -19,7 +19,7 @@
 			"highcharts": "node_modules/highcharts/highcharts",
 			"highcharts-theme-sand": "node_modules/highcharts/themes/sand-signika",
 			"moment": "node_modules/moment/moment",
-			"requirejs-text": "node_modules/requirejs-text/text"
+			"text": "node_modules/requirejs-text/text"
 		},
 		"shim": {
 			"highcharts": ["jquery"],

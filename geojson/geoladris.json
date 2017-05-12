@@ -1,7 +1,7 @@
 {
 	"requirejs": {
 		"paths": {
-			"wellknown": "node_modules/wellknown/wellknown.js"
+			"wellknown": "node_modules/wellknown/wellknown"
 		}
 	}
 }
