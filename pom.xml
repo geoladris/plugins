@@ -182,7 +182,6 @@
 							<goal>karma</goal>
 						</goals>
 						<configuration>
-							<failOnError>true</failOnError>
 							<karmaConfPath>${project.basedir}/karma.conf.js</karmaConfPath>
 						</configuration>
 					</execution>
