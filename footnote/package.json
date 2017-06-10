@@ -20,7 +20,7 @@
 		"eslint-config-airbnb-es5": "^1.1.0",
 		"eslint-plugin-react": "^6.10.3"
 	},
-	"files": ["/src", "geoladris.json"],
+	"files": ["/src", "/geoladris.json"],
 	"scripts": {
 		"test": "karma start",
 		"testd": "karma start --single-run=false --auto-watch --browsers=Chrome --reporters=progress",

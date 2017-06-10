@@ -18,7 +18,7 @@
 		"paths": {
 			"highcharts": "node_modules/highcharts/highcharts",
 			"highcharts-theme-sand": "node_modules/highcharts/themes/sand-signika",
-			"moment": "node_modules/moment/moment",
+			"moment": "node_modules/moment/min/moment.min",
 			"text": "node_modules/requirejs-text/text"
 		},
 		"shim": {
