@@ -1,7 +1,0 @@
-{
-	"requirejs" : {
-		"paths" : {
-			"wellknown" : "../jslib/wellknown"
-		}
-	}
-}

@@ -1,13 +1,17 @@
 {
-  "name": "ol2Controls",
-  "version": "6.0.0-SNAPSHOT",
-  "devDependencies": {
-    "babel-eslint": "^7.2.1",
-    "eslint": "^3.18.0",
-    "eslint-config-airbnb-es5": "^1.1.0",
-    "eslint-plugin-react": "^6.10.3"
-  },
-  "scripts": {
-    "lint": "eslint src/main/resources/geoladris/*/modules src/test/resources/js-test/tests"
-  }
+	"name": "@geoladris/ol2Controls",
+	"version": "7.0.0-SNAPSHOT",
+	"dependencies": {
+		"@geoladris/core": "geoladris/core#master"
+	},
+	"devDependencies": {
+		"babel-eslint": "^7.2.1",
+		"eslint": "^3.18.0",
+		"eslint-config-airbnb-es5": "^1.1.0",
+		"eslint-plugin-react": "^6.10.3"
+	},
+	"files": ["/src"],
+	"scripts": {
+		"lint": "eslint src test"
+	}
 }

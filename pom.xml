@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.fao.unredd</groupId>
 	<artifactId>plugins-root</artifactId>
-	<version>6.1.0-SNAPSHOT</version>
+	<version>7.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>geoladris plugins</name>
@@ -26,10 +26,12 @@
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<core.version>6.0.0</core.version>
-		<!-- See https://nodejs.org/en/download/ for latest node and npm (lts) versions -->
-		<node.version>v6.10.2</node.version>
-		<npm.version>3.10.10</npm.version>
+		<core.version>7.0.0-SNAPSHOT</core.version>
+		<csgis.geoladris.version>1.0-SNAPSHOT</csgis.geoladris.version>
+		<!-- See https://nodejs.org/en/download/ for latest node version -->
+		<node.version>v6.10.1</node.version>
+		<!-- See https://yarnpkg.com/ for latest yarn version -->
+		<yarn.version>v0.23.2</yarn.version>
 	</properties>
 
 	<distributionManagement>
@@ -62,6 +64,43 @@
 		</repository>
 	</repositories>
 	<build>
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<targetPath>src</targetPath>
+				<excludes>
+					<exclude>main/**</exclude>
+					<exclude>test/**</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>styles</directory>
+				<targetPath>styles</targetPath>
+			</resource>
+			<resource>
+				<directory>theme</directory>
+				<targetPath>theme</targetPath>
+			</resource>
+			<resource>
+				<directory>jslib</directory>
+				<targetPath>jslib</targetPath>
+			</resource>
+			<resource>
+				<directory></directory>
+				<includes>
+					<include>package.json</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory></directory>
+				<includes>
+					<include>geoladris.json</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -112,75 +151,65 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>install-node-and-yarn</id>
+						<goals>
+							<goal>install-node-and-yarn</goal>
+						</goals>
+						<configuration>
+							<nodeVersion>${node.version}</nodeVersion>
+							<yarnVersion>${yarn.version}</yarnVersion>
+						</configuration>
+					</execution>
+					<execution>
+						<id>yarn install</id>
+						<goals>
+							<goal>yarn</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>test</id>
+						<goals>
+							<goal>karma</goal>
+						</goals>
+						<configuration>
+							<karmaConfPath>${project.basedir}/karma.conf.js</karmaConfPath>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
 		<profile>
-			<id>js-testing</id>
+			<id>npm</id>
 			<activation>
 				<file>
-					<exists>${basedir}/src/test/resources/js/karma.conf.js</exists>
+					<missing>package.json</missing>
 				</file>
 			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>2.8</version>
-						<executions>
-							<execution>
-								<id>unpack-core</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>unpack-dependencies</goal>
-								</goals>
-								<configuration>
-									<includeGroupIds>org.fao.unredd</includeGroupIds>
-									<includeArtifactIds>core</includeArtifactIds>
-									<outputDirectory>${project.build.directory}/unpacked-core</outputDirectory>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>com.github.eirslett</groupId>
-						<artifactId>frontend-maven-plugin</artifactId>
-						<version>1.0</version>
-						<executions>
-							<execution>
-								<id>install node and npm</id>
-								<goals>
-									<goal>install-node-and-npm</goal>
-								</goals>
-								<configuration>
-									<nodeVersion>${node.version}</nodeVersion>
-									<npmVersion>${npm.version}</npmVersion>
-								</configuration>
-							</execution>
-							<execution>
-								<id>npm install</id>
-								<goals>
-									<goal>npm</goal>
-								</goals>
-								<!-- Optional configuration which provides for running any npm command -->
-								<configuration>
-									<arguments>install</arguments>
-								</configuration>
-							</execution>
-							<execution>
-								<id>javascript tests</id>
-								<goals>
-									<goal>karma</goal>
-								</goals>
-								<configuration>
-									<karmaConfPath>${project.basedir}/src/test/resources/js/karma.conf.js</karmaConfPath>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
+			<properties>
+				<skip.npm>true</skip.npm>
+			</properties>
+		</profile>
+		<profile>
+			<id>karma</id>
+			<activation>
+				<file>
+					<missing>karma.conf.js</missing>
+				</file>
+			</activation>
+			<properties>
+				<skip.karma>true</skip.karma>
+			</properties>
 		</profile>
 	</profiles>
 </project>

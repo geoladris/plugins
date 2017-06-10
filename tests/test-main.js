@@ -18,14 +18,14 @@ Object.keys(window.__karma__.files).forEach(function(file) {
 // https://github.com/iammerrick/Squire.js/issues/31#issuecomment-50999798
 var alreadyRun;
 require.config({
-	baseUrl : "/base",
-  paths : {
-	  "jquery" : "target/unpacked-core/geoladris/core/jslib/jquery-2.1.0",
-		"message-bus" : "target/unpacked-core/geoladris/core/modules/message-bus",
-		"Squire" : "node_modules/squirejs/src/Squire"
+	baseUrl: '/base',
+	paths: {
+		'jquery': 'node_modules/jquery/dist/jquery.min',
+		'message-bus': 'node_modules/@geoladris/core/src/message-bus',
+		'Squire': 'node_modules/squirejs/src/Squire'
 	},
-	deps : allTestFiles,
-	callback : function() {
+	deps: allTestFiles,
+	callback: function() {
 		if (!alreadyRun) {
 			alreadyRun = true;
 			window.__karma__.start();

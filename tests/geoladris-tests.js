@@ -1,57 +1,52 @@
-define("geoladris-tests", [ "Squire", "message-bus" ], function(Squire, bus) {
-  var CONTEXT = "geoladris-test";
+define('geoladris-tests', ['Squire', 'message-bus'], function(Squire, bus) {
+	var CONTEXT = 'geoladris-test';
+	var injector;
 
-  // project basedir relative to the directory where karma.conf.js is
-  // contained; useful for RequireJS paths below
-  var root = "../../../../../../";
-  var injector;
+	function init(config, additionalPaths) {
+		var paths = additionalPaths || {};
+		paths.jquery = '../node_modules/jquery/dist/jquery.min';
+		paths['message-bus'] = '../node_modules/@geoladris/core/src/message-bus';
 
-  function init(pluginName, config, paths) {
-    paths = paths || {};
-    paths["jquery"] = root + "target/unpacked-core/geoladris/core/jslib/jquery-2.1.0";
-    paths["message-bus"] = root + "target/unpacked-core/geoladris/core/modules/message-bus";
+		var c = {
+			context: CONTEXT,
+			baseUrl: '/base/src',
+			paths: paths
+		};
 
-    var c = {
-      context : CONTEXT,
-      baseUrl : "/base/src/main/resources/geoladris/" + pluginName + "/modules",
-      paths : paths
-    };
+		c.config = config || {};
+		require.config(c);
 
-    c.config = config || {};
-    require.config(c);
+		if (injector) {
+			injector.clean();
+			injector.remove();
+		}
 
-    if (injector != null) {
-      injector.clean();
-      injector.remove();
-    }
+		injector = new Squire(CONTEXT);
+		injector.mock('message-bus', bus);
 
-    injector = new Squire(CONTEXT);
-    injector.mock("message-bus", bus);
+		bus.stopListenAll();
+		spyOn(bus, 'send').and.callThrough();
+		spyOn(bus, 'listen').and.callThrough();
 
-    bus.stopListenAll();
-    spyOn(bus, "send").and.callThrough();
-    spyOn(bus, "listen").and.callThrough();
+		return {
+			bus: bus,
+			injector: injector
+		};
+	}
 
-    return {
-      bus : bus,
-      injector : injector
-    }
-  }
+	function replaceParent(id) {
+		var previous = document.getElementById(id);
+		if (previous) {
+			document.body.removeChild(previous);
+		}
 
-  function replaceParent(id) {
-    var previous = document.getElementById(id);
-    if (previous) {
-      document.body.removeChild(previous);
-    }
+		var parent = document.createElement('div');
+		parent.setAttribute('id', id);
+		document.body.appendChild(parent);
+	}
 
-    var parent = document.createElement('div');
-    parent.setAttribute("id", id);
-    document.body.appendChild(parent);
-  }
-
-  return {
-    init : init,
-    replaceParent : replaceParent
-  }
+	return {
+		init: init,
+		replaceParent: replaceParent
+	};
 });
-
