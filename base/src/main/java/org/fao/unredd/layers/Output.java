@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.geoladris.DBUtils;
-import org.geoladris.PersistenceException;
+import org.fao.unredd.DBUtils;
+import org.fao.unredd.PersistenceException;
 
 /**
  * One of the outputs a layer can have.

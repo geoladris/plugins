@@ -6,17 +6,17 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.geoladris.config.ModuleConfigurationProvider;
-import org.geoladris.config.PortalRequestConfiguration;
+import org.geoladris.config.Config;
+import org.geoladris.config.PluginConfigProvider;
 
 import net.sf.json.JSONObject;
 
-public class AuthConfigurationProvider implements ModuleConfigurationProvider {
+public class AuthConfigurationProvider implements PluginConfigProvider {
   public static final String MODULE_NAME = "auth-user";
 
   @Override
-  public Map<String, JSONObject> getPluginConfig(PortalRequestConfiguration configurationContext,
-      HttpServletRequest request) throws IOException {
+  public Map<String, JSONObject> getPluginConfig(Config config,
+      Map<String, JSONObject> currentConfig, HttpServletRequest request) throws IOException {
     JSONObject pluginConfig = new JSONObject();
     if (Auth.isAuthorized(request)) {
       String userName = request.getUserPrincipal().getName();

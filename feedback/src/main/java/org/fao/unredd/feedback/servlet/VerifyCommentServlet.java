@@ -11,10 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.fao.unredd.PersistenceException;
 import org.fao.unredd.feedback.Feedback;
 import org.fao.unredd.feedback.VerificationCodeNotFoundException;
 import org.geoladris.Geoladris;
-import org.geoladris.PersistenceException;
 import org.geoladris.config.Config;
 import org.geoladris.servlet.StatusServletException;
 

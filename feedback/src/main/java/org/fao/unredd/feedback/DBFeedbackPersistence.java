@@ -8,8 +8,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.geoladris.DBUtils;
-import org.geoladris.PersistenceException;
+import org.fao.unredd.DBUtils;
+import org.fao.unredd.PersistenceException;
 
 public class DBFeedbackPersistence implements FeedbackPersistence {
 

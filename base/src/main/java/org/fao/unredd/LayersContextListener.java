@@ -11,7 +11,7 @@ public class LayersContextListener implements ServletContextListener {
   @Override
   public void contextInitialized(ServletContextEvent sce) {
     Config config = (Config) sce.getServletContext().getAttribute(Geoladris.ATTR_CONFIG);
-    config.addModuleConfigurationProvider(new LayersModuleConfigurationProvider());
+    config.addPluginConfigProvider(new LayersModuleConfigurationProvider());
   }
 
   @Override

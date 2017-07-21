@@ -10,24 +10,24 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.geoladris.DBUtils;
-import org.geoladris.PersistenceException;
+import org.fao.unredd.DBUtils;
+import org.fao.unredd.PersistenceException;
+import org.geoladris.config.Config;
 import org.geoladris.config.ConfigException;
-import org.geoladris.config.ModuleConfigurationProvider;
-import org.geoladris.config.PortalRequestConfiguration;
+import org.geoladris.config.PluginConfigProvider;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
-public class GeoExplorerDBConfigurationProvider implements ModuleConfigurationProvider {
+public class GeoExplorerDBConfigurationProvider implements PluginConfigProvider {
   private static final String PLUGIN_NAME = "geoexplorer-reader";
 
   public GeoExplorerDBConfigurationProvider() {}
 
   @Override
-  public Map<String, JSONObject> getPluginConfig(PortalRequestConfiguration requestConfig,
-      HttpServletRequest request) throws IOException {
+  public Map<String, JSONObject> getPluginConfig(Config config,
+      Map<String, JSONObject> currentConfig, HttpServletRequest request) throws IOException {
     JSONObject conf = new JSONObject();
     conf.put("geoexplorer-layers", getGeoExplorerLayers(request));
     return Collections.singletonMap(PLUGIN_NAME, conf);

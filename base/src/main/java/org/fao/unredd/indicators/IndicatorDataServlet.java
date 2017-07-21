@@ -7,12 +7,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.fao.unredd.PersistenceException;
 import org.fao.unredd.charts.ChartGenerator;
 import org.fao.unredd.layers.Layer;
 import org.fao.unredd.layers.LayerFactory;
 import org.fao.unredd.layers.NoSuchIndicatorException;
 import org.fao.unredd.layers.Output;
-import org.geoladris.PersistenceException;
 import org.geoladris.servlet.StatusServletException;
 
 public class IndicatorDataServlet extends HttpServlet {

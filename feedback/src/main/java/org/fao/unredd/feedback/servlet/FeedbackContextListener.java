@@ -9,12 +9,12 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.fao.unredd.PersistenceException;
 import org.fao.unredd.feedback.DBFeedbackPersistence;
 import org.fao.unredd.feedback.Feedback;
 import org.fao.unredd.feedback.Mailer;
 import org.fao.unredd.feedback.MissingArgumentException;
 import org.geoladris.Geoladris;
-import org.geoladris.PersistenceException;
 import org.geoladris.config.Config;
 
 public class FeedbackContextListener implements ServletContextListener {

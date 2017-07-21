@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.fao.unredd.PersistenceException;
 import org.fao.unredd.feedback.CannotSendMailException;
 import org.fao.unredd.feedback.Feedback;
 import org.fao.unredd.feedback.MissingArgumentException;
 import org.geoladris.Geoladris;
-import org.geoladris.PersistenceException;
 import org.geoladris.config.Config;
 import org.geoladris.servlet.StatusServletException;
 

@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
+import org.fao.unredd.DBUtils;
+import org.fao.unredd.PersistenceException;
 import org.fao.unredd.layers.Layer;
 import org.fao.unredd.layers.NoSuchIndicatorException;
 import org.fao.unredd.layers.Output;
 import org.fao.unredd.layers.Outputs;
-import org.geoladris.DBUtils;
-import org.geoladris.PersistenceException;
 
 /**
  * Concrete implementation of the {@link Layer} interface based on databases

@@ -7,12 +7,13 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
-import org.geoladris.config.PortalRequestConfiguration;
+import org.geoladris.config.Config;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,7 @@ import net.sf.json.JSONObject;
 public class LayersModuleConfigurationProviderTest {
   private LayersModuleConfigurationProvider provider;
   private File confDir;
-  private PortalRequestConfiguration portalConf;
+  private Config config;
   private HttpServletRequest request;
 
   @Before
@@ -32,8 +33,8 @@ public class LayersModuleConfigurationProviderTest {
     this.confDir.delete();
     this.confDir.mkdir();
 
-    this.portalConf = mock(PortalRequestConfiguration.class);
-    when(portalConf.getConfigDir()).thenReturn(confDir);
+    this.config = mock(Config.class);
+    when(config.getDir()).thenReturn(confDir);
     this.request = mock(HttpServletRequest.class);
   }
 
@@ -44,13 +45,14 @@ public class LayersModuleConfigurationProviderTest {
 
   @Test
   public void testGetPluginConf() throws Exception {
-    when(portalConf.localize(anyString())).thenReturn("{}");
+    when(config.localize(anyString())).thenReturn("{}");
     new File(this.confDir, "layers.json").createNewFile();
 
-    Map<String, JSONObject> config = provider.getPluginConfig(portalConf, request);
+    Map<String, JSONObject> pluginConfig =
+        provider.getPluginConfig(this.config, new HashMap<String, JSONObject>(), request);
 
-    assertEquals(1, config.size());
-    JSONObject pluginConf = config.values().iterator().next();
+    assertEquals(1, pluginConfig.size());
+    JSONObject pluginConf = pluginConfig.values().iterator().next();
     assertEquals(JSONObject.fromObject("{layers:{}}"), pluginConf);
   }
 }

@@ -19,8 +19,8 @@ import java.io.StringWriter;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.fao.unredd.PersistenceException;
 import org.fao.unredd.layers.Output;
-import org.geoladris.PersistenceException;
 
 /**
  * 

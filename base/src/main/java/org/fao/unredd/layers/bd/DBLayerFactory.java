@@ -18,10 +18,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.fao.unredd.DBUtils;
+import org.fao.unredd.PersistenceException;
 import org.fao.unredd.layers.Layer;
 import org.fao.unredd.layers.LayerFactory;
-import org.geoladris.DBUtils;
-import org.geoladris.PersistenceException;
 
 /**
  * Databases based implementation of {@link LayerFactory}

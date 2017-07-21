@@ -11,7 +11,7 @@ public class AuthContextListener implements ServletContextListener {
   @Override
   public void contextInitialized(ServletContextEvent event) {
     Config config = (Config) event.getServletContext().getAttribute(Geoladris.ATTR_CONFIG);
-    config.addModuleConfigurationProvider(new AuthConfigurationProvider());
+    config.addPluginConfigProvider(new AuthConfigurationProvider());
   }
 
   @Override

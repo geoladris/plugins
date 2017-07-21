@@ -10,7 +10,7 @@ public class GeoExplorerReaderContextListener implements ServletContextListener 
   @Override
   public void contextInitialized(ServletContextEvent sce) {
     Config config = (Config) sce.getServletContext().getAttribute(Geoladris.ATTR_CONFIG);
-    config.addModuleConfigurationProvider(new GeoExplorerDBConfigurationProvider());
+    config.addPluginConfigProvider(new GeoExplorerDBConfigurationProvider());
   }
 
   @Override

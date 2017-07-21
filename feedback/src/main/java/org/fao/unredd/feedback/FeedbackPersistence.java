@@ -1,6 +1,6 @@
 package org.fao.unredd.feedback;
 
-import org.geoladris.PersistenceException;
+import org.fao.unredd.PersistenceException;
 
 public interface FeedbackPersistence {
 

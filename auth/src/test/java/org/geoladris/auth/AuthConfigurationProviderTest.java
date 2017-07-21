@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -18,7 +19,6 @@ import javax.servlet.http.HttpSession;
 
 import org.geoladris.Geoladris;
 import org.geoladris.config.Config;
-import org.geoladris.config.PortalRequestConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public class AuthConfigurationProviderTest {
     HttpServletRequest request = mockRequestWithRoles("admin");
     when(request.isUserInRole(anyString())).thenReturn(false);
     Map<String, JSONObject> config =
-        provider.getPluginConfig(mock(PortalRequestConfiguration.class), request);
+        provider.getPluginConfig(mock(Config.class), new HashMap<String, JSONObject>(), request);
     assertEquals(new JSONObject(), config.get(Auth.PLUGIN_NAME));
   }
 
@@ -57,7 +57,7 @@ public class AuthConfigurationProviderTest {
     when(request.getUserPrincipal()).thenReturn(principal);
 
     Map<String, JSONObject> config =
-        provider.getPluginConfig(mock(PortalRequestConfiguration.class), request);
+        provider.getPluginConfig(mock(Config.class), new HashMap<String, JSONObject>(), request);
     JSONObject pluginConfig = config.get(Auth.PLUGIN_NAME);
     JSONObject moduleConfig = pluginConfig.getJSONObject(AuthConfigurationProvider.MODULE_NAME);
     assertEquals(user, moduleConfig.getString("user"));

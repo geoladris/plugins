@@ -7,7 +7,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
 import org.apache.log4j.Logger;
-import org.geoladris.PersistenceException;
+import org.fao.unredd.PersistenceException;
 import org.geoladris.config.Config;
 
 public class Feedback {

@@ -17,7 +17,7 @@ import java.util.PropertyResourceBundle;
 
 import javax.mail.MessagingException;
 
-import org.geoladris.PersistenceException;
+import org.fao.unredd.PersistenceException;
 import org.geoladris.config.Config;
 import org.junit.Test;
 
