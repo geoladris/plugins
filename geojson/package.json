@@ -23,6 +23,7 @@
 	},
 	"files": ["/src", "/geoladris.json"],
 	"scripts": {
+		"postinstall": "gl-build-plugin.js",
 		"test": "karma start",
 		"testd": "karma start --single-run=false --auto-watch --browsers=Chrome --reporters=progress",
 		"lint": "eslint src test"
