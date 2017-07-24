@@ -190,14 +190,14 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>npm</id>
+			<id>yarn</id>
 			<activation>
 				<file>
 					<missing>package.json</missing>
 				</file>
 			</activation>
 			<properties>
-				<skip.npm>true</skip.npm>
+				<skip.yarn>true</skip.yarn>
 			</properties>
 		</profile>
 		<profile>
