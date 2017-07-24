@@ -21,7 +21,11 @@
 		"requirejs": "~2.1.8",
 		"squirejs": "^0.2.1"
 	},
-	"files": ["/src", "/jslib", "/geoladris.json"],
+	"files": [
+		"/src",
+		"/jslib",
+		"/geoladris.json"
+	],
 	"scripts": {
 		"test": "karma start",
 		"testd": "karma start --single-run=false --auto-watch --browsers=Chrome --reporters=progress",

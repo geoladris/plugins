@@ -10,7 +10,11 @@
 		"eslint-config-airbnb-es5": "^1.1.0",
 		"eslint-plugin-react": "^6.10.3"
 	},
-	"files": ["/src/**js", "/src/**css", "src/images"],
+	"files": [
+		"/src/**js",
+		"/src/**css",
+		"src/images"
+	],
 	"scripts": {
 		"lint": "eslint src test"
 	}
