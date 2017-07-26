@@ -74,12 +74,8 @@
 				</excludes>
 			</resource>
 			<resource>
-				<directory>styles</directory>
-				<targetPath>styles</targetPath>
-			</resource>
-			<resource>
-				<directory>theme</directory>
-				<targetPath>theme</targetPath>
+				<directory>css</directory>
+				<targetPath>css</targetPath>
 			</resource>
 			<resource>
 				<directory>jslib</directory>
