@@ -3,16 +3,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd">
 	<listener>
-		<listener-class>org.fao.unredd.LayersContextListener</listener-class>
+		<listener-class>org.geoladris.LayersContextListener</listener-class>
 	</listener>
 	<listener>
-		<listener-class>org.fao.unredd.IndicatorsContextListener</listener-class>
+		<listener-class>org.geoladris.IndicatorsContextListener</listener-class>
 	</listener>
 
 	<!-- indicators -->
 	<servlet>
 		<servlet-name>indicator-list-servlet</servlet-name>
-		<servlet-class>org.fao.unredd.indicators.IndicatorListServlet</servlet-class>
+		<servlet-class>org.geoladris.indicators.IndicatorListServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>indicator-list-servlet</servlet-name>
@@ -20,7 +20,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>indicator-data-servlet</servlet-name>
-		<servlet-class>org.fao.unredd.indicators.IndicatorDataServlet</servlet-class>
+		<servlet-class>org.geoladris.indicators.IndicatorDataServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>indicator-data-servlet</servlet-name>

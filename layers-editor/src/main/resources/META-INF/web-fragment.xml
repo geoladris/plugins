@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd">
 	<servlet>
 		<servlet-name>layers</servlet-name>
-		<servlet-class>org.fao.unredd.layersEditor.LayersServlet</servlet-class>
+		<servlet-class>org.geoladris.layersEditor.LayersServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>layers</servlet-name>
