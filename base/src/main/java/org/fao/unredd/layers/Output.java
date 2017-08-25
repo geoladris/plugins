@@ -30,6 +30,7 @@ import org.fao.unredd.PersistenceException;
  * @author manureta
  */
 public class Output extends OutputDescriptor {
+  private static final String DB_RESOURCE_NAME = "geoladris";
 
   private String subtitle;
   private String table_name_data;
@@ -98,7 +99,7 @@ public class Output extends OutputDescriptor {
   }
 
   private void cargarDatos(final String objectid) throws PersistenceException {
-    DBUtils.processConnection("unredd-portal", new DBUtils.DBProcessor() {
+    DBUtils.processConnection(DB_RESOURCE_NAME, new DBUtils.DBProcessor() {
 
       @Override
       public void process(Connection connection) throws SQLException {

@@ -20,6 +20,8 @@ public class DBFeedbackPersistence implements FeedbackPersistence {
 
   private String tableName;
 
+  private static final String DB_RESOURCE_NAME = "geoladris";
+
   public DBFeedbackPersistence(String schemaName) {
     this.tableName = schemaName + ".redd_feedback";
   }
@@ -28,7 +30,7 @@ public class DBFeedbackPersistence implements FeedbackPersistence {
   public void insert(final String geom, final String srid, final String comment, final String email,
       final String layerName, final String layerDate, final String verificationCode,
       final String language) throws PersistenceException {
-    DBUtils.processConnection("unredd-portal", new DBUtils.DBProcessor() {
+    DBUtils.processConnection(DB_RESOURCE_NAME, new DBUtils.DBProcessor() {
 
       @Override
       public void process(Connection connection) throws SQLException {
@@ -53,7 +55,7 @@ public class DBFeedbackPersistence implements FeedbackPersistence {
 
   @Override
   public void cleanOutOfDate() throws PersistenceException {
-    DBUtils.processConnection("unredd-portal", new DBUtils.DBProcessor() {
+    DBUtils.processConnection(DB_RESOURCE_NAME, new DBUtils.DBProcessor() {
       @Override
       public void process(Connection connection) throws SQLException {
         PreparedStatement statement = connection
@@ -68,7 +70,7 @@ public class DBFeedbackPersistence implements FeedbackPersistence {
 
   @Override
   public boolean existsUnverified(final String verificationCode) throws PersistenceException {
-    return DBUtils.processConnection("unredd-portal", new DBUtils.ReturningDBProcessor<Boolean>() {
+    return DBUtils.processConnection(DB_RESOURCE_NAME, new DBUtils.ReturningDBProcessor<Boolean>() {
       @Override
       public Boolean process(Connection connection) throws SQLException {
         PreparedStatement statement = connection.prepareStatement("SELECT count(*) FROM "
@@ -86,7 +88,7 @@ public class DBFeedbackPersistence implements FeedbackPersistence {
 
   @Override
   public void verify(final String verificationCode) throws PersistenceException {
-    DBUtils.processConnection("unredd-portal", new DBUtils.DBProcessor() {
+    DBUtils.processConnection(DB_RESOURCE_NAME, new DBUtils.DBProcessor() {
       @Override
       public void process(Connection connection) throws SQLException {
         PreparedStatement statement = connection.prepareStatement("UPDATE " + tableName
@@ -102,7 +104,7 @@ public class DBFeedbackPersistence implements FeedbackPersistence {
   @Override
   public CommentInfo[] getValidatedToNotifyInfo() throws PersistenceException {
     final ArrayList<CommentInfo> ret = new ArrayList<CommentInfo>();
-    DBUtils.processConnection("unredd-portal", new DBUtils.DBProcessor() {
+    DBUtils.processConnection(DB_RESOURCE_NAME, new DBUtils.DBProcessor() {
       @Override
       public void process(Connection connection) throws SQLException {
         PreparedStatement statement =
@@ -123,7 +125,7 @@ public class DBFeedbackPersistence implements FeedbackPersistence {
 
   @Override
   public void setNotified(final int id) throws PersistenceException {
-    DBUtils.processConnection("unredd-portal", new DBUtils.DBProcessor() {
+    DBUtils.processConnection(DB_RESOURCE_NAME, new DBUtils.DBProcessor() {
       @Override
       public void process(Connection connection) throws SQLException {
         PreparedStatement statement = connection

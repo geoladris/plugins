@@ -36,6 +36,8 @@ import org.fao.unredd.layers.Outputs;
  * 
  */
 public class DBLayer implements Layer {
+  private static final String DB_RESOURCE_NAME = "geoladris";
+
   private String qName;
   public Outputs var_outputs;
   public ArrayList<Output> tempoutputs;
@@ -49,7 +51,7 @@ public class DBLayer implements Layer {
     }
     this.qName = layerName;
 
-    DBUtils.processConnection("unredd-portal", new DBUtils.ReturningDBProcessor<Boolean>() {
+    DBUtils.processConnection(DB_RESOURCE_NAME, new DBUtils.ReturningDBProcessor<Boolean>() {
       @Override
       public Boolean process(Connection connection) throws SQLException {
         boolean ret = false;

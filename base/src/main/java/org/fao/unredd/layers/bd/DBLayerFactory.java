@@ -30,6 +30,7 @@ import org.fao.unredd.layers.LayerFactory;
  * 
  */
 public class DBLayerFactory implements LayerFactory {
+  private static final String DB_RESOURCE_NAME = "geoladris";
 
   private String schemaName;
 
@@ -41,7 +42,7 @@ public class DBLayerFactory implements LayerFactory {
   @Override
   public boolean exists(final String layerName) {
     try {
-      return DBUtils.processConnection("unredd-portal",
+      return DBUtils.processConnection(DB_RESOURCE_NAME,
           new DBUtils.ReturningDBProcessor<Boolean>() {
             @Override
             public Boolean process(Connection connection) throws SQLException {
