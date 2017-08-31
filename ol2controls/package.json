@@ -1,8 +1,8 @@
 {
-	"name": "@geoladris/ol2Controls",
-	"version": "7.0.0-SNAPSHOT",
+	"name": "@geoladris/ol2controls",
+	"version": "7.0.0-alpha.0",
 	"license": "MIT",
-	"description": "Geoladris Plugin: ol2Controls",
+	"description": "Geoladris Plugin: ol2controls",
 	"repository": "git@github.com:geoladris/plugins.git",
 	"author": "Víctor González <victor.gonzalez@geomati.co>",
 	"contributors": [

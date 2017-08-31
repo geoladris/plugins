@@ -50,7 +50,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>ol2Controls</artifactId>
+			<artifactId>ol2controls</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

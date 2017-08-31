@@ -22,7 +22,7 @@
 		<module>auth</module>
 		<module>ol2</module>
 		<module>geojson</module>
-		<module>ol2Controls</module>
+		<module>ol2controls</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
