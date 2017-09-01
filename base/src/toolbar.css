@@ -27,4 +27,5 @@
 .toolbar_button {
 	float: left;
 	margin-left: 20px;
+	height: 1em;
 }
