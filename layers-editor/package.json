@@ -30,6 +30,7 @@
 	},
 	"files": [
 		"/src/**js",
+		"/src/**json",
 		"/src/**css",
 		"/src/images"
 	],
