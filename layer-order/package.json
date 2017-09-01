@@ -1,6 +1,6 @@
 {
 	"name": "@geoladris/layer-order",
-	"version": "7.0.0-alpha.0",
+	"version": "7.0.0-alpha.1",
 	"license": "MIT",
 	"description": "Geoladris Plugin: layer-order",
 	"repository": "git@github.com:geoladris/plugins.git",
