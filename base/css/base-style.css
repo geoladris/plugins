@@ -30,6 +30,7 @@
 
 .dialog-close {
 	background: url("images/close.png");
+	background-size: contain;
 	position: absolute;
 	top: 0px;
 	right: 0px;
