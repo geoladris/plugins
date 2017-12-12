@@ -1,4 +1,4 @@
-#loading-shade {
+#wait-mask {
 	background: rgba(0, 0, 0, 0.7);
 	display: flex;
 	align-items: center;
@@ -7,6 +7,7 @@
 
 #loading-msg {
 	min-width: 12em;
+	max-width: 50%;
 	padding: 20px 50px;
 	background: rgb(150, 150, 150);
 	border: 2px solid rgb(200, 200, 200);

@@ -155,7 +155,7 @@ define([ 'module', 'jquery', 'message-bus', 'i18n', 'customization', 'ui/ui', 'g
 					id: 'info-magnifier-' + wmsLayerId + '-' + index,
 					css: 'info-magnifier',
 					parent: tdMagnifier,
-					image: 'modules/images/zoom-to-object.png',
+					image: 'images/zoom-to-object.png',
 					clickEventName: 'zoom-to',
 					// the parameter is itself an array
 					clickEventMessage: [ feature.bbox ]
@@ -230,7 +230,7 @@ define([ 'module', 'jquery', 'message-bus', 'i18n', 'customization', 'ui/ui', 'g
 			var button = ui.create('button', {
 				id: 'info-indicator-' + wmsLayerId + '-' + infoFeatureIndex + '-' + indicatorIndex,
 				parent: 'info-indicator-' + wmsLayerId + '-' + infoFeatureIndex,
-				image: 'modules/images/object-indicators.png',
+				image: 'images/object-indicators.png',
 				clickEventName: 'show-feature-indicator',
 				clickEventMessage: [ wmsName, wmsLayerId, infoFeatureIndex, indicatorIndex ]
 			});
