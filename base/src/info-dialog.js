@@ -176,8 +176,10 @@ define([ 'module', 'jquery', 'message-bus', 'i18n', 'customization', 'ui/ui', 'g
 			var imgWait = ui.create('img', {
 				parent: tdIndicator
 			});
-			imgWait.src = 'styles/images/ajax-loader.gif';
+			imgWait.src = 'images/loader.gif';
 			imgWait.alt = 'wait';
+			imgWait.style.height = '20px';
+			imgWait.style.width = '20px';
 			var wmsName = wmsLayerInfo[wmsLayerId].wmsName;
 			bus.send('ajax', {
 				url: 'indicators?layerId=' + wmsName,
