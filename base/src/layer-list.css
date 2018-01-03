@@ -120,6 +120,7 @@ td.layer_visibility {
 
 .layer-list-accordion-header>p {
   width: auto;
+  display: inline-block;
 }
 
 .layer-list-accordion {
@@ -163,8 +164,12 @@ td.layer_visibility {
   display: block !important;
 }
 
-.layer-list-accordion.accordion-content .layer-list-accordion-header {
+.layer-list-accordion.accordion-content .layer-list-accordion-header, .layer-list-accordion.accordion-content .layer-list-accordion-header>p {
   pointer-events: none !important;
+}
+
+.layer-list-accordion.accordion-content .layer-list-accordion-header>* {
+  pointer-events: auto !important;
 }
 
 .layer-info-button, .editable-layer-list-button {
