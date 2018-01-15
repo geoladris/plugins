@@ -11,7 +11,7 @@
 
 	<groupId>com.github.geoladris.plugins</groupId>
 	<artifactId>footnote</artifactId>
-	<name>footnote</name>
+	<name>Footnote</name>
 	<description>Footnote plugin for Geoladris</description>
 	<url>https://github.com/geoladris/plugins</url>
 
